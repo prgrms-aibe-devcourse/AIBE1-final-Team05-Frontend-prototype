@@ -1,5 +1,7 @@
+// src/components/navigation/Breadcrumb.tsx
+
 import React from "react";
-import { Breadcrumbs, Link, Typography, Box } from "@mui/material";
+import { Breadcrumbs, Link, Typography } from "@mui/material";
 import {
   Home as HomeIcon,
   ChevronRight as ChevronRightIcon,

@@ -1,3 +1,5 @@
+// src/components/product/ProductSorting.tsx
+
 import React from "react";
 import {
   Box,
