@@ -31,7 +31,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const [isFavorite, setIsFavorite] = useState(product.isFavorite || false);
   const [isHovered, setIsHovered] = useState(false);
-  const theme = useTheme();
 
   const handleFavoriteClick = (event: React.MouseEvent) => {
     event.preventDefault();
