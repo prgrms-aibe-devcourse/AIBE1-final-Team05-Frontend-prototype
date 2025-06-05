@@ -9,21 +9,12 @@ import LoginPage from '@/pages/auth/LoginPage';
 import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
 
 const router = createBrowserRouter([
-    // 인증 관련 라우트 (레이아웃 없음)
-    {
-        path: '/login',
-        element: <LoginPage />,
-    },
-    {
-        path: '/role-selection',
-        element: <RoleSelectionPage />,
-    },
-    // 메인 애플리케이션 라우트 (레이아웃 포함)
     {
         path: '/',
         element: <Layout />,
         errorElement: <NotFoundPage />,
         children: [
+            // 메인 애플리케이션 라우트
             {
                 index: true,
                 element: <HomePage />,
@@ -39,6 +30,15 @@ const router = createBrowserRouter([
             {
                 path: 'support',
                 element: <SupportPage />,
+            },
+            // 🆕 인증 라우트도 Layout 안에 포함
+            {
+                path: 'login',
+                element: <LoginPage />,
+            },
+            {
+                path: 'role-selection',
+                element: <RoleSelectionPage />,
             },
         ],
     },
