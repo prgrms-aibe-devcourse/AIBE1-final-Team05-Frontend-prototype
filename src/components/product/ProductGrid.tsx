@@ -1,3 +1,5 @@
+// src/components/product/ProductGrid.tsx
+
 import React from "react";
 import { Grid, Box, Pagination, Button, Typography } from "@mui/material";
 import ProductCard from "./ProductCard";
@@ -20,10 +22,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   onFavoriteToggle,
   onLoadMore,
 }) => {
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    page: number
-  ) => {
+  const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     onPageChange(page);
     // 페이지 변경 시 스크롤을 맨 위로
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -34,7 +33,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
       {/* 상품 그리드 */}
       <Grid container spacing={3} sx={{ mb: 5 }}>
         {products.map((product) => (
-          <Grid item xs={6} sm={6} md={4} lg={3} key={product.id}>
+          <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }} key={product.id}>
             <ProductCard
               product={product}
               onFavoriteToggle={onFavoriteToggle}
