@@ -14,7 +14,6 @@ import {
     ListItem,
     ListItemText,
     Divider,
-    Badge,
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -41,7 +40,7 @@ const Header = () => {
         <Box sx={{ width: 250, pt: 2 }}>
             <Box sx={{ px: 2, mb: 2 }}>
                 <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                    🐕 Pet's Delight
+                    CatDogEats
                 </Typography>
             </Box>
             <Divider />
@@ -65,14 +64,20 @@ const Header = () => {
                     fullWidth
                     variant="outlined"
                     sx={{ mb: 1 }}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => {
+                        navigate('/login');
+                        setMobileOpen(false);
+                    }}
                 >
                     로그인
                 </Button>
                 <Button
                     fullWidth
                     variant="contained"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => {
+                        navigate('/login');
+                        setMobileOpen(false);
+                    }}
                 >
                     회원가입
                 </Button>
@@ -85,31 +90,30 @@ const Header = () => {
             <AppBar
                 position="sticky"
                 sx={{
-                    backgroundColor: 'rgba(252, 250, 248, 0.8)',
-                    backdropFilter: 'blur(12px)',
+                    backgroundColor: 'white',
                     color: 'text.primary',
-                    boxShadow: '0 1px 0 rgba(231, 221, 208, 1)',
+                    boxShadow: 'none',
                     borderBottom: '1px solid',
                     borderBottomColor: 'grey.200',
                 }}
             >
-                <Toolbar sx={{ justifyContent: 'space-between', py: 1, minHeight: '64px !important' }}>
+                <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 1, sm: 1.5 }, minHeight: '64px !important' }}>
                     {/* 로고 */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Box
                             sx={{
                                 width: 32,
                                 height: 32,
                                 borderRadius: '50%',
-                                background: 'conic-gradient(from 0deg, #e89830 0deg, #e89830 360deg)',
+                                background: '#e89830',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: 'white',
-                                fontSize: '16px',
+                                mr: 1.5,
+                                cursor: 'pointer'
                             }}
+                            onClick={() => navigate('/')}
                         >
-                            🐕
                         </Box>
                         <Typography
                             variant="h6"
@@ -122,13 +126,13 @@ const Header = () => {
                             }}
                             onClick={() => navigate('/')}
                         >
-                            Pet's Delight
+                            CatDogEats
                         </Typography>
                     </Box>
 
                     {/* 네비게이션 (데스크톱) */}
                     {!isMobile && (
-                        <Box sx={{ display: 'flex', gap: 4 }}>
+                        <Box sx={{ display: 'flex', gap: 4, mx: 4 }}>
                             {navigationItems.map((item) => (
                                 <Button
                                     key={item.label}
@@ -136,10 +140,13 @@ const Header = () => {
                                     onClick={() => navigate(item.path)}
                                     sx={{
                                         fontSize: '0.875rem',
-                                        fontWeight: 500,
-                                        color: 'text.primary',
+                                        fontWeight: 400,
+                                        color: 'text.secondary',
+                                        textTransform: 'none',
+                                        minWidth: 'auto',
+                                        px: 1,
                                         '&:hover': {
-                                            color: 'primary.main',
+                                            color: 'text.primary',
                                             backgroundColor: 'transparent',
                                         }
                                     }}
@@ -150,106 +157,141 @@ const Header = () => {
                         </Box>
                     )}
 
-                    {/* 검색 및 액션 */}
+                    {/* 검색창 및 우측 메뉴 */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-                        {/* 검색창 */}
+                        {/* 검색창 (데스크톱) */}
                         {!isSmall && (
                             <TextField
                                 placeholder="간식 검색..."
                                 size="small"
                                 sx={{
-                                    width: { sm: 200, md: 300 },
+                                    width: { sm: 200, md: 250 },
                                     '& .MuiOutlinedInput-root': {
-                                        backgroundColor: 'grey.100',
+                                        backgroundColor: '#f5f5f5',
+                                        borderRadius: '20px',
+                                        fontSize: '0.875rem',
+                                        '& fieldset': {
+                                            border: 'none',
+                                        },
+                                        '&:hover fieldset': {
+                                            border: 'none',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            border: '1px solid #e89830',
+                                        },
                                         '& input': {
                                             fontSize: '0.875rem',
+                                            py: '8px',
                                         }
                                     }
                                 }}
                                 InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton size="small">
-                                                <span className="material-icons" style={{ fontSize: '18px' }}>search</span>
-                                            </IconButton>
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <span className="material-icons" style={{ fontSize: '18px', color: '#999' }}>
+                                                search
+                                            </span>
                                         </InputAdornment>
                                     ),
                                 }}
                             />
                         )}
 
-                        {/* 모바일 검색 아이콘 */}
-                        {isSmall && (
-                            <IconButton>
-                                <span className="material-icons">search</span>
-                            </IconButton>
-                        )}
-
-                        {/* 로그인/회원가입 버튼 (데스크톱) */}
+                        {/* 로그인 버튼 (데스크톱) */}
                         {!isMobile && (
-                            <>
-                                <Button
-                                    variant="text"
-                                    size="small"
-                                    sx={{
+                            <Button
+                                variant="text"
+                                onClick={() => navigate('/login')} // 로그인 페이지로 이동
+                                sx={{
+                                    fontSize: '0.875rem',
+                                    fontWeight: 400,
+                                    color: 'text.secondary',
+                                    textTransform: 'none',
+                                    minWidth: 'auto',
+                                    px: 2,
+                                    '&:hover': {
                                         color: 'text.primary',
-                                        '&:hover': { backgroundColor: 'grey.100' }
-                                    }}
-                                >
-                                    로그인
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    size="small"
-                                    sx={{
-                                        borderRadius: 3,
-                                        px: 2
-                                    }}
-                                >
-                                    회원가입
-                                </Button>
-                            </>
+                                        backgroundColor: 'transparent',
+                                    }
+                                }}
+                            >
+                                로그인
+                            </Button>
                         )}
 
-                        {/* 모바일 로그인/회원가입 아이콘 */}
-                        {isMobile && !isSmall && (
-                            <>
-                                <IconButton>
-                                    <span className="material-icons">login</span>
-                                </IconButton>
-                                <IconButton>
-                                    <span className="material-icons">person_add</span>
-                                </IconButton>
-                            </>
+                        {/* 회원가입 버튼 (데스크톱) */}
+                        {!isMobile && (
+                            <Button
+                                variant="contained"
+                                onClick={() => navigate('/login')} // 로그인 페이지로 이동 (소셜로그인으로 회원가입도 처리)
+                                sx={{
+                                    fontSize: '0.875rem',
+                                    fontWeight: 500,
+                                    backgroundColor: '#e89830',
+                                    color: 'white',
+                                    textTransform: 'none',
+                                    borderRadius: '20px',
+                                    px: 3,
+                                    py: 1,
+                                    '&:hover': {
+                                        backgroundColor: '#d18224',
+                                    }
+                                }}
+                            >
+                                회원가입
+                            </Button>
                         )}
 
-                        {/* 장바구니 */}
+                        {/* 장바구니 아이콘 */}
                         <IconButton
+                            size="small"
                             sx={{
-                                color: 'text.primary',
+                                color: 'text.secondary',
                                 '&:hover': {
                                     color: 'primary.main',
-                                    backgroundColor: 'grey.100'
+                                    backgroundColor: 'grey.50'
                                 }
                             }}
                         >
-                            <Badge badgeContent={3} color="primary" max={99}>
-                                <span className="material-icons">shopping_cart</span>
-                            </Badge>
+                            <span className="material-icons" style={{ fontSize: '20px' }}>
+                                shopping_cart
+                            </span>
                         </IconButton>
+
+                        {/* 모바일 검색 아이콘 */}
+                        {isSmall && (
+                            <IconButton
+                                size="small"
+                                sx={{
+                                    color: 'text.secondary',
+                                    '&:hover': {
+                                        color: 'primary.main',
+                                        backgroundColor: 'grey.50'
+                                    }
+                                }}
+                            >
+                                <span className="material-icons" style={{ fontSize: '20px' }}>
+                                    search
+                                </span>
+                            </IconButton>
+                        )}
 
                         {/* 모바일 메뉴 버튼 */}
                         {isMobile && (
                             <IconButton
                                 onClick={handleDrawerToggle}
+                                size="small"
                                 sx={{
-                                    color: 'text.primary',
+                                    color: 'text.secondary',
                                     '&:hover': {
-                                        color: 'primary.main'
+                                        color: 'primary.main',
+                                        backgroundColor: 'grey.50'
                                     }
                                 }}
                             >
-                                <span className="material-icons">menu</span>
+                                <span className="material-icons" style={{ fontSize: '20px' }}>
+                                    menu
+                                </span>
                             </IconButton>
                         )}
                     </Box>
