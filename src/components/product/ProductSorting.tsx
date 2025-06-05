@@ -34,7 +34,7 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
   };
 
   const handleProductTypeChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _: React.MouseEvent<HTMLElement>,
     newValue: string | null
   ) => {
     if (newValue !== null) {
