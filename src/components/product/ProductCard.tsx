@@ -11,7 +11,6 @@ import {
   Chip,
   Rating,
   alpha,
-  useTheme,
 } from "@mui/material";
 import {
   FavoriteBorder as FavoriteIcon,
