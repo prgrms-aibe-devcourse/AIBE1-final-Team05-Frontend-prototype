@@ -119,19 +119,3 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
-
-// src/App.tsx
-
-import React from "react";
-import Layout from "./components/common/Layout";
-import ProductsPage from "./pages/ProductsPage";
-
-const App: React.FC = () => {
-  return (
-    <Layout>
-      <ProductsPage />
-    </Layout>
-  );
-};
-
-export default App;
