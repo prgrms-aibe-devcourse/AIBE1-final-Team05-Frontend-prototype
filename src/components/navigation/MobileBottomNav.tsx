@@ -1,3 +1,5 @@
+// src/components/navigation/MobileBottomNav.tsx
+
 import React from "react";
 import {
   Box,
