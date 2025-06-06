@@ -6,7 +6,13 @@ const WorkshopGrid = ({ workshops, onWorkshopClick }: WorkshopGridProps) => {
     return (
         <Grid container spacing={3}>
             {workshops.map((workshop) => (
-                <Grid item xs={12} sm={6} lg={4} key={workshop.id}>
+                <Grid
+                    key={workshop.id}
+                    size={{
+                        xs: 12,
+                        sm: 6,
+                        lg: 4
+                    }}>
                     <WorkshopCard workshop={workshop} onClick={onWorkshopClick} />
                 </Grid>
             ))}

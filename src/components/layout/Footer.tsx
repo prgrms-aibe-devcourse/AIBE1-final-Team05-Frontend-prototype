@@ -23,7 +23,7 @@ const Footer = () => {
             <Container maxWidth="lg">
                 <Grid container spacing={4} sx={{ mb: 4 }}>
                     {/* 브랜드 섹션 */}
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <Typography
                             variant="h6"
                             sx={{
@@ -47,7 +47,7 @@ const Footer = () => {
                     </Grid>
 
                     {/* 바로가기 섹션 */}
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <Typography
                             variant="h6"
                             sx={{
@@ -80,7 +80,7 @@ const Footer = () => {
                     </Grid>
 
                     {/* 고객센터 섹션 */}
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <Typography
                             variant="h6"
                             sx={{

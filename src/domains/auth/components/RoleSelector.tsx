@@ -1,5 +1,5 @@
 import { Grid, Paper, Box, Typography } from '@mui/material';
-import { ROLE_INFO, USER_ROLES } from '../constants/auth.constants';
+import { ROLE_INFO } from '../constants/auth.constants';
 import { RoleSelectorProps, UserRole } from '../types/auth.types';
 
 const RoleSelector = ({ selectedRole, onRoleSelect }: RoleSelectorProps) => {
@@ -11,7 +11,7 @@ const RoleSelector = ({ selectedRole, onRoleSelect }: RoleSelectorProps) => {
     return (
         <Grid container spacing={3}>
             {roles.map((role) => (
-                <Grid item xs={12} md={6} key={role.id}>
+                <Grid size={{ xs: 12, md: 6 }} key={role.id}>
                     <Paper
                         elevation={selectedRole === role.id ? 8 : 2}
                         sx={{
