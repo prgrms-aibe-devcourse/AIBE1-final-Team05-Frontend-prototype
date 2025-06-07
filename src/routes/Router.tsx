@@ -7,8 +7,9 @@ import SupportPage from '@/pages/mainpage/SupportPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
 import NotFoundPage from "@/pages/mainpage/NotFoundPage.tsx";
+import SellerDashboardPage from '@/pages/seller/SellerDashboardPage';
 
-// React Router 6 사용
+// React Router 7 사용
 const router = createBrowserRouter([
     {
         path: '/',
@@ -27,6 +28,11 @@ const router = createBrowserRouter([
             // 404 페이지
             { path: '*',element: <NotFoundPage/>},
         ],
+    },
+    // 판매자 대시보드 (별도 레이아웃)
+    {
+        path: '/seller-dashboard',
+        element: <SellerDashboardPage />,
     },
 ]);
 
