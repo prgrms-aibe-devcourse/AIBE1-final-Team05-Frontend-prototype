@@ -48,7 +48,6 @@ import {
 import {
     Receipt,
     LocalShipping,
-    Refresh,
     Description,
     Home,
     Pets,
@@ -58,7 +57,7 @@ import {
     Search,
     Map,
     ChevronRight,
-    PhotoCamera, CheckCircle, HourglassBottom, Payment, Inventory,
+    PhotoCamera, CheckCircle, HourglassBottom, Payment, Inventory, RateReview, Settings,
 } from "@mui/icons-material"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import OrderItem from "../components/OrderItem"; // 또는 적절한 경로
@@ -150,7 +149,7 @@ const ArrowConnector = styled(StepConnector)(({ theme }) => ({
 
 const menuItems = [
     { id: "orders", label: "주문/배송 조회", icon: Receipt },
-    { id: "returns", label: "취소/반품/교환 신청", icon: Refresh },
+    { id: "reviews", label: "리뷰 관리", icon: RateReview },
     { id: "return-inquiry", label: "반품/교환 조회", icon: Description },
     { id: "addresses", label: "주소 관리", icon: Home },
     { id: "pets", label: "나의 애완동물", icon: Pets },
@@ -617,6 +616,148 @@ export default function MyPage() {
         </Box>
     )
 
+    const renderCancelDetail = () => (
+        <Box>
+            <Button
+                startIcon={<ChevronRight sx={{ transform: "rotate(180deg)" }} />}
+                onClick={() => setDetailView(null)}
+                sx={{ mb: 3 }}
+            >
+                뒤로가기
+            </Button>
+
+            <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4 }}>
+                취소/반품/교환/환불내역 상세
+            </Typography>
+
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                    주문일 : 2022/7/23 | 주문번호 : 29000146282236
+                </Typography>
+            </Box>
+
+            {/* 상품 정보 테이블 */}
+            <TableContainer component={Paper} sx={{ mb: 4 }}>
+                <Table>
+                    <TableHead>
+                        <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                            <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>상품</TableCell>
+                            <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>금액</TableCell>
+                            <TableCell sx={{ fontWeight: 600, textAlign: "center" }}>진행 상태</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                    <Avatar src="/placeholder.svg?height=80&width=80" variant="rounded" sx={{ width: 80, height: 80 }} />
+                                    <Box>
+                                        <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+                                            셀리본 프리미엄 롤 포킹 헤어브러쉬
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            셀리본 프리미엄 토모 롤 포킹 헤어브러쉬, 1호, 1개
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </TableCell>
+                            <TableCell sx={{ textAlign: "center" }}>
+                                <Typography variant="body2">1개</Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                    8,260 원
+                                </Typography>
+                            </TableCell>
+                            <TableCell sx={{ textAlign: "center" }}>
+                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                    취소완료
+                                </Typography>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            {/* 상세정보 */}
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                상세정보
+            </Typography>
+            <TableContainer component={Paper} sx={{ mb: 4 }}>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5", width: 150 }}>취소접수일자</TableCell>
+                            <TableCell>2022/7/23</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5" }}>취소접수번호</TableCell>
+                            <TableCell>596931508</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5" }}>취소완료일</TableCell>
+                            <TableCell>2022/7/23</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            {/* 취소 사유 */}
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                취소 사유
+            </Typography>
+            <TableContainer component={Paper} sx={{ mb: 4 }}>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5", width: 150 }}>취소 사유</TableCell>
+                            <TableCell>상품을 주가하여 재주문</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            {/* 환불안내 */}
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    환불안내
+                </Typography>
+                <Typography variant="body2" color="primary" sx={{ fontWeight: 600 }}>
+                    취소영수증 확인
+                </Typography>
+            </Box>
+            <TableContainer component={Paper} sx={{ mb: 4 }}>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5", width: 150 }}>상품금액</TableCell>
+                            <TableCell sx={{ textAlign: "right" }}>8,260원</TableCell>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5", width: 150 }}>환불 수단</TableCell>
+                            <TableCell sx={{ textAlign: "right" }}>국민은행 8,260원</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5" }}>배송비</TableCell>
+                            <TableCell sx={{ textAlign: "right" }}>0원</TableCell>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5" }}>환불 완료</TableCell>
+                            <TableCell sx={{ textAlign: "right", color: "error.main", fontWeight: 600 }}>8,260원</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 600, bgcolor: "#f5f5f5" }}>반품비</TableCell>
+                            <TableCell sx={{ textAlign: "right" }}>0원</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            {/* 목록 버튼 */}
+            <Box sx={{ textAlign: "center", mt: 4 }}>
+                <Button variant="contained" size="large" sx={{ minWidth: 120 }} onClick={() => setDetailView(null)}>
+                    목록
+                </Button>
+            </Box>
+        </Box>
+    )
+
 
     const renderContent = () => {
         if (detailView === "shipping" && selectedOrder) {
@@ -634,6 +775,9 @@ export default function MyPage() {
                 setDetailView={setDetailView}
                 handleOrderAction={handleOrderAction}
             />)
+        }
+        if (detailView === "cancel-detail") {
+            return renderCancelDetail()
         }
 
         const shippingSteps = [
@@ -801,6 +945,92 @@ export default function MyPage() {
                         </Paper>
                     </Box>
                 )
+            case "reviews":
+                return (
+                    <Box>
+                        <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4, color: "text.primary" }}>
+                            리뷰 관리
+                        </Typography>
+
+                        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+                            <Tabs value={0}>
+                                <Tab label="리뷰 작성" />
+                                <Tab label="작성한 리뷰" />
+                            </Tabs>
+                        </Box>
+
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                작성 가능한 리뷰 1건이 있습니다.
+                            </Typography>
+                            <Box>
+                                <Button variant="text" color="primary" size="small">
+                                    리뷰 운영원칙
+                                </Button>
+                                <Button variant="text" color="primary" size="small" startIcon={<Settings />}>
+                                    리뷰 설정
+                                </Button>
+                            </Box>
+                        </Box>
+
+                        {mockOrders.map((order) => (
+                            <Paper key={order.id} sx={{ mb: 3, p: 3 }}>
+                                <TableContainer>
+                                    <Table>
+                                        <TableBody>
+                                            {order.products.map((product) => (
+                                                <TableRow key={product.id}>
+                                                    {/* 이미지 셀 */}
+                                                    <TableCell sx={{ width: 120 }}>
+                                                        <Avatar
+                                                            src={product.image}
+                                                            variant="rounded"
+                                                            sx={{ width: 100, height: 100 }}
+                                                        />
+                                                    </TableCell>
+
+                                                    {/* 상품 정보 셀 */}
+                                                    <TableCell>
+                                                        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                                                            {product.name}
+                                                        </Typography>
+                                                        <Typography variant="body2" color="text.secondary">
+                                                            {order.deliveryDate
+                                                                ? `${order.deliveryDate.split("(")[0]} 배송`
+                                                                : "배송 완료"}
+                                                        </Typography>
+                                                    </TableCell>
+
+                                                    {/* 버튼 셀 */}
+                                                    <TableCell align="right" sx={{ width: 200 }}>
+                                                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                            <Button
+                                                                variant="outlined"
+                                                                color="primary"
+                                                                sx={{ mb: 1 }}
+                                                                onClick={() => handleOrderAction("review", order)}
+                                                            >
+                                                                리뷰 작성하기
+                                                            </Button>
+
+                                                            <Button
+                                                                variant="text"
+                                                                color="primary"
+                                                                size="small"
+                                                            >
+                                                                숨기기
+                                                            </Button>
+                                                        </Box>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Paper>
+                        ))}
+                    </Box>
+                )
 
             case "return-inquiry":
                 return (
@@ -862,7 +1092,7 @@ export default function MyPage() {
                                             <Typography variant="body2">취소완료</Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Button variant="outlined" size="small">
+                                            <Button variant="outlined" size="small" onClick={() => setDetailView("cancel-detail")}>
                                                 취소상세
                                             </Button>
                                         </TableCell>
