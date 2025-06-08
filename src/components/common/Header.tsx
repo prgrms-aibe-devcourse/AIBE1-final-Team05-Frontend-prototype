@@ -53,7 +53,7 @@ const Header: React.FC = () => {
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
               }}
             >
-              펫스낵스
+              CatDogEats
             </Typography>
           </Box>
 
