@@ -149,8 +149,8 @@ const ArrowConnector = styled(StepConnector)(({ theme }) => ({
 
 const menuItems = [
     { id: "orders", label: "주문/배송 조회", icon: Receipt },
-    { id: "reviews", label: "리뷰 관리", icon: RateReview },
     { id: "return-inquiry", label: "반품/교환 조회", icon: Description },
+    { id: "reviews", label: "리뷰 관리", icon: RateReview },
     { id: "addresses", label: "주소 관리", icon: Home },
     { id: "pets", label: "나의 애완동물", icon: Pets },
 ]
