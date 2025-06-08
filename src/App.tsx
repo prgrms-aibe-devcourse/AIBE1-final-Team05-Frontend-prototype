@@ -1,10 +1,16 @@
-import { Routes, Route } from 'react-router-dom'
-import PetTreatsCheckout from "./page/pet-treats-checkout"
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import theme from '@/theme';
+import AppRouter from '@/routes/Router.tsx';
+import '@/styles/globals.css';
 
-export default function Page() {
+function App() {
     return (
-    <Routes>
-        <Route path="/payment" element={<PetTreatsCheckout />} />
-    </Routes>
-    )
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <AppRouter />
+        </ThemeProvider>
+    );
 }
+
+export default App;
