@@ -88,6 +88,13 @@ export interface SettlementTableProps {
     filters: SettlementFilters;
     onFiltersChange: (filters: Partial<SettlementFilters>) => void;
     onSettlementRequest: () => void;
+    // 페이지네이션 관련 props (선택사항 - API 연동 시 추가)
+    totalCount?: number;
+    currentPage?: number;
+    pageSize?: number;
+    onPageChange?: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
+    loading?: boolean;
 }
 
 export interface SalesChartProps {

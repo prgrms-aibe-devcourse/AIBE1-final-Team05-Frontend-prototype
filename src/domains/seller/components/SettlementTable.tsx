@@ -20,9 +20,12 @@ import {
     Popover,
     Grid,
     IconButton,
-    Divider
+    Divider,
+    Pagination,
+    Stack,
+    TableFooter
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { SettlementTableProps, SettlementFilters } from '../types';
 
 // 날짜 유틸리티 함수들
@@ -123,11 +126,9 @@ const DateRangePicker = ({
         const dateStr = formatDate(date);
 
         if (!tempStartDate || (tempStartDate && tempEndDate)) {
-            // 시작 날짜 설정
             setTempStartDate(dateStr);
             setTempEndDate('');
         } else if (tempStartDate && !tempEndDate) {
-            // 종료 날짜 설정
             const start = parseDate(tempStartDate);
             if (start && date >= start) {
                 setTempEndDate(dateStr);
@@ -379,11 +380,17 @@ const SettlementTable = ({
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
+    // 페이지네이션 상태
+    const [page, setPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
     const handleFilterChange = (filterKey: keyof SettlementFilters) =>
         (event: SelectChangeEvent) => {
             onFiltersChange({
                 [filterKey]: event.target.value
             });
+            // 필터 변경 시 첫 페이지로 이동
+            setPage(1);
         };
 
     const handleDatePickerOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -397,11 +404,21 @@ const SettlementTable = ({
     const handleDateRangeChange = (newStartDate: string, newEndDate: string) => {
         setStartDate(newStartDate);
         setEndDate(newEndDate);
-        // 필터에 날짜 범위 정보 전달
         onFiltersChange({
             startDate: newStartDate,
             endDate: newEndDate
         });
+        // 날짜 필터 변경 시 첫 페이지로 이동
+        setPage(1);
+    };
+
+    const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: SelectChangeEvent) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(1); // 페이지 크기 변경 시 첫 페이지로 이동
     };
 
     const getDateRangeLabel = (): string => {
@@ -412,16 +429,28 @@ const SettlementTable = ({
     };
 
     // 날짜 범위에 따른 데이터 필터링
-    const filteredData = data.filter(item => {
-        if (!startDate && !endDate) return true;
-        const itemDate = new Date(item.orderDate);
-        const start = startDate ? parseDate(startDate) : null;
-        const end = endDate ? parseDate(endDate) : null;
-        return isDateInRange(itemDate, start, end);
-    });
+    const filteredData = useMemo(() => {
+        return data.filter(item => {
+            if (!startDate && !endDate) return true;
+            const itemDate = new Date(item.orderDate);
+            const start = startDate ? parseDate(startDate) : null;
+            const end = endDate ? parseDate(endDate) : null;
+            return isDateInRange(itemDate, start, end);
+        });
+    }, [data, startDate, endDate]);
 
-    // 총 정산 금액 계산 (필터링된 데이터 기준)
+    // 페이지네이션 계산
+    const totalItems = filteredData.length;
+    const totalPages = Math.ceil(totalItems / rowsPerPage);
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
+    const currentPageData = filteredData.slice(startIndex, endIndex);
+
+    // 총 정산 금액 계산 (필터링된 전체 데이터 기준)
     const totalSettlementAmount = filteredData.reduce((sum, item) => sum + item.settlementAmount, 0);
+
+    // 현재 페이지 정산 금액 계산
+    const currentPageSettlementAmount = currentPageData.reduce((sum, item) => sum + item.settlementAmount, 0);
 
     return (
         <Box>
@@ -546,6 +575,61 @@ const SettlementTable = ({
                 onClose={handleDatePickerClose}
             />
 
+            {/* 결과 요약 및 페이지 크기 선택 */}
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 2,
+                flexWrap: 'wrap',
+                gap: 2
+            }}>
+                {/* 필터링 결과 요약 */}
+                <Box>
+                    {(startDate || endDate) ? (
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: theme.palette.text.primary,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1
+                            }}
+                        >
+                            <span className="material-icons" style={{ fontSize: '16px', color: theme.palette.primary.main }}>
+                                filter_alt
+                            </span>
+                            선택한 기간: {getDateRangeLabel()} (총 {totalItems}건)
+                        </Typography>
+                    ) : (
+                        <Typography
+                            variant="body2"
+                            sx={{ color: theme.palette.text.secondary }}
+                        >
+                            총 {totalItems}건의 정산 내역
+                        </Typography>
+                    )}
+                </Box>
+
+                {/* 페이지 크기 선택 */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                        페이지당 표시:
+                    </Typography>
+                    <FormControl size="small" sx={{ minWidth: 80 }}>
+                        <Select
+                            value={rowsPerPage.toString()}
+                            onChange={handleRowsPerPageChange}
+                        >
+                            <MenuItem value="5">5개</MenuItem>
+                            <MenuItem value="10">10개</MenuItem>
+                            <MenuItem value="20">20개</MenuItem>
+                            <MenuItem value="50">50개</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+            </Box>
+
             {/* 정산 테이블 */}
             <TableContainer
                 component={Paper}
@@ -604,8 +688,8 @@ const SettlementTable = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredData.length > 0 ? (
-                            filteredData.map((item) => (
+                        {currentPageData.length > 0 ? (
+                            currentPageData.map((item) => (
                                 <TableRow
                                     key={item.id}
                                     sx={{
@@ -684,32 +768,77 @@ const SettlementTable = ({
                             </TableRow>
                         )}
                     </TableBody>
+
+                    {/* 테이블 푸터 - 현재 페이지 요약 */}
+                    {currentPageData.length > 0 && (
+                        <TableFooter>
+                            <TableRow>
+                                <TableCell
+                                    colSpan={7}
+                                    sx={{
+                                        backgroundColor: theme.palette.grey[50],
+                                        borderTop: `1px solid ${theme.palette.grey[200]}`
+                                    }}
+                                >
+                                    <Box sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        py: 1
+                                    }}>
+                                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                            {startIndex + 1} - {endIndex}번째 항목 (전체 {totalItems}개 중)
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                            현재 페이지 정산금액:
+                                            <span style={{ color: theme.palette.primary.main, marginLeft: '8px' }}>
+                                                ₩{currentPageSettlementAmount.toLocaleString()}
+                                            </span>
+                                        </Typography>
+                                    </Box>
+                                </TableCell>
+                            </TableRow>
+                        </TableFooter>
+                    )}
                 </Table>
             </TableContainer>
 
-            {/* 필터링 결과 요약 */}
-            {(startDate || endDate) && (
-                <Box sx={{
-                    mb: 2,
-                    p: 2,
-                    backgroundColor: 'rgba(232, 152, 48, 0.05)',
-                    borderRadius: 2,
-                    border: `1px solid rgba(232, 152, 48, 0.2)`
-                }}>
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            color: theme.palette.text.primary,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1
-                        }}
-                    >
-                        <span className="material-icons" style={{ fontSize: '16px', color: theme.palette.primary.main }}>
-                            filter_alt
-                        </span>
-                        선택한 기간: {getDateRangeLabel()} ({filteredData.length}건)
-                    </Typography>
+            {/* 페이지네이션 */}
+            {totalPages > 1 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                    <Stack spacing={2}>
+                        <Pagination
+                            count={totalPages}
+                            page={page}
+                            onChange={handlePageChange}
+                            color="primary"
+                            size="large"
+                            showFirstButton
+                            showLastButton
+                            sx={{
+                                '& .MuiPaginationItem-root': {
+                                    fontSize: '0.875rem',
+                                    fontWeight: 500
+                                },
+                                '& .MuiPaginationItem-page.Mui-selected': {
+                                    backgroundColor: theme.palette.primary.main,
+                                    color: 'white',
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.primary.dark
+                                    }
+                                }
+                            }}
+                        />
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                textAlign: 'center',
+                                color: theme.palette.text.secondary
+                            }}
+                        >
+                            {page} / {totalPages} 페이지
+                        </Typography>
+                    </Stack>
                 </Box>
             )}
 
@@ -721,33 +850,36 @@ const SettlementTable = ({
                 backgroundColor: theme.palette.grey[100],
                 p: 2,
                 borderRadius: 2,
-                border: `1px solid ${theme.palette.grey[200]}`
+                border: `1px solid ${theme.palette.grey[200]}`,
+                flexWrap: 'wrap',
+                gap: 2
             }}>
-                <Typography
-                    variant="h6"
-                    sx={{
-                        fontWeight: 700,
-                        color: theme.palette.text.primary
-                    }}
-                >
-                    총 정산 금액:
-                    <span style={{ color: theme.palette.primary.main, marginLeft: '8px' }}>
-                        ₩{totalSettlementAmount.toLocaleString()}
-                    </span>
+                <Box>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            fontWeight: 700,
+                            color: theme.palette.text.primary,
+                            mb: 0.5
+                        }}
+                    >
+                        총 정산 금액:
+                        <span style={{ color: theme.palette.primary.main, marginLeft: '8px' }}>
+                            ₩{totalSettlementAmount.toLocaleString()}
+                        </span>
+                    </Typography>
                     {(startDate || endDate) && (
                         <Typography
-                            component="span"
                             variant="body2"
                             sx={{
                                 color: theme.palette.text.secondary,
-                                ml: 1,
                                 fontSize: '0.875rem'
                             }}
                         >
-                            (필터링된 결과)
+                            필터링된 {totalItems}건의 정산 내역
                         </Typography>
                     )}
-                </Typography>
+                </Box>
                 <Button
                     variant="contained"
                     size="large"
