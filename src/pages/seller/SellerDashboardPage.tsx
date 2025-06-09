@@ -8,7 +8,8 @@ import {
     ListItemText,
     Drawer,
     useTheme,
-    useMediaQuery
+    useMediaQuery,
+    IconButton
 } from '@mui/material';
 import {
     SellerHeader,
@@ -257,7 +258,7 @@ const DRAWER_WIDTH = 240;
 const SellerDashboardPage = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    const [activeTab, setActiveTab] = useState(1); // 정산 탭을 기본으로 설정
+    const [activeTab, setActiveTab] = useState(4); // 정산 탭을 기본으로 설정
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const handleTabChange = (tabIndex: number) => {
@@ -288,7 +289,6 @@ const SellerDashboardPage = () => {
     };
 
     const menuItems = [
-
         {
             id: 1,
             label: '상품관리',
@@ -347,7 +347,12 @@ const SellerDashboardPage = () => {
     };
 
     const drawer = (
-        <Box sx={{ height: '100%', backgroundColor: '#f8f9fa' }}>
+        <Box sx={{
+            height: '100%',
+            backgroundColor: '#f8f9fa',
+            // 헤더와 연결된 느낌을 주기 위해 상단 패딩 제거
+            pt: 0
+        }}>
             <List sx={{ p: 0 }}>
                 {menuItems.map((item) => (
                     <ListItem
@@ -407,70 +412,127 @@ const SellerDashboardPage = () => {
     );
 
     return (
-        <Box sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
-            {/* 헤더 */}
-            <SellerHeader
-                sellerInfo={mockSellerInfo}
-                notifications={mockNotifications}
-                onNotificationClick={handleNotificationClick}
-                onAnnouncementClick={handleAnnouncementClick}
-                onFaqClick={handleFaqClick}
-                onInquiryClick={handleInquiryClick}
-            />
+        <Box sx={{
+            height: '100vh', // minHeight가 아닌 고정 height
+            backgroundColor: theme.palette.background.default,
+            overflow: 'hidden' // 전체 페이지 스크롤 방지
+        }}>
+            {/* 헤더 - 고정 위치 */}
+            <Box
+                sx={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 64, // 명시적으로 높이 설정
+                    zIndex: theme.zIndex.appBar
+                }}
+            >
+                <SellerHeader
+                    sellerInfo={mockSellerInfo}
+                    notifications={mockNotifications}
+                    onNotificationClick={handleNotificationClick}
+                    onAnnouncementClick={handleAnnouncementClick}
+                    onFaqClick={handleFaqClick}
+                    onInquiryClick={handleInquiryClick}
+                />
+            </Box>
 
-            <Box sx={{ display: 'flex' }}>
-                {/* 사이드바 - 데스크톱 */}
-                <Drawer
-                    variant="permanent"
-                    sx={{
-                        display: { xs: 'none', md: 'block' },
-                        '& .MuiDrawer-paper': {
-                            width: DRAWER_WIDTH,
-                            boxSizing: 'border-box',
-                            position: 'relative',
-                            height: 'calc(100vh - 64px)',
-                            borderRight: `1px solid ${theme.palette.grey[200]}`,
-                            boxShadow: 'none'
-                        },
-                    }}
-                    open
-                >
-                    {drawer}
-                </Drawer>
-
-                {/* 사이드바 - 모바일 */}
-                <Drawer
-                    variant="temporary"
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                    ModalProps={{
-                        keepMounted: true,
-                    }}
-                    sx={{
-                        display: { xs: 'block', md: 'none' },
-                        '& .MuiDrawer-paper': {
-                            width: DRAWER_WIDTH,
-                            boxSizing: 'border-box',
-                            marginTop: '64px',
-                            height: 'calc(100vh - 64px)'
-                        },
-                    }}
-                >
-                    {drawer}
-                </Drawer>
-
-                {/* 메인 콘텐츠 */}
+            {/* 모바일 메뉴 버튼 */}
+            {isMobile && (
                 <Box
-                    component="main"
                     sx={{
-                        flexGrow: 1,
-                        width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-                        minHeight: 'calc(100vh - 64px)',
-                        backgroundColor: theme.palette.background.default
+                        position: 'fixed',
+                        top: 64, // 헤더 높이만큼 아래
+                        left: 0,
+                        right: 0,
+                        height: 48, // 명시적으로 높이 설정
+                        zIndex: theme.zIndex.appBar - 1,
+                        backgroundColor: theme.palette.background.paper,
+                        borderBottom: `1px solid ${theme.palette.grey[200]}`
                     }}
                 >
-                    {renderContent()}
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 2, height: '100%' }}>
+                        <IconButton
+                            color="inherit"
+                            aria-label="메뉴 열기"
+                            edge="start"
+                            onClick={handleDrawerToggle}
+                            sx={{ color: theme.palette.text.primary, mr: 2 }}
+                        >
+                            <span className="material-icons">menu</span>
+                        </IconButton>
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="div"
+                            sx={{
+                                color: theme.palette.text.primary,
+                                fontWeight: 600,
+                                fontSize: '1rem'
+                            }}
+                        >
+                            {menuItems.find(item => item.id === activeTab)?.label || '대시보드'}
+                        </Typography>
+                    </Box>
                 </Box>
+            )}
+
+            {/* 사이드바 - 데스크톱 (고정 위치) */}
+            <Box
+                sx={{
+                    display: { xs: 'none', md: 'block' },
+                    position: 'fixed',
+                    left: 0,
+                    top: 64, // 헤더 높이만큼 아래
+                    width: DRAWER_WIDTH,
+                    height: 'calc(100vh - 64px)', // 전체 높이에서 헤더 높이 제외
+                    backgroundColor: '#f8f9fa',
+                    borderRight: `1px solid ${theme.palette.grey[200]}`,
+                    overflowY: 'auto', // 사이드바에 독립적인 스크롤
+                    zIndex: theme.zIndex.drawer
+                }}
+            >
+                {drawer}
+            </Box>
+
+            {/* 사이드바 - 모바일 */}
+            <Drawer
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                    keepMounted: true,
+                }}
+                sx={{
+                    display: { xs: 'block', md: 'none' },
+                    '& .MuiDrawer-paper': {
+                        width: DRAWER_WIDTH,
+                        boxSizing: 'border-box',
+                        top: isMobile ? 112 : 64, // 헤더 + 모바일 메뉴 높이
+                        height: `calc(100vh - ${isMobile ? 112 : 64}px)`,
+                        backgroundColor: '#f8f9fa'
+                    },
+                }}
+            >
+                {drawer}
+            </Drawer>
+
+            {/* 메인 콘텐츠 */}
+            <Box
+                component="main"
+                sx={{
+                    position: 'fixed',
+                    top: { xs: isMobile ? 112 : 64, md: 64 }, // 헤더(+모바일메뉴) 아래부터 시작
+                    left: { xs: 0, md: DRAWER_WIDTH }, // 데스크톱에서는 사이드바 옆에서 시작
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: theme.palette.background.default,
+                    overflowY: 'auto', // 메인 콘텐츠에서만 스크롤
+                    overflowX: 'hidden'
+                }}
+            >
+                {renderContent()}
             </Box>
         </Box>
     );

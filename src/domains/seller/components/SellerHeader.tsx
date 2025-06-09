@@ -84,12 +84,12 @@ const SellerHeader = ({
 
     return (
         <AppBar
-            position="sticky"
+            position="static" // sticky에서 static으로 변경
             sx={{
                 backgroundColor: theme.palette.background.paper,
                 color: theme.palette.text.primary,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                zIndex: 1200
+                zIndex: theme.zIndex.appBar
             }}
         >
             <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
