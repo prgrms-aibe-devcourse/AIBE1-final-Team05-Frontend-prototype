@@ -15,100 +15,61 @@ import SalesChart from './SalesChart';
 import SalesRanking from './SalesRanking';
 import { SettlementFilters, SettlementItem, SalesData, SalesRecommendation } from '../types';
 
-// 더미 데이터에 더 많은 날짜 샘플 추가
-const settlementData: SettlementItem[] = [
-    {
-        id: '#12345',
-        productName: '닭가슴살 간식',
-        orderAmount: 25000,
-        commission: 2500,
-        settlementAmount: 22500,
-        status: '대기중',
-        orderDate: '2024-06-01'
-    },
-    {
-        id: '#12346',
-        productName: '고단백 면역 간식',
-        orderAmount: 15000,
-        commission: 1500,
-        settlementAmount: 13500,
-        status: '정산완료',
-        orderDate: '2024-06-02'
-    },
-    {
-        id: '#12347',
-        productName: '강아지 소고기 젤리',
-        orderAmount: 30000,
-        commission: 3000,
-        settlementAmount: 27000,
-        status: '대기중',
-        orderDate: '2024-06-03'
-    },
-    {
-        id: '#12348',
-        productName: '고단백 첨가 육류미르크',
-        orderAmount: 12000,
-        commission: 1200,
-        settlementAmount: 10800,
-        status: '정산완료',
-        orderDate: '2024-06-04'
-    },
-    {
-        id: '#12349',
-        productName: '강아지 맘마기쁨',
-        orderAmount: 20000,
-        commission: 2000,
-        settlementAmount: 18000,
-        status: '대기중',
-        orderDate: '2024-06-05'
-    },
-    // 추가 더미 데이터 (다양한 날짜)
-    {
-        id: '#12350',
-        productName: '고양이 참치 간식',
-        orderAmount: 18000,
-        commission: 1800,
-        settlementAmount: 16200,
-        status: '정산완료',
-        orderDate: '2024-05-28'
-    },
-    {
-        id: '#12351',
-        productName: '강아지 치킨 스낵',
-        orderAmount: 22000,
-        commission: 2200,
-        settlementAmount: 19800,
-        status: '대기중',
-        orderDate: '2024-05-25'
-    },
-    {
-        id: '#12352',
-        productName: '연어 큐브',
-        orderAmount: 35000,
-        commission: 3500,
-        settlementAmount: 31500,
-        status: '정산완료',
-        orderDate: '2024-05-20'
-    },
-    {
-        id: '#12353',
-        productName: '야채 믹스 간식',
-        orderAmount: 16000,
-        commission: 1600,
-        settlementAmount: 14400,
-        status: '대기중',
-        orderDate: '2024-05-15'
-    },
-    {
-        id: '#12354',
-        productName: '프리미엄 덴탈 츄',
-        orderAmount: 28000,
-        commission: 2800,
-        settlementAmount: 25200,
-        status: '정산완료',
-        orderDate: '2024-05-10'
+// 🚀 더 많은 더미 데이터 생성 (페이징 테스트용)
+const generateSettlementData = (): SettlementItem[] => {
+    const baseData = [
+        { name: '닭가슴살 간식', category: 'dog' },
+        { name: '고단백 면역 간식', category: 'dog' },
+        { name: '강아지 소고기 젤리', category: 'dog' },
+        { name: '고단백 첨가 육류미르크', category: 'dog' },
+        { name: '강아지 맘마기쁨', category: 'dog' },
+        { name: '고양이 참치 간식', category: 'cat' },
+        { name: '강아지 치킨 스낵', category: 'dog' },
+        { name: '연어 큐브', category: 'cat' },
+        { name: '야채 믹스 간식', category: 'both' },
+        { name: '프리미엄 덴탈 츄', category: 'dog' },
+        { name: '고양이 연어 파우치', category: 'cat' },
+        { name: '유기농 쌀 과자', category: 'both' },
+        { name: '소고기 육포 스틱', category: 'dog' },
+        { name: '참치 캔 간식', category: 'cat' },
+        { name: '치즈 큐브', category: 'both' },
+        { name: '닭고기 져키', category: 'dog' },
+        { name: '고양이 우유', category: 'cat' },
+        { name: '감자 과자', category: 'both' },
+        { name: '오리고기 간식', category: 'dog' },
+        { name: '고등어 간식', category: 'cat' }
+    ];
+
+    const statuses = ['대기중', '정산완료'];
+    const data: SettlementItem[] = [];
+
+    // 60개의 더미 데이터 생성
+    for (let i = 0; i < 60; i++) {
+        const baseItem = baseData[i % baseData.length];
+        const orderAmount = Math.floor(Math.random() * 40000) + 10000; // 10,000 ~ 50,000
+        const commission = Math.floor(orderAmount * 0.1); // 10% 수수료
+        const settlementAmount = orderAmount - commission;
+
+        // 날짜를 최근 3개월로 분산
+        const date = new Date();
+        date.setDate(date.getDate() - Math.floor(Math.random() * 90)); // 0~90일 전
+
+        data.push({
+            id: `#${12345 + i}`,
+            productName: `${baseItem.name} ${Math.floor(i / baseData.length) + 1}`,
+            orderAmount,
+            commission,
+            settlementAmount,
+            status: statuses[Math.floor(Math.random() * statuses.length)] as '대기중' | '정산완료',
+            orderDate: date.toISOString().split('T')[0]
+        });
     }
-];
+
+    return data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+};
+
+// 더미 데이터 생성
+const settlementData = generateSettlementData();
 
 const salesChartData: SalesData[] = [
     { month: '1월', amount: 150 },
@@ -163,7 +124,8 @@ const SettlementTab = () => {
 
     const handleSettlementRequest = () => {
         console.log('정산 신청 요청');
-        // TODO: 정산 신청 API 호출
+        console.log('현재 필터 상태:', filters);
+        console.log('총 데이터 개수:', settlementData.length);
 
         // 선택된 기간 정보 로그
         if (filters.startDate || filters.endDate) {
@@ -176,16 +138,25 @@ const SettlementTab = () => {
 
     const handleDownloadReport = () => {
         console.log('보고서 다운로드 요청');
-
-        // 현재 필터 상태 로그
         console.log('현재 필터 상태:', filters);
 
-        // TODO: 보고서 다운로드 기능 구현
-        // 날짜 범위가 설정되어 있다면 해당 기간의 데이터만 포함하여 보고서 생성
+        // 현재 데이터 통계
+        const pendingCount = settlementData.filter(item => item.status === '대기중').length;
+        const completedCount = settlementData.filter(item => item.status === '정산완료').length;
+        const totalAmount = settlementData.reduce((sum, item) => sum + item.settlementAmount, 0);
+
+        console.log('데이터 통계:', {
+            전체: settlementData.length,
+            정산대기: pendingCount,
+            정산완료: completedCount,
+            총정산금액: totalAmount.toLocaleString()
+        });
     };
 
     return (
         <Container maxWidth="xl" sx={{ py: 3 }}>
+
+
             {/* 정산 현황 섹션 */}
             <Box sx={{ mb: 6 }}>
                 <SettlementTable

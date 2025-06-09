@@ -423,8 +423,21 @@ const SettlementTable = ({
 
     const getDateRangeLabel = (): string => {
         if (!startDate && !endDate) return '기간 선택';
-        if (startDate && endDate) return `${startDate} ~ ${endDate}`;
-        if (startDate) return `${startDate} ~`;
+        if (startDate && endDate) {
+            // 날짜 형식을 더 간결하게 표시 (YYYY-MM-DD → MM/DD)
+            const formatShortDate = (dateStr: string) => {
+                const date = new Date(dateStr);
+                return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+            };
+            return `${formatShortDate(startDate)} ~ ${formatShortDate(endDate)}`;
+        }
+        if (startDate) {
+            const formatShortDate = (dateStr: string) => {
+                const date = new Date(dateStr);
+                return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+            };
+            return `${formatShortDate(startDate)} ~`;
+        }
         return '기간 선택';
     };
 
@@ -474,10 +487,14 @@ const SettlementTable = ({
                     onClick={handleDatePickerOpen}
                     placeholder="기간 선택"
                     sx={{
-                        minWidth: 200,
+                        minWidth: 250, // 200 → 250으로 확대
+                        maxWidth: 300, // 최대 너비 설정
                         cursor: 'pointer',
                         '& .MuiInputBase-input': {
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
                         }
                     }}
                     InputProps={{
