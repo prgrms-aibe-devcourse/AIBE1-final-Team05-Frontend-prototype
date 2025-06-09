@@ -19,6 +19,9 @@ export interface SettlementFilters {
     confirmFilter: string;
     settlementFilter: string;
     periodFilter: string;
+    // 날짜 범위 필터 추가
+    startDate?: string;
+    endDate?: string;
 }
 
 // 매출 관련 타입들
@@ -96,6 +99,16 @@ export interface SalesRankingProps {
     data: SalesRecommendation[];
     title?: string;
     onDownloadReport?: () => void;
+}
+
+// 날짜 범위 피커 컴포넌트 Props
+export interface DateRangePickerProps {
+    startDate: string;
+    endDate: string;
+    onDateChange: (startDate: string, endDate: string) => void;
+    open: boolean;
+    anchorEl: HTMLElement | null;
+    onClose: () => void;
 }
 
 // API 응답 타입들
