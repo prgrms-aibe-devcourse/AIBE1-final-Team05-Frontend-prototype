@@ -22,12 +22,20 @@ import {
   ShoppingBag as ShoppingBagIcon,
 } from "@mui/icons-material";
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onLogoClick?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onLogoClick }) => {
   const [searchValue, setSearchValue] = useState("");
   const theme = useTheme();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
+  };
+
+  const handleLogoClick = () => {
+    onLogoClick?.();
   };
 
   return (
@@ -43,7 +51,18 @@ const Header: React.FC = () => {
         {/* 로고 및 네비게이션 */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 5, flex: 1 }}>
           {/* 로고 */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              cursor: "pointer",
+              "&:hover": {
+                opacity: 0.8,
+              },
+            }}
+            onClick={handleLogoClick}
+          >
             <PetsIcon sx={{ fontSize: 32, color: "#E92933" }} />
             <Typography
               variant="h5"

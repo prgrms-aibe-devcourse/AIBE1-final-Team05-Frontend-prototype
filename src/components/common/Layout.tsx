@@ -95,9 +95,10 @@ const theme = createTheme({
 
 interface LayoutProps {
   children: React.ReactNode;
+  onLogoClick?: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, onLogoClick }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -109,7 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           flexDirection: "column",
         }}
       >
-        <Header />
+        <Header onLogoClick={onLogoClick} />
         <Box component="main" sx={{ flexGrow: 1 }}>
           {children}
         </Box>
