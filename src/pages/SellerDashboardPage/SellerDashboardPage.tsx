@@ -28,7 +28,7 @@ import {
   ReorderPanel,
 } from "./SellerDashboardComponents";
 
-const SellerDashboardPage: React.FC = () => {
+const SellerDashboardDashboardPage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -283,4 +283,4 @@ const SellerDashboardPage: React.FC = () => {
   );
 };
 
-export default SellerDashboardPage;
+export default SellerDashboardDashboardPage;

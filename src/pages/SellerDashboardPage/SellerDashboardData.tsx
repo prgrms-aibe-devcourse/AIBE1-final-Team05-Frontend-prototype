@@ -1,6 +1,6 @@
 // src/pages/SellerDashboardPage/SellerDashboardData.ts
 
-import React from "react";
+// import React from "react";
 import { TrendingUp, CheckCircle } from "@mui/icons-material";
 
 // 타입 정의
