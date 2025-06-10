@@ -168,7 +168,7 @@ const ReviewSummarySection: React.FC<{
               총 {totalReviews}개 리뷰를 AI가 분석한 결과입니다
             </Typography>
           </Box>
-          <Chip
+          {/* <Chip
             label="LLM 기반"
             size="small"
             sx={{
@@ -178,7 +178,7 @@ const ReviewSummarySection: React.FC<{
               fontWeight: 500,
               ml: 1,
             }}
-          />
+          /> */}
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
