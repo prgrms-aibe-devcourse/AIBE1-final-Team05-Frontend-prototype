@@ -1,39 +1,16 @@
-// src/App.tsx
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import theme from '@/theme';
+import AppRouter from '@/routes/Router.tsx';
+import '@/styles/globals.css';
 
-import React, { useState } from "react";
-import Layout from "./components/common/Layout";
-import ProductsPage from "./pages/ProductsPage";
-import ProductManagementPage from "./pages/ProductManagementPage";
-import MainPage from "./pages/MainPage";
-
-type PageType = "main" | "products" | "admin";
-
-const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<PageType>("main");
-
-  const handleNavigate = (page: PageType) => {
-    setCurrentPage(page);
-  };
-
-  const renderCurrentPage = () => {
-    switch (currentPage) {
-      case "products":
-        return (
-          <Layout onLogoClick={() => handleNavigate("main")}>
-            <ProductsPage />
-          </Layout>
-        );
-      case "admin":
-        return (
-          <ProductManagementPage onLogoClick={() => handleNavigate("main")} />
-        );
-      case "main":
-      default:
-        return <MainPage onNavigate={handleNavigate} />;
-    }
-  };
-
-  return renderCurrentPage();
-};
+function App() {
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <AppRouter />
+        </ThemeProvider>
+    );
+}
 
 export default App;
