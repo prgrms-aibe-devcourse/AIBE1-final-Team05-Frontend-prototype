@@ -8,6 +8,8 @@ import LoginPage from '@/pages/auth/LoginPage';
 import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
 import NotFoundPage from "@/pages/mainpage/NotFoundPage.tsx";
 import SellerDashboardPage from '@/pages/seller/SellerDashboardPage';
+import PetTreatsCheckout from '@/pages/pet-treats-checkout';
+import MyPage from '@/pages/account';
 
 // React Router 7 사용
 const router = createBrowserRouter([
@@ -21,12 +23,16 @@ const router = createBrowserRouter([
             { path: 'workshops', element: <WorkshopsPage /> },
             { path: 'support', element: <SupportPage /> },
 
-            //로그인 & 역할선택
+            // 로그인 & 역할선택
             { path: 'login', element: <LoginPage /> },
             { path: 'role-selection', element: <RoleSelectionPage /> },
 
+            // 결제 및 계정 관련 페이지
+            { path: 'payment', element: <PetTreatsCheckout /> },
+            { path: 'account', element: <MyPage /> },
+
             // 404 페이지
-            { path: '*',element: <NotFoundPage/>},
+            { path: '*', element: <NotFoundPage /> },
         ],
     },
     // 판매자 대시보드 (별도 레이아웃)
