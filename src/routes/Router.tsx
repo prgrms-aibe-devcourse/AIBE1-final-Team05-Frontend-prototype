@@ -13,6 +13,9 @@ import PetTreatsCheckout from "@/pages/pet-treats-checkout";
 import MyPage from "@/pages/account";
 import ProductsPage from "@/pages/ProductsPage";
 import ProductManagementPage from "@/pages/ProductManagementPage";
+import ProductDetailPage from "@/pages/ProductDetailPage";
+import SellerInfoEnterPage from "@/pages/SellerInfoEnterPage";
+import SellerDashboardDashboardPage from "@/pages/SellerDashboardPage";
 
 // React Router 7 사용
 const router = createBrowserRouter([
@@ -28,11 +31,19 @@ const router = createBrowserRouter([
 
       { path: "productsList", element: <ProductsPage /> }, // 상품 목록 페이지
 
-      // 판매자 상세 페이지 추가
-      { path: "seller/:sellerId", element: <SellerInfoPage /> },
-      // 로그인 & 역할선택
-      { path: "login", element: <LoginPage /> },
-      { path: "role-selection", element: <RoleSelectionPage /> },
+            // 상품 상세 페이지
+            {path: 'product-detail', element: <ProductDetailPage />},
+
+            // 판매자 상세 페이지 추가
+            { path: 'seller/:sellerId', element: <SellerInfoPage /> },
+            // 판매자 정보 기입 페이지
+            {path: 'seller-infoenter', element: <SellerInfoEnterPage />},
+            // 판매자 대시보드-대시보드 페이지
+            {path: 'seller-dashboard-dashboard', element: < SellerDashboardDashboardPage/>},
+
+            // 로그인 & 역할선택
+            { path: 'login', element: <LoginPage /> },
+            { path: 'role-selection', element: <RoleSelectionPage /> },
 
       // 결제 및 계정 관련 페이지
       { path: "payment", element: <PetTreatsCheckout /> },
