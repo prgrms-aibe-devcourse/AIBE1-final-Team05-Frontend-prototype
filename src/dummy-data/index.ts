@@ -5,6 +5,7 @@ export {
     bestSellerProducts,
     allergicFreeProducts,
     dentalCareProducts,
+    discountProducts
 } from './products.data';
 
 // 공방 데이터

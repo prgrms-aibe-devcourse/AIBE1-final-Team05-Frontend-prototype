@@ -46,4 +46,11 @@ export const contentCategories: Category[] = [
         icon: '🏆',
         description: '가장 인기 있는 베스트셀러',
     },
+    {
+        id: 'sale',
+        name: 'sale',
+        label: '🔥 특가상품',
+        icon: '🔥',
+        description: '할인가로 만나는 특가상품',
+    },
 ];

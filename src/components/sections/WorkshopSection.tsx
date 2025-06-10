@@ -22,7 +22,7 @@ export const WorkshopSection = ({ workshops, onWorkshopClick }: WorkshopSectionP
                         color: 'text.primary',
                     }}
                 >
-                    인기 판매자 공방
+                    인기 판매자
                 </Typography>
 
                 <WorkshopGrid

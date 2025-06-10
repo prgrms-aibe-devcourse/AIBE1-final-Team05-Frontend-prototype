@@ -7,6 +7,7 @@ import SupportPage from '@/pages/mainpage/SupportPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RoleSelectionPage from '@/pages/auth/RoleSelectionPage';
 import NotFoundPage from "@/pages/mainpage/NotFoundPage.tsx";
+import SellerInfoPage from '@/pages/SellerInfoPage';
 import SellerDashboardPage from '@/pages/seller/SellerDashboardPage';
 import PetTreatsCheckout from '@/pages/pet-treats-checkout';
 import MyPage from '@/pages/account';
@@ -23,6 +24,8 @@ const router = createBrowserRouter([
             { path: 'workshops', element: <WorkshopsPage /> },
             { path: 'support', element: <SupportPage /> },
 
+            // 판매자 상세 페이지 추가
+            { path: 'seller/:sellerId', element: <SellerInfoPage /> },
             // 로그인 & 역할선택
             { path: 'login', element: <LoginPage /> },
             { path: 'role-selection', element: <RoleSelectionPage /> },

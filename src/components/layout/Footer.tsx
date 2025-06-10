@@ -32,7 +32,7 @@ const Footer = () => {
                                 mb: 2
                             }}
                         >
-                            Pet's Delight
+                            CatDogEats
                         </Typography>
                         <Typography
                             variant="body2"

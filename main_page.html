@@ -1,0 +1,717 @@
+<html>
+  <head>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <meta charset="utf-8" />
+    <title>CatDogEats - Handmade Pet Treats</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-[#fcfaf8] text-[#1b150e]"
+    style="font-family: 'Plus Jakarta Sans', 'Noto Sans', sans-serif"
+  >
+    <div
+      class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden"
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="sticky top-0 z-50 bg-[#fcfaf8]/80 backdrop-blur-md">
+          <div
+            class="container mx-auto flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f3eee7] px-4 sm:px-6 lg:px-10 py-4"
+          >
+            <div class="flex items-center gap-6 lg:gap-8">
+              <a
+                class="flex items-center gap-2 text-[#1b150e] text-xl font-bold"
+                href="#"
+              >
+                <svg
+                  class="h-8 w-8 text-[#e89830]"
+                  fill="none"
+                  viewBox="0 0 48 48"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+                <h1 class="text-xl font-bold leading-tight tracking-[-0.015em]">
+                  CatDogEats
+                </h1>
+              </a>
+
+            </div>
+            <div class="flex items-center gap-3 lg:gap-4">
+              <label
+                class="relative flex-col min-w-32 !h-10 max-w-xs hidden sm:flex"
+              >
+                <div
+                  class="flex w-full flex-1 items-stretch rounded-full h-full"
+                >
+                  <div
+                    class="text-[#97784e] flex border-none bg-[#f3eee7] items-center justify-center pl-4 rounded-l-full border-r-0"
+                  >
+                    <i class="material-icons text-lg">search</i>
+                  </div>
+                  <input
+                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-[#1b150e] focus:outline-0 focus:ring-2 focus:ring-[#e89830]/50 border-none bg-[#f3eee7] focus:border-none h-full placeholder:text-[#97784e] px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal"
+                    placeholder="간식 검색..."
+                    value=""
+                  />
+                </div>
+              </label>
+              <div class="flex gap-2">
+                <a
+                  class="flex items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-transparent text-[#1b150e] hover:bg-[#f3eee7] text-sm font-medium leading-normal tracking-[0.015em] transition-colors"
+                  href="#"
+                >
+                  <span class="hidden sm:inline">로그인</span>
+                  <i class="material-icons sm:hidden">login</i>
+                </a>
+                <a
+                  class="flex items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#e89830] text-white hover:bg-[#d18224] text-sm font-medium leading-normal tracking-[0.015em] transition-colors"
+                  href="#"
+                >
+                  <span class="hidden sm:inline">회원가입</span>
+                  <i class="material-icons sm:hidden">person_add</i>
+                </a>
+                <button
+                  aria-label="장바구니"
+                  class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 bg-transparent text-[#1b150e] hover:bg-[#f3eee7] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-3 transition-colors"
+                >
+                  <i class="material-icons">shopping_cart</i>
+                </button>
+              </div>
+              <button
+                aria-label="메뉴 열기"
+                class="lg:hidden text-[#1b150e] hover:text-[#e89830] p-2"
+              >
+                <i class="material-icons">menu</i>
+              </button>
+            </div>
+          </div>
+        </header>
+        <main class="flex-1">
+          <section
+            class="relative min-h-[calc(100vh-80px)] sm:min-h-[560px] flex items-center justify-center bg-cover bg-center bg-no-repeat text-center px-4 py-16"
+            style="
+              background-image: linear-gradient(
+                  rgba(0, 0, 0, 0.2) 0%,
+                  rgba(0, 0, 0, 0.5) 100%
+                ),
+                url('https://lh3.googleusercontent.com/aida-public/AB6AXuB4BG42-5q2OmGqTzH9jLVYzZl1MnKd-w3Z6L5liNG69je6TT3chRmsCf78MpZfFjYIz4hT3qJmGZJbTXo6GIIZ4a8qiHvEsv79-IqrHtXjya4W6sMvwyPLrilCXBnBITGzJlMtrklZ-7qc77D6k0r1oe0qZyQMmGrGa7rTuctF8MdWfFmyRTJRA2Dn_2kSvs4oXbpIjxp9RGPN1cyuzl4s1FeZYfffhhVVkwmNlNI0A7nNCi7zf8avRJ0_ddnonkysmG5UfJSHqRI');
+            "
+          >
+            <div class="max-w-3xl mx-auto">
+              <h1
+                class="text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-6"
+              >
+                우리 아이만을 위한<br />특별한 수제 간식
+              </h1>
+              <p
+                class="text-white text-base sm:text-lg lg:text-xl font-normal leading-relaxed mb-8"
+              >
+                정성껏 만든 영양 가득한 수제 간식으로
+                <br class="sm:hidden" />사랑하는 반려동물에게 행복을 선물하세요.
+              </p>
+              <a
+                class="inline-flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 sm:h-14 sm:px-8 bg-[#e89830] text-white hover:bg-[#d18224] text-base sm:text-lg font-bold leading-normal tracking-[0.015em] transition-colors shadow-lg hover:shadow-xl"
+                href="#"
+              >
+                <span class="truncate">지금 쇼핑하기</span>
+                <i class="material-icons ml-2">arrow_forward</i>
+              </a>
+            </div>
+          </section>
+          <section class="py-12 sm:py-16 lg:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+              <div
+                class="flex justify-center border-b border-[#e7ddd0] mb-8 sm:mb-12"
+              >
+                <nav class="flex gap-4 sm:gap-6 lg:gap-8 -mb-px">
+                  <a
+                    class="flex flex-col items-center justify-center border-b-2 border-[#e89830] text-[#1b150e] pb-3 pt-2 px-2 sm:px-4 transition-colors"
+                    href="#"
+                  >
+                    <p
+                      class="text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
+                    >
+                      🐶 강아지용
+                    </p>
+                  </a>
+                  <a
+                    class="flex flex-col items-center justify-center border-b-2 border-transparent text-[#97784e] hover:text-[#1b150e] hover:border-[#e89830]/50 pb-3 pt-2 px-2 sm:px-4 transition-colors"
+                    href="#"
+                  >
+                    <p
+                      class="text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
+                    >
+                      🐱 고양이용
+                    </p>
+                  </a>
+                  <a
+                    class="flex flex-col items-center justify-center border-b-2 border-transparent text-[#97784e] hover:text-[#1b150e] hover:border-[#e89830]/50 pb-3 pt-2 px-2 sm:px-4 transition-colors"
+                    href="#"
+                  >
+                    <p
+                      class="text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
+                    >
+                      🌿 알러지 프리
+                    </p>
+                  </a>
+                  <a
+                    class="flex flex-col items-center justify-center border-b-2 border-transparent text-[#97784e] hover:text-[#1b150e] hover:border-[#e89830]/50 pb-3 pt-2 px-2 sm:px-4 transition-colors"
+                    href="#"
+                  >
+                    <p
+                      class="text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
+                    >
+                      🦷 치석제거
+                    </p>
+                  </a>
+                </nav>
+              </div>
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8"
+              >
+                <div
+                  class="group flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div class="relative">
+                    <div
+                      class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover"
+                      style="
+                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAUeM1g3uIayGqXqhhRBgWCmBmTokVvYmhi_7kp_ag9r3XWpl_0MJbbPmM6OzDSRhmPlOYhqIdsJm1i1fQIS7bn_OF3gjg0t0dkAI8qqkpZBF9JRCuw-VQx33NQdL64i0Ikm_VjzascCUwrRAIdADyRciHO4p8sQS93beuT4EPWtWWHfWA4zjuVLwyuE7I-TRZ6r-Y5J5FTC_deJiyJ2A7Qg1y8c__pMz4vehyjPiYyOwmuQ3GKGWRXO6fLZXEhc4ijrhUJa2g0J_Y');
+                      "
+                    ></div>
+                    <button
+                      aria-label="찜하기"
+                      class="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full text-[#e89830] hover:text-[#d18224] transition-colors focus:outline-none focus:ring-2 focus:ring-[#e89830]"
+                    >
+                      <i class="material-icons text-xl">favorite_border</i>
+                    </button>
+                  </div>
+                  <div class="p-4 flex flex-col flex-grow">
+                    <h3
+                      class="text-[#1b150e] text-base font-semibold leading-snug mb-1"
+                    >
+                      치킨 &amp; 야채 수제 스틱
+                    </h3>
+                    <p class="text-[#e89830] text-lg font-bold mb-2">
+                      12,990원
+                    </p>
+                    <div class="flex items-center text-sm text-[#97784e] mb-3">
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_half</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_border</i
+                      >
+                      <span class="ml-1">(23)</span>
+                    </div>
+                    <button
+                      class="mt-auto w-full flex items-center justify-center rounded-lg h-10 px-4 bg-[#f3eee7] text-[#1b150e] hover:bg-[#e89830] hover:text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+                    >
+                      장바구니 담기
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="group flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div class="relative">
+                    <div
+                      class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover"
+                      style="
+                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKWeNgyiPKMxgJwSjN78jZVUEsW6xOU6XZt1sjnwqThcWYtiaapPtkpanJ87dI3QuXRQPrlKJnA6Uqgsd-7NmqvEwqREIpoz3XXJsh4ABSUMl45pywdpho_rVCRnWmVF4Dn0aYTJllyE-lflZ-nI6dxK3xn7ynDH06J251HUCs3MiMxn1addo3gqRPBXV8j4dazoitsU1RDP0pXQ1Rl2JN1BTl_fIpqkV08khmx525vlrBy3YrUNhq_yjJ-Cp5oiNs3Et7zY3Mz2Q');
+                      "
+                    ></div>
+                    <button
+                      aria-label="찜하기"
+                      class="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full text-[#e89830] hover:text-[#d18224] transition-colors focus:outline-none focus:ring-2 focus:ring-[#e89830]"
+                    >
+                      <i class="material-icons text-xl">favorite_border</i>
+                    </button>
+                  </div>
+                  <div class="p-4 flex flex-col flex-grow">
+                    <h3
+                      class="text-[#1b150e] text-base font-semibold leading-snug mb-1"
+                    >
+                      연어 &amp; 고구마 큐브
+                    </h3>
+                    <p class="text-[#e89830] text-lg font-bold mb-2">
+                      14,990원
+                    </p>
+                    <div class="flex items-center text-sm text-[#97784e] mb-3">
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_half</i
+                      >
+                      <span class="ml-1">(42)</span>
+                    </div>
+                    <button
+                      class="mt-auto w-full flex items-center justify-center rounded-lg h-10 px-4 bg-[#f3eee7] text-[#1b150e] hover:bg-[#e89830] hover:text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+                    >
+                      장바구니 담기
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="group flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div class="relative">
+                    <div
+                      class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover"
+                      style="
+                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBNDzQymxMrlSyl1YpEnjE0fEPl3zBwBClttl_UZrMZh_LPOrH1x-bxGpVKPr3WDpWkPuEg4VFP8O_sWuF5Ax1iUXh9vKsy4tST_qKBnX_RdEwWTzAkIMeUcX0m1SqMIGTQz_a17FvTykQvWa0xrPYP-a2NwdgbphJxAObjevU7JOKXEs-RF874nFCOjWzYKlwEHMP1LODpXnayANQ1t-eLw2MI6rB0Pz5End2nxW2bKUtWt4cxugCRJHDBVeudmtS3cj09zfnL8tU');
+                      "
+                    ></div>
+                    <button
+                      aria-label="찜하기"
+                      class="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full text-[#e89830] hover:text-[#d18224] transition-colors focus:outline-none focus:ring-2 focus:ring-[#e89830]"
+                    >
+                      <i class="material-icons text-xl text-red-500"
+                        >favorite</i
+                      >
+                    </button>
+                  </div>
+                  <div class="p-4 flex flex-col flex-grow">
+                    <h3
+                      class="text-[#1b150e] text-base font-semibold leading-snug mb-1"
+                    >
+                      소고기 &amp; 당근 육포
+                    </h3>
+                    <p class="text-[#e89830] text-lg font-bold mb-2">
+                      11,990원
+                    </p>
+                    <div class="flex items-center text-sm text-[#97784e] mb-3">
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_border</i
+                      >
+                      <span class="ml-1">(18)</span>
+                    </div>
+                    <button
+                      class="mt-auto w-full flex items-center justify-center rounded-lg h-10 px-4 bg-[#f3eee7] text-[#1b150e] hover:bg-[#e89830] hover:text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+                    >
+                      장바구니 담기
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="group flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div class="relative">
+                    <div
+                      class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover"
+                      style="
+                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDI3bdEnmz0_R0NBTRt_M8fvKm58sJqyymZx17sAEH20Hc6PZPJjI5ybNQtNJGcufr2PQ4IqqkSExU-VfYqxQv7fKhZUXK_6e3ELEt3a4Q8SoZX--O8YXOZ0RNFVboLZMXyOF3BfbjGA4MEKoAJw0qzGskPavRu3euDeneI-t_Qnm52NSVQH8GXdzgXhuF96kd87PhkrCqicO-acJGRCc5j9RVijoEDunWQZiBoxCnT0CPGK-L3PUtVceYTIMFPnV7vIeNptDYCTqg');
+                      "
+                    ></div>
+                    <button
+                      aria-label="찜하기"
+                      class="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full text-[#e89830] hover:text-[#d18224] transition-colors focus:outline-none focus:ring-2 focus:ring-[#e89830]"
+                    >
+                      <i class="material-icons text-xl">favorite_border</i>
+                    </button>
+                  </div>
+                  <div class="p-4 flex flex-col flex-grow">
+                    <h3
+                      class="text-[#1b150e] text-base font-semibold leading-snug mb-1"
+                    >
+                      오리 &amp; 사과 쿠키
+                    </h3>
+                    <p class="text-[#e89830] text-lg font-bold mb-2">
+                      13,990원
+                    </p>
+                    <div class="flex items-center text-sm text-[#97784e] mb-3">
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_half</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_border</i
+                      >
+                      <span class="ml-1">(31)</span>
+                    </div>
+                    <button
+                      class="mt-auto w-full flex items-center justify-center rounded-lg h-10 px-4 bg-[#f3eee7] text-[#1b150e] hover:bg-[#e89830] hover:text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+                    >
+                      장바구니 담기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="bg-[#f3eee7] py-12 sm:py-16 lg:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+              <h2
+                class="text-2xl sm:text-3xl font-bold text-[#1b150e] text-center mb-8 sm:mb-12"
+              >
+                내 아이 정보로 맞춤 추천
+              </h2>
+              <div
+                class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8 lg:p-10 flex flex-col sm:flex-row items-center gap-6 lg:gap-8"
+              >
+                <img
+                  alt="맞춤 추천 이미지"
+                  class="w-full sm:w-1/3 h-auto rounded-lg object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzVmhGwpIw0KQseyDSFtrsNMegUoL3FJHZ3vxW3POHzi0xtIztnpZLpifh2lYKqikRb7o3DOq4Nf5L2u3kT59Bou3HZPwajymXB4dOLBQ0YsiwO_krU7CEuMlTCYaSIUWdERYlmJyRHFw_ixPwalTZitjXWjtfNKGRwtbfRBuE9Hdhy7yFsvvna813am4eJ712K416ReGZ2WchBrbR0OWNeW7P9bZBFTbMkPt-7cJQF0H-OZOUq47x_eZ3fP6ERkXtqhpys2aevAY"
+                />
+                <div class="flex-1 text-center sm:text-left">
+                  <p
+                    class="text-[#97784e] text-sm font-normal leading-normal mb-1"
+                  >
+                    우리 아이 맞춤형 간식
+                  </p>
+                  <p
+                    class="text-[#1b150e] text-lg sm:text-xl font-bold leading-tight mb-2"
+                  >
+                    나이, 품종, 알러지 정보로<br />최적의 간식을 찾아보세요.
+                  </p>
+                  <p
+                    class="text-[#97784e] text-sm font-normal leading-normal mb-4"
+                  >
+                    간단한 정보 입력으로 우리 아이에게 딱 맞는 간식을 추천받을
+                    수 있습니다.
+                  </p>
+                  <a
+                    class="inline-flex items-center justify-center rounded-full h-10 px-5 bg-[#e89830] text-white hover:bg-[#d18224] text-sm font-medium transition-colors"
+                    href="#"
+                  >
+                    맞춤 추천 시작하기
+                    <i class="material-icons ml-1 text-base">pets</i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="py-12 sm:py-16 lg:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+              <h2
+                class="text-2xl sm:text-3xl font-bold text-[#1b150e] text-center mb-8 sm:mb-12"
+              >
+                인기 판매자 공방
+              </h2>
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+              >
+                <div
+                  class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div
+                    class="w-full h-48 bg-center bg-no-repeat bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAjne2XjAVpHCBZBkd-LDH6RzK2e1KvEECtKTxZ5AC9NgnLh0nHymyYYfidPlt2lLUKnWN8CQehQCDEfxhJ4zKsSHmwF7XsKRU_cgCvjswVrtnkd39E9Uf83W6ixI1ICLpG2YzxZtocbt79tT9I3iHsGEkZR6i7-uzEeypBfn0_LwAbW5OtPPwJ-szeYCvM83fx5kBuQSl0iNC9I6Vrfbj0IaST7s0yOOaDniN6ZeeOoKaCppl4ryDaDQgswD0bGYuitvIUmkJOdyI');
+                    "
+                  ></div>
+                  <div class="p-4">
+                    <h3
+                      class="text-[#1b150e] text-lg font-semibold leading-snug mb-1"
+                    >
+                      사랑가득 엄마손길
+                    </h3>
+                    <p
+                      class="text-[#97784e] text-sm font-normal leading-normal mb-2"
+                    >
+                      유기농 재료로 만드는 건강 간식 전문
+                    </p>
+                    <a
+                      class="text-sm font-medium text-[#e89830] hover:text-[#d18224] transition-colors"
+                      href="#"
+                      >공방 보러가기
+                      <i class="material-icons text-xs align-middle"
+                        >arrow_forward_ios</i
+                      ></a
+                    >
+                  </div>
+                </div>
+                <div
+                  class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div
+                    class="w-full h-48 bg-center bg-no-repeat bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCu8MSwhLB79ZwMLmkvM7p7c7sR4SwHZtJq8A-y5AlFLutm93wG-81mSK3i90KbRp7msrZ2p4rsb0iRSW18Is5qsuykYv0VyJj649-n0z4VhXoKo6BUko_N94mBbQDyLwTfziHAmZFOU__yQQzAGt6gnuAX3jx7LSIl_yeO50fw7LHbVj1fNe1pqHheJf3bLuGEVCml-EbmzVx4LtMmzRirxufee11yhbUtkUzvkz-Qh-1XnlicdOSR5mzC74T46-y0KJQfBOoItBM');
+                    "
+                  ></div>
+                  <div class="p-4">
+                    <h3
+                      class="text-[#1b150e] text-lg font-semibold leading-snug mb-1"
+                    >
+                      댕댕이 쉐프
+                    </h3>
+                    <p
+                      class="text-[#97784e] text-sm font-normal leading-normal mb-2"
+                    >
+                      특별한 날을 위한 맞춤 케이크 &amp; 쿠키
+                    </p>
+                    <a
+                      class="text-sm font-medium text-[#e89830] hover:text-[#d18224] transition-colors"
+                      href="#"
+                      >공방 보러가기
+                      <i class="material-icons text-xs align-middle"
+                        >arrow_forward_ios</i
+                      ></a
+                    >
+                  </div>
+                </div>
+                <div
+                  class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div
+                    class="w-full h-48 bg-center bg-no-repeat bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA7O-yDNm7DAjRSgdDvdd-sXq08jwiZyGEh0V8S1mg99bVm4LhtkCt__m1S0O3sQ9fOFtedIijA1rFuYrLNPygxuYiBerHqOELA_Gnmn-3MqfFTFaoZfB0niNnGhd9KA_xoHR3hZ2VfsKZ1rW2ktxthUl1AmuArbe2JjJaANA9Nh2OXDTDJgu_W7azo3pMZu33tuw7ufo3WIxmBB3SczMvsh6aw4-T40LiFi6CHf_sUQ5ah083meCPxDHODfRDfXrZVtEHqY0c4LU4');
+                    "
+                  ></div>
+                  <div class="p-4">
+                    <h3
+                      class="text-[#1b150e] text-lg font-semibold leading-snug mb-1"
+                    >
+                      냥이네 부엌
+                    </h3>
+                    <p
+                      class="text-[#97784e] text-sm font-normal leading-normal mb-2"
+                    >
+                      까다로운 냥님 입맛 저격! 영양만점 간식
+                    </p>
+                    <a
+                      class="text-sm font-medium text-[#e89830] hover:text-[#d18224] transition-colors"
+                      href="#"
+                      >공방 보러가기
+                      <i class="material-icons text-xs align-middle"
+                        >arrow_forward_ios</i
+                      ></a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="bg-[#fcfaf8] py-12 sm:py-16 lg:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+              <h2
+                class="text-2xl sm:text-3xl font-bold text-[#1b150e] text-center mb-8 sm:mb-12"
+              >
+                신상품 &amp; 베스트셀러
+              </h2>
+              <div
+                class="flex justify-center border-b border-[#e7ddd0] mb-8 sm:mb-12"
+              >
+                <nav class="flex gap-4 sm:gap-6 lg:gap-8 -mb-px">
+                  <a
+                    class="flex flex-col items-center justify-center border-b-2 border-[#e89830] text-[#1b150e] pb-3 pt-2 px-2 sm:px-4 transition-colors"
+                    href="#"
+                  >
+                    <p
+                      class="text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
+                    >
+                      ✨ 신상품
+                    </p>
+                  </a>
+                  <a
+                    class="flex flex-col items-center justify-center border-b-2 border-transparent text-[#97784e] hover:text-[#1b150e] hover:border-[#e89830]/50 pb-3 pt-2 px-2 sm:px-4 transition-colors"
+                    href="#"
+                  >
+                    <p
+                      class="text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
+                    >
+                      🏆 베스트셀러
+                    </p>
+                  </a>
+                </nav>
+              </div>
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8"
+              >
+                <div
+                  class="group flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div class="relative">
+                    <div
+                      class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover"
+                      style="
+                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAlpqFTcfLDhlwFwqr_F6oh5A9czaFn7HjvriOf0FnjxFzfFoutgkxzRgo6pV1_2DuQL5v4IFZpFCpl0BNca5R726_GYBcf5juHrY_EbiJjuYGvtQkTKiIRmhr8y3Toxmd9ATiaZRBupB1TDkUWusuc1YSHchZdy_ZWVwSYFRFbYd_4BT8AlxuRm5E-2vK3jmcVKEtJ5YbzTaU_hva7JXlBUpPpPcAEKaPpnT0VQVj7U9XX1a26EBN0frOO_ArCZ_28Yjr4w6r8dl8');
+                      "
+                    ></div>
+                    <button
+                      aria-label="찜하기"
+                      class="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full text-[#e89830] hover:text-[#d18224] transition-colors focus:outline-none focus:ring-2 focus:ring-[#e89830]"
+                    >
+                      <i class="material-icons text-xl">favorite_border</i>
+                    </button>
+                    <span
+                      class="absolute top-3 left-3 bg-[#e89830] text-white text-xs font-semibold px-2 py-1 rounded"
+                      >NEW</span
+                    >
+                  </div>
+                  <div class="p-4 flex flex-col flex-grow">
+                    <h3
+                      class="text-[#1b150e] text-base font-semibold leading-snug mb-1"
+                    >
+                      [신상] 블루베리 요거트볼
+                    </h3>
+                    <p class="text-[#e89830] text-lg font-bold mb-2">
+                      12,990원
+                    </p>
+                    <div class="flex items-center text-sm text-[#97784e] mb-3">
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_half</i
+                      >
+                      <i class="material-icons text-base text-yellow-400"
+                        >star_border</i
+                      >
+                      <span class="ml-1">(23)</span>
+                    </div>
+                    <button
+                      class="mt-auto w-full flex items-center justify-center rounded-lg h-10 px-4 bg-[#f3eee7] text-[#1b150e] hover:bg-[#e89830] hover:text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+                    >
+                      장바구니 담기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer class="bg-[#1b150e] text-[#f3eee7] pt-12 sm:pt-16">
+          <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              <div>
+                <h3 class="text-lg font-bold text-white mb-4">Pet's Delight</h3>
+                <p class="text-sm text-[#97784e] leading-relaxed">
+                  사랑하는 반려동물을 위한 건강하고 맛있는 수제 간식을 만듭니다.
+                </p>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white mb-4">바로가기</h3>
+                <ul class="space-y-2">
+                  <li>
+                    <a
+                      class="text-sm text-[#97784e] hover:text-[#e89830] transition-colors"
+                      href="#"
+                      >상품 전체보기</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="text-sm text-[#97784e] hover:text-[#e89830] transition-colors"
+                      href="#"
+                      >자주 묻는 질문</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="text-sm text-[#97784e] hover:text-[#e89830] transition-colors"
+                      href="#"
+                      >공방 입점 문의</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="text-sm text-[#97784e] hover:text-[#e89830] transition-colors"
+                      href="#"
+                      >이용약관</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="text-sm text-[#97784e] hover:text-[#e89830] transition-colors"
+                      href="#"
+                      >개인정보처리방침</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white mb-4">고객센터</h3>
+                <p class="text-sm text-[#97784e]">전화: 070-1234-5678</p>
+                <p class="text-sm text-[#97784e]">
+                  이메일: help@petsdelight.com
+                </p>
+                <p class="text-sm text-[#97784e]">
+                  운영시간: 평일 10:00 - 17:00 (점심시간 12:00 - 13:00)
+                </p>
+                <div class="mt-4">
+                  <a
+                    class="inline-block bg-[#e89830] hover:bg-[#d18224] text-white text-sm font-medium py-2 px-4 rounded-md transition-colors"
+                    href="#"
+                    >판매자 등록하기</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="border-t border-[#3a2e1e] py-6 text-center">
+              <p class="text-sm text-[#97784e]">
+                상호: 펫츠딜라이트 | 대표: 김펫츠 | 사업자등록번호: 123-45-67890
+                <br />
+                통신판매업신고번호: 제2024-서울강남-0000호 | 주소: 서울특별시
+                강남구 테헤란로 123, 4층 <br />
+                © 2024 Pet's Delight. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

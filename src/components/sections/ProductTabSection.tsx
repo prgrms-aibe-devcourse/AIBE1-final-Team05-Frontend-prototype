@@ -27,14 +27,12 @@ function TabPanel(props: TabPanelProps) {
 }
 
 interface ProductTabSectionProps {
-    title: string;
     categories: Category[];
     productSets: Product[][]; // 각 탭별 상품 배열
     onProductClick: (product: Product) => void;
 }
 
 export const ProductTabSection = ({
-                                      title,
                                       categories,
                                       productSets,
                                       onProductClick
@@ -54,7 +52,6 @@ export const ProductTabSection = ({
                         color: 'text.primary',
                     }}
                 >
-                    {title}
                 </Typography>
 
                 <Box sx={{ borderBottom: '1px solid', borderBottomColor: 'grey.200', mb: { xs: 4, sm: 6 } }}>

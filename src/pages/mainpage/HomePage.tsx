@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
     HeroSection,
-    ProductCategorySection,
+    // ProductCategorySection,
     RecommendationSection,
     WorkshopSection,
     ProductTabSection
@@ -10,13 +10,14 @@ import {
 import { Product } from '@/domains/product/types';
 import { Workshop } from '@/domains/workshop/types';
 import {
-    popularProducts,
+    // popularProducts,
     newProducts,
     bestSellerProducts,
-    allergicFreeProducts,
-    dentalCareProducts,
+    discountProducts,
+    // allergicFreeProducts,
+    // dentalCareProducts,
     popularWorkshops,
-    productCategories,
+    // productCategories,
     contentCategories,
 } from '@/dummy-data';
 
@@ -24,20 +25,20 @@ const HomePage = () => {
     const navigate = useNavigate();
 
     // 카테고리별 상품 데이터 매핑
-    const getProductsByCategory = (categoryId: string): Product[] => {
-        switch (categoryId) {
-            case 'dog':
-                return popularProducts.filter(product => product.category === 'dog');
-            case 'cat':
-                return popularProducts.filter(product => product.category === 'cat');
-            case 'allergy-free':
-                return allergicFreeProducts;
-            case 'dental':
-                return dentalCareProducts;
-            default:
-                return popularProducts;
-        }
-    };
+    // const getProductsByCategory = (categoryId: string): Product[] => {
+    //     switch (categoryId) {
+    //         case 'dog':
+    //             return popularProducts.filter(product => product.category === 'dog');
+    //         case 'cat':
+    //             return popularProducts.filter(product => product.category === 'cat');
+    //         case 'allergy-free':
+    //             return allergicFreeProducts;
+    //         case 'dental':
+    //             return dentalCareProducts;
+    //         default:
+    //             return popularProducts;
+    //     }
+    // };
 
     const handleProductClick = (product: Product) => {
         console.log('상품 클릭:', product);
@@ -62,9 +63,15 @@ const HomePage = () => {
         <Box>
             <HeroSection onShopNowClick={handleShopNowClick} />
 
-            <ProductCategorySection
-                categories={productCategories}
-                getProductsByCategory={getProductsByCategory}
+            {/*<ProductCategorySection*/}
+            {/*    categories={productCategories}*/}
+            {/*    getProductsByCategory={getProductsByCategory}*/}
+            {/*    onProductClick={handleProductClick}*/}
+            {/*/>*/}
+
+            <ProductTabSection
+                categories={contentCategories}
+                productSets={[newProducts, bestSellerProducts, discountProducts]}
                 onProductClick={handleProductClick}
             />
 
@@ -75,12 +82,6 @@ const HomePage = () => {
                 onWorkshopClick={handleWorkshopClick}
             />
 
-            <ProductTabSection
-                title="신상품 & 베스트셀러"
-                categories={contentCategories}
-                productSets={[newProducts, bestSellerProducts]}
-                onProductClick={handleProductClick}
-            />
         </Box>
     );
 };

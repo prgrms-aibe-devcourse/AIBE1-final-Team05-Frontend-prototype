@@ -127,3 +127,20 @@ export const dentalCareProducts: Product[] = [
         tags: ['덴탈케어', '치석제거', '구강건강', '츄'],
     },
 ];
+
+export const discountProducts: Product[] = [
+    {
+        id: '9',
+        name: '[특가 상품] 치석 제거 덴탈 츄',
+        price: 18990,
+        originalPrice: 21990, // 예: 할인 전 가격 설정
+        image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=300&fit=crop',
+        category: 'dental',
+        brand: '냥이네 부엌',
+        rating: 4.3,
+        reviewCount: 67,
+        isDiscount: true,
+        description: '씹으면서 치석을 제거해주는 덴탈 츄',
+        tags: ['덴탈케어', '치석제거', '구강건강', '츄', '할인'],
+    },
+];
