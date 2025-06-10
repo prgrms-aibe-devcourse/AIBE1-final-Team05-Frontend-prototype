@@ -51,7 +51,13 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const ProductManagementPage: React.FC = () => {
+interface ProductManagementPageProps {
+  onLogoClick?: () => void;
+}
+
+const ProductManagementPage: React.FC<ProductManagementPageProps> = ({
+  onLogoClick,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [tabValue, setTabValue] = useState(0);
@@ -99,7 +105,17 @@ const ProductManagementPage: React.FC = () => {
         <Toolbar sx={{ px: { xs: 2, md: 4 }, py: 1 }}>
           {/* 로고 및 제목 */}
           <Box
-            sx={{ display: "flex", alignItems: "center", gap: 1.5, flex: 1 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              flex: 1,
+              cursor: "pointer",
+              "&:hover": {
+                opacity: 0.8,
+              },
+            }}
+            onClick={onLogoClick}
           >
             <PetsIcon sx={{ fontSize: 32, color: "#ef9942" }} />
             <Typography
