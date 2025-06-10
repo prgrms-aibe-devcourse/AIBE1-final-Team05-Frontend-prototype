@@ -13,12 +13,12 @@ import {
     SellerProfileCard,
     SellerProductGrid,
     SimilarSellersGrid,
-} from '../domains/seller';
+} from '../domains/sellerInfo';
 import {
     SellerProfile,
     SellerProduct,
     SimilarSeller,
-} from '../domains/seller/types';
+} from '@/domains/sellerInfo/types';
 import { sellersData } from '../dummy-data/sellers.data';
 import { sellerProductsData } from '../dummy-data/seller-products.data';
 

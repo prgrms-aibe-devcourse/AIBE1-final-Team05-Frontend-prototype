@@ -1,4 +1,4 @@
-import { SellerProduct } from '../domains/seller/types';
+import { SellerProduct } from '@/domains/sellerInfo/types';
 
 export const sellerProductsData: SellerProduct[] = [
     // 캣독잇츠 (sellerId: '1') 상품들

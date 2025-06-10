@@ -1,4 +1,4 @@
-import { SellerProfile } from '../domains/seller/types';
+import { SellerProfile } from '@/domains/sellerInfo/types';
 
 export const sellersData: SellerProfile[] = [
     {
