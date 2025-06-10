@@ -77,10 +77,12 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
     <Box
       sx={{
         width: 256,
-        height: "100%",
+        height: "100vh", // 페이지 전체 높이로 변경
         borderRight: 1,
         borderColor: "#F5EFEA",
         backgroundColor: "white",
+        position: "sticky", // 스크롤 시에도 고정
+        top: 0,
       }}
     >
       <Paper

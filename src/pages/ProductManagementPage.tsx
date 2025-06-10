@@ -28,6 +28,7 @@ import AdminSidebar from "../components/admin/AdminSidebar";
 import ProductRegistrationForm from "../components/admin/ProductRegistrationForm";
 import ProductEditDelete from "../components/admin/ProductEditDelete";
 import InventoryManagement from "../components/admin/InventoryManagement";
+import OrderShippingManagement from "../components/admin/OrderShippingManagement";
 import { ProductFormData } from "../types/ProductManagement";
 
 interface TabPanelProps {
@@ -62,9 +63,22 @@ const ProductManagementPage: React.FC<ProductManagementPageProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [tabValue, setTabValue] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [activeSection, setActiveSection] = useState<
+    "products" | "orders" | "dashboard" | "payments"
+  >("products");
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
+  };
+
+  const handleSidebarItemClick = (itemId: string) => {
+    console.log("받은 itemId:", itemId); // 디버깅용
+    console.log("현재 activeSection:", activeSection); // 디버깅용
+    setActiveSection(
+      itemId as "products" | "orders" | "dashboard" | "payments"
+    );
+    console.log("변경될 activeSection:", itemId); // 디버깅용
+    if (isMobile) setSidebarOpen(false);
   };
 
   const handleProductSubmit = (data: ProductFormData) => {
@@ -72,23 +86,162 @@ const ProductManagementPage: React.FC<ProductManagementPageProps> = ({
     // 실제 구현에서는 API 호출
   };
 
-  const tabsData = [
-    {
-      label: "상품 등록",
-      icon: <AddIcon />,
-      component: <ProductRegistrationForm onSubmit={handleProductSubmit} />,
-    },
-    {
-      label: "상품 수정/삭제",
-      icon: <EditIcon />,
-      component: <ProductEditDelete />,
-    },
-    {
-      label: "재고 관리",
-      icon: <InventoryIcon />,
-      component: <InventoryManagement />,
-    },
-  ];
+  const renderActiveSection = () => {
+    console.log("renderActiveSection 호출됨, activeSection:", activeSection); // 디버깅용
+    switch (activeSection) {
+      case "orders":
+        console.log("주문/배송 페이지 렌더링"); // 디버깅용
+        return (
+          <Box sx={{ p: 4 }}>
+            <Typography variant="h4" sx={{ color: "#2d2a27", mb: 2 }}>
+              주문 및 배송 관리
+            </Typography>
+            <Typography variant="body1" sx={{ color: "#5c5752", mb: 3 }}>
+              주문/배송 관리 페이지가 성공적으로 로드되었습니다!
+            </Typography>
+            <OrderShippingManagement />
+          </Box>
+        );
+      case "dashboard":
+        return (
+          <Box sx={{ p: 4, textAlign: "center" }}>
+            <Typography variant="h5" sx={{ color: "#2d2a27", mb: 2 }}>
+              판매자 대시보드
+            </Typography>
+            <Typography variant="body1" sx={{ color: "#5c5752" }}>
+              대시보드 페이지가 여기에 표시됩니다.
+            </Typography>
+          </Box>
+        );
+      case "payments":
+        return (
+          <Box sx={{ p: 4, textAlign: "center" }}>
+            <Typography variant="h5" sx={{ color: "#2d2a27", mb: 2 }}>
+              정산 관리
+            </Typography>
+            <Typography variant="body1" sx={{ color: "#5c5752" }}>
+              정산 관리 페이지가 여기에 표시됩니다.
+            </Typography>
+          </Box>
+        );
+      case "products":
+      default:
+        console.log("상품 관리 페이지 렌더링"); // 디버깅용
+        return renderProductManagement();
+    }
+  };
+
+  const renderProductManagement = () => {
+    const tabsData = [
+      {
+        label: "상품 등록",
+        icon: <AddIcon />,
+        component: <ProductRegistrationForm onSubmit={handleProductSubmit} />,
+      },
+      {
+        label: "상품 수정/삭제",
+        icon: <EditIcon />,
+        component: <ProductEditDelete />,
+      },
+      {
+        label: "재고 관리",
+        icon: <InventoryIcon />,
+        component: <InventoryManagement />,
+      },
+    ];
+
+    return (
+      <>
+        {/* 페이지 제목 */}
+        <Box sx={{ mb: 4 }}>
+          <Typography
+            variant="h3"
+            sx={{
+              fontSize: "2.5rem",
+              fontWeight: 700,
+              color: "#2d2a27",
+              fontFamily: "'Noto Sans KR', sans-serif",
+              mb: 1,
+            }}
+          >
+            상품 관리
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ color: "#5c5752", fontSize: "1rem" }}
+          >
+            상품 등록, 수정, 재고 관리를 한 곳에서 편리하게 관리하세요.
+          </Typography>
+        </Box>
+
+        {/* 탭 네비게이션 */}
+        <Paper
+          sx={{
+            borderRadius: 3,
+            overflow: "hidden",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
+          }}
+        >
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: "#F5EFEA",
+              backgroundColor: "#f9fafb",
+            }}
+          >
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              variant={isMobile ? "fullWidth" : "standard"}
+              sx={{
+                px: 2,
+                "& .MuiTab-root": {
+                  textTransform: "none",
+                  fontWeight: 600,
+                  fontSize: "0.875rem",
+                  color: "#8d837a",
+                  minHeight: 72,
+                  gap: 1,
+                  "&.Mui-selected": {
+                    color: "#ef9942",
+                  },
+                  "&:hover": {
+                    color: "#ef9942",
+                  },
+                },
+                "& .MuiTabs-indicator": {
+                  backgroundColor: "#ef9942",
+                  height: 3,
+                  borderRadius: 1.5,
+                },
+              }}
+            >
+              {tabsData.map((tab, index) => (
+                <Tab
+                  key={index}
+                  label={tab.label}
+                  icon={tab.icon}
+                  iconPosition="start"
+                  sx={{
+                    "& .MuiTab-iconWrapper": {
+                      color: "inherit",
+                    },
+                  }}
+                />
+              ))}
+            </Tabs>
+          </Box>
+
+          {/* 탭 컨텐츠 */}
+          {tabsData.map((tab, index) => (
+            <TabPanel key={index} value={tabValue} index={index}>
+              <Box sx={{ backgroundColor: "white" }}>{tab.component}</Box>
+            </TabPanel>
+          ))}
+        </Paper>
+      </>
+    );
+  };
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#FFFBF5" }}>
@@ -205,11 +358,8 @@ const ProductManagementPage: React.FC<ProductManagementPageProps> = ({
         {/* 사이드바 */}
         {(!isMobile || sidebarOpen) && (
           <AdminSidebar
-            activeItem="products"
-            onItemClick={(itemId) => {
-              console.log("Navigate to:", itemId);
-              if (isMobile) setSidebarOpen(false);
-            }}
+            activeItem={activeSection}
+            onItemClick={handleSidebarItemClick}
           />
         )}
 
@@ -220,98 +370,13 @@ const ProductManagementPage: React.FC<ProductManagementPageProps> = ({
             sx={{
               flex: 1,
               py: 4,
-              px: { xs: 2, sm: 3, md: 4, lg: 5, xl: 8 },
-              maxWidth: "1200px",
+              px: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8 },
+              maxWidth: activeSection === "orders" ? "none" : "1200px", // 주문/배송 페이지에서는 최대 폭 제한 없음
               mx: "auto",
+              width: "100%", // 전체 폭 사용
             }}
           >
-            {/* 페이지 제목 */}
-            <Box sx={{ mb: 4 }}>
-              <Typography
-                variant="h3"
-                sx={{
-                  fontSize: "2.5rem",
-                  fontWeight: 700,
-                  color: "#2d2a27",
-                  fontFamily: "'Noto Sans KR', sans-serif",
-                  mb: 1,
-                }}
-              >
-                상품 관리
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ color: "#5c5752", fontSize: "1rem" }}
-              >
-                상품 등록, 수정, 재고 관리를 한 곳에서 편리하게 관리하세요.
-              </Typography>
-            </Box>
-
-            {/* 탭 네비게이션 */}
-            <Paper
-              sx={{
-                borderRadius: 3,
-                overflow: "hidden",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
-              }}
-            >
-              <Box
-                sx={{
-                  borderBottom: 1,
-                  borderColor: "#F5EFEA",
-                  backgroundColor: "#f9fafb",
-                }}
-              >
-                <Tabs
-                  value={tabValue}
-                  onChange={handleTabChange}
-                  variant={isMobile ? "fullWidth" : "standard"}
-                  sx={{
-                    px: 2,
-                    "& .MuiTab-root": {
-                      textTransform: "none",
-                      fontWeight: 600,
-                      fontSize: "0.875rem",
-                      color: "#8d837a",
-                      minHeight: 72,
-                      gap: 1,
-                      "&.Mui-selected": {
-                        color: "#ef9942",
-                      },
-                      "&:hover": {
-                        color: "#ef9942",
-                      },
-                    },
-                    "& .MuiTabs-indicator": {
-                      backgroundColor: "#ef9942",
-                      height: 3,
-                      borderRadius: 1.5,
-                    },
-                  }}
-                >
-                  {tabsData.map((tab, index) => (
-                    <Tab
-                      key={index}
-                      label={tab.label}
-                      icon={tab.icon}
-                      iconPosition="start"
-                      sx={{
-                        "& .MuiTab-iconWrapper": {
-                          color: "inherit",
-                        },
-                      }}
-                    />
-                  ))}
-                </Tabs>
-              </Box>
-
-              {/* 탭 컨텐츠 */}
-              {tabsData.map((tab, index) => (
-                <TabPanel key={index} value={tabValue} index={index}>
-                  <Box sx={{ backgroundColor: "white" }}>{tab.component}</Box>
-                </TabPanel>
-              ))}
-            </Paper>
+            {renderActiveSection()}
           </Container>
 
           {/* 푸터 */}
