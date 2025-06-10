@@ -1,4 +1,3 @@
-// tsconfig.json
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -10,8 +9,8 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
+    "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
 
@@ -21,14 +20,23 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Path mapping */
-    "baseUrl": ".",
+    //  Path Mapping 설정
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"],
-      "@/components/*": ["src/components/*"],
-      "@/types/*": ["src/types/*"],
-      "@/theme/*": ["src/theme/*"],
-      "@/pages/*": ["src/pages/*"]
+      "@/*": ["*"],
+      "@/components/*": ["components/*"],
+      "@/domains/*": ["domains/*"],
+      "@/pages/*": ["pages/*"],
+      "@/routes/*": ["routes/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/types/*": ["types/*"],
+      "@/constants/*": ["constants/*"],
+      "@/theme/*": ["theme/*"],
+      "@/styles/*": ["styles/*"],
+      "@/assets/*": ["assets/*"],
+      "@/data/*": ["data/*"],
+      "@/utils/*": ["utils/*"],
+      "@/services/*": ["services/*"]
     }
   },
   "include": ["src"],
