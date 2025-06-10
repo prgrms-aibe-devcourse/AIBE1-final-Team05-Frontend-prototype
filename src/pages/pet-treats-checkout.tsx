@@ -32,7 +32,7 @@ import { Search, Person, Pets, Schedule, ShoppingCartCheckout, CreditCard, Map }
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import PetModal from "../components/pet-modal"
 import AddressModal from "../components/address-modal"
-import { savedPets, savedAddresses, type SavedPet, type SavedAddress } from "../dummy-data/mock-data"
+import { savedPets, savedAddresses, type SavedPet, type SavedAddress } from "../data/mock-data"
 
 const theme = createTheme({
     palette: {
