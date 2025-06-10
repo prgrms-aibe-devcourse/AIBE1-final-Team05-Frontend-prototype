@@ -21,7 +21,6 @@ import {
   CloudUpload as CloudUploadIcon,
   Save as SaveIcon,
   Delete as DeleteIcon,
-  Add as AddIcon,
 } from "@mui/icons-material";
 import {
   ProductFormData,

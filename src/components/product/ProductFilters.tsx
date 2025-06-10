@@ -12,7 +12,6 @@ import {
   Checkbox,
   FormGroup,
   Slider,
-  useTheme,
 } from "@mui/material";
 import {
   ProductFilters as ProductFiltersType,
@@ -33,8 +32,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   filters,
   onFiltersChange,
 }) => {
-  const theme = useTheme();
-
   const handlePetTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({
       ...filters,
@@ -75,10 +72,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
       });
     };
 
-  const handlePriceRangeChange = (
-    event: Event,
-    newValue: number | number[]
-  ) => {
+  const handlePriceRangeChange = (_: Event, newValue: number | number[]) => {
     onFiltersChange({
       ...filters,
       priceRange: newValue as [number, number],

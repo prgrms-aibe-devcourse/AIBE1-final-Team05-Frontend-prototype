@@ -33,8 +33,6 @@ import {
   Tab,
 } from "@mui/material";
 import {
-  Add as AddIcon,
-  Remove as RemoveIcon,
   Search as SearchIcon,
   TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon,
@@ -209,7 +207,7 @@ const InventoryManagement: React.FC = () => {
     return stockItems.filter((item) => item.currentStock === 0).length;
   };
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -569,7 +567,7 @@ const InventoryManagement: React.FC = () => {
               count={filteredItems.length}
               rowsPerPage={rowsPerPage}
               page={page}
-              onPageChange={(event, newPage) => setPage(newPage)}
+              onPageChange={(_, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {
                 setRowsPerPage(parseInt(event.target.value, 10));
                 setPage(0);

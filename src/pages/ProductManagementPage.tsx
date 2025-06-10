@@ -15,7 +15,6 @@ import {
   IconButton,
   Button,
   Avatar,
-  Badge,
 } from "@mui/material";
 import {
   AddCircleOutline as AddIcon,
@@ -58,7 +57,7 @@ const ProductManagementPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
