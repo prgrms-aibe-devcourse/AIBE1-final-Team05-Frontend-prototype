@@ -5,6 +5,7 @@ import CategoriesPage from '@/pages/mainpage/CategoriesPage';
 import WorkshopsPage from '@/pages/mainpage/WorkshopsPage';
 import SupportPage from '@/pages/mainpage/SupportPage';
 import NotFoundPage from "@/pages/mainpage/NotFoundPage.tsx";
+import SellerInfoPage from '@/pages/SellerInfoPage';
 
 // React Router 7 사용
 const router = createBrowserRouter([
@@ -18,6 +19,8 @@ const router = createBrowserRouter([
             { path: 'workshops', element: <WorkshopsPage /> },
             { path: 'support', element: <SupportPage /> },
 
+            // 판매자 상세 페이지 추가
+            { path: 'seller/:sellerId', element: <SellerInfoPage /> },
 
             // 404 페이지
             { path: '*',element: <NotFoundPage/>},

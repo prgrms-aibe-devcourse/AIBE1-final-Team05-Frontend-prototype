@@ -34,8 +34,8 @@ const Header = () => {
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [allergyFree, setAllergyFree] = useState(false);
-    const [minRating, setMinRating] = useState('');
-    const [maxRating, setMaxRating] = useState('');
+    const [minRating, setMinRating] = useState<number>(0);
+    const [maxRating, setMaxRating] = useState<number>(5);
 
     const navigationItems = [
         { label: '베스트 상품', path: '/best' },
@@ -87,14 +87,50 @@ const Header = () => {
         setMinPrice('');
         setMaxPrice('');
         setAllergyFree(false);
-        setMinRating('');
-        setMaxRating('');
+        setMinRating(0);
+        setMaxRating(5);
     };
 
     const handleMenuToggle = () => {
         setMenuOpen(!menuOpen);
         setHoveredCategory(null);
         setHoveredSubCategory(null);
+    };
+
+    // 별점 컴포넌트
+    const StarRating = ({
+                            rating,
+                            onStarClick,
+                            size = 16,
+                            interactive = true
+                        }: {
+        rating: number;
+        onStarClick?: (star: number) => void;
+        size?: number;
+        interactive?: boolean;
+    }) => {
+        return (
+            <Box sx={{ display: 'flex', gap: 0.25 }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <Box
+                        key={star}
+                        onClick={() => interactive && onStarClick && onStarClick(star)}
+                        sx={{
+                            cursor: interactive ? 'pointer' : 'default',
+                            color: star <= rating ? '#ffc107' : '#e0e0e0',
+                            fontSize: `${size}px`,
+                            lineHeight: 1,
+                            transition: 'color 0.2s',
+                            '&:hover': interactive ? {
+                                color: star <= rating ? '#ffb300' : '#bdbdbd'
+                            } : {}
+                        }}
+                    >
+                        ★
+                    </Box>
+                ))}
+            </Box>
+        );
     };
 
     const drawer = (
@@ -347,42 +383,33 @@ const Header = () => {
                                                         />
                                                     </Box>
 
-                                                    {/* 별점 필터 */}
+                                                    {/* 평점 필터 */}
                                                     <Box sx={{ mb: 2 }}>
                                                         <Typography variant="subtitle2" sx={{ mb: 1, fontSize: '0.75rem', color: 'text.secondary' }}>
-                                                            별점 범위
+                                                            평점 범위
                                                         </Typography>
-                                                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                                                            <TextField
-                                                                size="small"
-                                                                placeholder="최소"
-                                                                value={minRating}
-                                                                onChange={(e) => setMinRating(e.target.value)}
-                                                                type="number"
-                                                                inputProps={{ min: 1, max: 5, step: 0.1 }}
-                                                                sx={{
-                                                                    width: '80px',
-                                                                    '& .MuiOutlinedInput-root': {
-                                                                        fontSize: '0.75rem',
-                                                                        '& input': { py: '4px' }
-                                                                    }
-                                                                }}
+
+                                                        {/* 최소 평점 */}
+                                                        <Box sx={{ mb: 1.5 }}>
+                                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                                                                최소 평점: {minRating}점
+                                                            </Typography>
+                                                            <StarRating
+                                                                rating={minRating}
+                                                                onStarClick={setMinRating}
+                                                                size={14}
                                                             />
-                                                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>~</Typography>
-                                                            <TextField
-                                                                size="small"
-                                                                placeholder="최대"
-                                                                value={maxRating}
-                                                                onChange={(e) => setMaxRating(e.target.value)}
-                                                                type="number"
-                                                                inputProps={{ min: 1, max: 5, step: 0.1 }}
-                                                                sx={{
-                                                                    width: '80px',
-                                                                    '& .MuiOutlinedInput-root': {
-                                                                        fontSize: '0.75rem',
-                                                                        '& input': { py: '4px' }
-                                                                    }
-                                                                }}
+                                                        </Box>
+
+                                                        {/* 최대 평점 */}
+                                                        <Box>
+                                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                                                                최대 평점: {maxRating}점
+                                                            </Typography>
+                                                            <StarRating
+                                                                rating={maxRating}
+                                                                onStarClick={setMaxRating}
+                                                                size={14}
                                                             />
                                                         </Box>
                                                     </Box>
