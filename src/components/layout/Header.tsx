@@ -63,6 +63,7 @@ const Header = () => {
                 }
             ]
         },
+        { label: '판매자와 1:1채팅', path: '/chat' },
         { label: '고객센터', path: '/support' },
         { label: '필터', isFilter: true },
     ];
