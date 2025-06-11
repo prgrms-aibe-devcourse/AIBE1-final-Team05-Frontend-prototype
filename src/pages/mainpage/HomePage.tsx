@@ -6,9 +6,9 @@ import {
     RecommendationSection,
     WorkshopSection,
     ProductTabSection
-} from '@/components/sections';
-import { Product } from '@/domains/product/types';
-import { Workshop } from '@/domains/workshop/types';
+} from '@/components/Home';
+import { Product } from '@/components/Home';
+import { Workshop } from '@/components/Home/types';
 import {
     // popularProducts,
     newProducts,
@@ -19,7 +19,7 @@ import {
     popularWorkshops,
     // productCategories,
     contentCategories,
-} from '@/dummy-data';
+} from '@/data';
 
 const HomePage = () => {
     const navigate = useNavigate();
