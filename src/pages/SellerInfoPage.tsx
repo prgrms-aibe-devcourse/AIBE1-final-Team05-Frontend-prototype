@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Container,
@@ -8,6 +8,7 @@ import {
     Alert,
     CircularProgress,
     Snackbar,
+    Stack,
 } from '@mui/material';
 import {
     SellerProfileCard,
@@ -21,6 +22,7 @@ import {
 } from '@/domains/sellerInfo/types';
 import { sellersData } from '../dummy-data/sellers.data';
 import { sellerProductsData } from '../dummy-data/seller-products.data';
+import ProductFilter from '../domains/sellerInfo/components/ProductFilter';
 
 const SellerInfoPage: React.FC = () => {
     const { sellerId } = useParams<{ sellerId: string }>();
@@ -34,6 +36,48 @@ const SellerInfoPage: React.FC = () => {
     const [isSellerLiked, setIsSellerLiked] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+
+    // 필터 상태
+    const [filters, setFilters] = useState({
+        excludeOutOfStock: false,
+        bestProducts: false,
+        discountProducts: false,
+        newProducts: false,
+    });
+
+    // 필터링된 상품 계산
+    // 필터 중복 적용 가능
+    const filteredProducts = useMemo(() => {
+        let result = [...products];
+
+        if (filters.excludeOutOfStock) {
+            result = result.filter(product => !product.isOutOfStock);
+        }
+
+        if (filters.bestProducts) {
+            // 베스트 상품 기준: 평점 4.5 이상 또는 리뷰 100개 이상
+            result = result.filter(product =>
+                product.rating >= 4.5 || product.reviewCount >= 100
+            );
+        }
+
+        if (filters.discountProducts) {
+            // 할인 상품: originalPrice가 있고 originalPrice가 현재 가격보다 높은 상품
+            result = result.filter(product =>
+                product.originalPrice && product.originalPrice > product.price
+            );
+        }
+
+        if (filters.newProducts) {
+            // 신규 상품: 가정상 상품 ID에 'new'가 포함되거나 최근 등록된 상품
+            // 실제로는 등록일 기준으로 필터링해야 함
+            result = result.filter(product =>
+                product.id.includes('new')
+            );
+        }
+
+        return result;
+    }, [products, filters]);
 
     // 데이터 로딩
     useEffect(() => {
@@ -61,7 +105,7 @@ const SellerInfoPage: React.FC = () => {
                         name: seller.name,
                         profileImage: seller.profileImage,
                         description: seller.description || `${seller.tags[0]} 전문`,
-                        speciality: seller.tags?.[0] || '전문 판매자' // ✅ 추가
+                        speciality: seller.tags?.[0] || '전문 판매자'
                     }));
 
                 setSimilarSellers(otherSellers);
@@ -144,6 +188,14 @@ const SellerInfoPage: React.FC = () => {
         setSnackbarOpen(false);
     };
 
+    // 필터 변경 핸들러
+    const handleFilterChange = (filterKey: string, value: boolean) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterKey]: value,
+        }));
+    };
+
     // 로딩 상태
     if (loading) {
         return (
@@ -183,28 +235,42 @@ const SellerInfoPage: React.FC = () => {
 
                 {/* 판매자 상품 섹션 */}
                 <Box sx={{ mb: { xs: 4, sm: 6 } }}>
-                    <Typography
-                        variant="h5"
-                        component="h2"
-                        fontWeight="bold"
-                        gutterBottom
-                        sx={{
-                            mb: { xs: 2, sm: 3 },
-                            fontSize: { xs: '1.25rem', sm: '1.5rem' }
-                        }}
+                    <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        justifyContent="space-between"
+                        alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+                        spacing={2}
+                        sx={{ mb: { xs: 2, sm: 3 } }}
                     >
-                        {seller.name}의 상품 ({products.length})
-                    </Typography>
+                        <Typography
+                            variant="h5"
+                            component="h2"
+                            fontWeight="bold"
+                            sx={{
+                                fontSize: { xs: '1.25rem', sm: '1.5rem' }
+                            }}
+                        >
+                            {seller.name}의 상품 ({filteredProducts.length})
+                        </Typography>
 
-                    {products.length > 0 ? (
+                        {/* 필터 컴포넌트 */}
+                        <Box sx={{ minWidth: { sm: 240 } }}>
+                            <ProductFilter
+                                filters={filters}
+                                onFilterChange={handleFilterChange}
+                            />
+                        </Box>
+                    </Stack>
+
+                    {filteredProducts.length > 0 ? (
                         <SellerProductGrid
-                            products={products}
+                            products={filteredProducts}
                             onProductClick={handleProductClick}
                             onToggleLike={handleToggleProductLike}
                         />
                     ) : (
                         <Alert severity="info">
-                            등록된 상품이 없습니다.
+                            {products.length === 0 ? '등록된 상품이 없습니다.' : '필터 조건에 맞는 상품이 없습니다.'}
                         </Alert>
                     )}
                 </Box>
