@@ -1,24 +1,22 @@
 // src/routes/Router.tsx
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "@/components/layout/Layout";
+import BuyerLayout from "@/components/layout/buyerLayout/BuyerLayout.tsx";
 import SellerLayout from "@/components/layout/sellerLayout/SellerLayout.tsx";
 import HomePage from "@/pages/mainpage/HomePage";
-import CategoriesPage from "@/pages/mainpage/CategoriesPage";
-import WorkshopsPage from "@/pages/mainpage/WorkshopsPage";
-import SupportPage from "@/pages/mainpage/SupportPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
 import NotFoundPage from "@/pages/mainpage/NotFoundPage";
-import SellerInfoPage from "@/pages/SellerInfoPage";
-import PetTreatsCheckout from "@/pages/pet-treats-checkout";
-import MyPage from "@/pages/account";
-import ProductsPage from "@/pages/ProductsPage";
-import ProductManagementPage from "@/pages/ProductManagementPage";
+import SellerStorePage from "@/pages/SellerDashboardPage/SellerStorePage.tsx";
+import OrderCheckoutPage from "@/pages/OrderCheckoutPage.tsx";
+import MyPage from "@/pages/MyPage.tsx";
+import ProductListPage from "@/pages/ProductListPage.tsx";
+import ProductManagementPage from "@/pages/SellerDashboardPage/ProductManagementPage.tsx";
 import ProductDetailPage from "@/pages/ProductDetailPage";
-import SellerInfoEnterPage from "@/pages/SellerInfoEnterPage";
-import { SettlementPage } from "@/domains/settlement";
-import SellerDashboardDashboardPage from "@/pages/SellerDashboardPage";
-import CustomerManagementPage from "@/pages/seller/CustomerManagementPage.tsx";
+import SellerInfoPage from "@/components/SellerDashboard/SellerInfo";
+import { SettlementPage } from "@/components/SellerDashboard/settlement";
+import SellerDashboardDashboardPage from "@/components/SellerDashboard/Dashboard";
+import CustomerManagementPage from "@/pages/SellerDashboardPage/CustomerManagementPage.tsx";
+import OrdersManagementPage from "@/pages/SellerDashboardPage/OrderManagementPage.tsx";
 
 
 
@@ -26,29 +24,35 @@ import CustomerManagementPage from "@/pages/seller/CustomerManagementPage.tsx";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Layout />, // 구매자용 레이아웃 (Header + Outlet + Footer)
+        element: <BuyerLayout />, // 구매자용 레이아웃 (BuyerHeader + Outlet + BuyerFooter)
         children: [
             // 메인페이지
             { index: true, element: <HomePage /> },
-            { path: "categories", element: <CategoriesPage /> },
-            { path: "workshops", element: <WorkshopsPage /> },
-            { path: "support", element: <SupportPage /> },
 
-            { path: "productsList", element: <ProductsPage /> }, // 상품 목록 페이지
+
+
+            { path: "productsList", element: <ProductListPage /> }, // 상품 목록 페이지
 
             // 상품 상세 페이지
             { path: 'product-detail', element: <ProductDetailPage /> },
 
-            // 판매자 상세 페이지 (구매자가 보는 판매자 정보)
-            { path: 'seller/:sellerId', element: <SellerInfoPage /> },
+            //주문 결제 페이지
+            { path: 'checkout', element: <OrderCheckoutPage /> },
+
+            // 마이페이지
+            { path: 'account', element: <MyPage /> },
+
+
+            // 판매자 스토어 페이지 (구매자가 보는 판매자 정보)
+            { path: 'seller/:sellerId', element: <SellerStorePage /> },
 
             // 로그인 & 역할선택
             { path: 'login', element: <LoginPage /> },
             { path: 'role-selection', element: <RoleSelectionPage /> },
 
             // 결제 및 계정 관련 페이지
-            { path: "payment", element: <PetTreatsCheckout /> },
-            { path: "account", element: <MyPage /> },
+            { path: "payment", element: <OrderCheckoutPage /> },
+            { path: "mypage", element: <MyPage /> },
 
             // 404 페이지
             { path: "*", element: <NotFoundPage /> },
@@ -68,7 +72,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "orders",
-                element: <ProductManagementPage />  //todo 주문배송 페이지 탭
+                element: <OrdersManagementPage />  //todo 주문배송 페이지 탭
             },
             {
                 path: "settlement",
@@ -80,7 +84,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "info",
-                element: <SellerInfoEnterPage /> //todo 판매자 정보 페이지 탭
+                element: <SellerInfoPage /> //todo 판매자 정보 페이지 탭
             },
         ],
     },
