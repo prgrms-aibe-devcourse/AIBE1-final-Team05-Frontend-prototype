@@ -17,6 +17,7 @@ import ProductManagementPage from "@/pages/ProductManagementPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import SellerInfoEnterPage from "@/pages/SellerInfoEnterPage";
 import { SettlementTab } from "@/domains/seller";
+import SellerDashboardDashboardPage from "@/pages/SellerDashboardPage";
 
 
 
@@ -58,7 +59,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "dashboard",
-                element: <SellerDashboardWrapper /> //todo 대시보드페이지 탭
+                element: <SellerDashboardDashboardPage /> //todo 대시보드페이지 탭
             },
             {
                 path: "products",
