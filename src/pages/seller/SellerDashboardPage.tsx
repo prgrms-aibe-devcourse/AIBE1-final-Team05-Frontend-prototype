@@ -19,6 +19,8 @@ import {
     SellerInfo,
     Notification,
 } from '@/domains/seller/types';
+import CustomerManagementPage from '@/pages/seller/CustomerManagementPage';
+
 
 // 임시 컴포넌트들 (추후 구현 예정)
 const ProductManagementTabContent = () => {
@@ -138,44 +140,44 @@ const OrderShippingTabContent = () => {
     );
 };
 
-const CustomerManagementTabContent = () => {
-    const theme = useTheme();
-    return (
-        <Box sx={{ p: 4 }}>
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-                <span
-                    className="material-icons"
-                    style={{
-                        fontSize: '64px',
-                        color: theme.palette.grey[200],
-                        marginBottom: '16px',
-                        display: 'block'
-                    }}
-                >
-                    people
-                </span>
-                <Typography
-                    variant="h4"
-                    sx={{
-                        color: theme.palette.text.secondary,
-                        mb: 2,
-                        fontWeight: 700
-                    }}
-                >
-                    고객관리 탭
-                </Typography>
-                <Typography
-                    variant="body1"
-                    sx={{
-                        color: theme.palette.text.secondary
-                    }}
-                >
-                    고객문의, 상품평 관리 기능이 곧 구현 예정입니다!
-                </Typography>
-            </Box>
-        </Box>
-    );
-};
+// const CustomerManagementTabContent = () => {
+//     const theme = useTheme();
+//     return (
+//         <Box sx={{ p: 4 }}>
+//             <Box sx={{ textAlign: 'center', py: 8 }}>
+//                 <span
+//                     className="material-icons"
+//                     style={{
+//                         fontSize: '64px',
+//                         color: theme.palette.grey[200],
+//                         marginBottom: '16px',
+//                         display: 'block'
+//                     }}
+//                 >
+//                     people
+//                 </span>
+//                 <Typography
+//                     variant="h4"
+//                     sx={{
+//                         color: theme.palette.text.secondary,
+//                         mb: 2,
+//                         fontWeight: 700
+//                     }}
+//                 >
+//                     고객관리 탭
+//                 </Typography>
+//                 <Typography
+//                     variant="body1"
+//                     sx={{
+//                         color: theme.palette.text.secondary
+//                     }}
+//                 >
+//                     고객문의, 상품평 관리 기능이 곧 구현 예정입니다!
+//                 </Typography>
+//             </Box>
+//         </Box>
+//     );
+//};
 
 const SellerInfoTabContent = () => {
     const theme = useTheme();
@@ -338,7 +340,8 @@ const SellerDashboardPage = () => {
             case 4:
                 return <SettlementTab />;
             case 5:
-                return <CustomerManagementTabContent />;
+                // return <CustomerManagementTabContent />;
+                return <CustomerManagementPage />;
             case 6:
                 return <SellerInfoTabContent />;
             default:
