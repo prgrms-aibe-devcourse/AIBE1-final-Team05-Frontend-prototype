@@ -1,72 +1,91 @@
+// src/routes/Router.tsx
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
+import SellerLayout from "@/components/layout/SellerLayout";
 import HomePage from "@/pages/mainpage/HomePage";
 import CategoriesPage from "@/pages/mainpage/CategoriesPage";
 import WorkshopsPage from "@/pages/mainpage/WorkshopsPage";
 import SupportPage from "@/pages/mainpage/SupportPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
-import NotFoundPage from "@/pages/mainpage/NotFoundPage.tsx";
+import NotFoundPage from "@/pages/mainpage/NotFoundPage";
 import SellerInfoPage from "@/pages/SellerInfoPage";
-import SellerDashboardPage from "@/pages/seller/SellerDashboardPage";
 import PetTreatsCheckout from "@/pages/pet-treats-checkout";
 import MyPage from "@/pages/account";
 import ProductsPage from "@/pages/ProductsPage";
 import ProductManagementPage from "@/pages/ProductManagementPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import SellerInfoEnterPage from "@/pages/SellerInfoEnterPage";
-import SellerDashboardDashboardPage from "@/pages/SellerDashboardPage";
+import { SettlementTab } from "@/domains/seller";
+
+
 
 // React Router 7 사용
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />, // Header + Outlet + Footer
-    children: [
-      // 메인페이지
-      { index: true, element: <HomePage /> },
-      { path: "categories", element: <CategoriesPage /> },
-      { path: "workshops", element: <WorkshopsPage /> },
-      { path: "support", element: <SupportPage /> },
+    {
+        path: "/",
+        element: <Layout />, // 구매자용 레이아웃 (Header + Outlet + Footer)
+        children: [
+            // 메인페이지
+            { index: true, element: <HomePage /> },
+            { path: "categories", element: <CategoriesPage /> },
+            { path: "workshops", element: <WorkshopsPage /> },
+            { path: "support", element: <SupportPage /> },
 
-      { path: "productsList", element: <ProductsPage /> }, // 상품 목록 페이지
+            { path: "productsList", element: <ProductsPage /> }, // 상품 목록 페이지
 
             // 상품 상세 페이지
-            {path: 'product-detail', element: <ProductDetailPage />},
+            { path: 'product-detail', element: <ProductDetailPage /> },
 
-            // 판매자 상세 페이지 추가
+            // 판매자 상세 페이지 (구매자가 보는 판매자 정보)
             { path: 'seller/:sellerId', element: <SellerInfoPage /> },
-            // 판매자 정보 기입 페이지
-            {path: 'seller-infoenter', element: <SellerInfoEnterPage />},
-            // 판매자 대시보드-대시보드 페이지
-            {path: 'seller-dashboard-dashboard', element: < SellerDashboardDashboardPage/>},
 
             // 로그인 & 역할선택
             { path: 'login', element: <LoginPage /> },
             { path: 'role-selection', element: <RoleSelectionPage /> },
 
-      // 결제 및 계정 관련 페이지
-      { path: "payment", element: <PetTreatsCheckout /> },
-      { path: "account", element: <MyPage /> },
+            // 결제 및 계정 관련 페이지
+            { path: "payment", element: <PetTreatsCheckout /> },
+            { path: "account", element: <MyPage /> },
 
-      // 404 페이지
-      { path: "*", element: <NotFoundPage /> },
-    ],
-  },
-  // 판매자 대시보드 (별도 레이아웃)
-  {
-    path: "/seller-dashboard",
-    element: <SellerDashboardPage />,
-  },
-  // 관리자 페이지 (별도 레이아웃)
-  {
-    path: "/seller-pdManagement",
-    element: <ProductManagementPage />,
-  },
+            // 404 페이지
+            { path: "*", element: <NotFoundPage /> },
+        ],
+    },
+    {
+        path: "/seller",
+        element: <SellerLayout />, // 판매자용 레이아웃 (SellerHeader + Sidebar + Outlet)
+        children: [
+            {
+                path: "dashboard",
+                element: <SellerDashboardWrapper /> //todo 대시보드페이지 탭
+            },
+            {
+                path: "products",
+                element: <ProductManagementPage /> // todo 상품관리 탭
+            },
+            {
+                path: "orders",
+                element: <ProductManagementPage />  //todo 주문배송 페이지 탭
+            },
+            {
+                path: "settlement",
+                element: <SettlementTab /> // 정산탭
+            },
+            {
+                path: "customers",
+                element: <SettlementTab />  //todo 고객관리 페이지 탭
+            },
+            {
+                path: "info",
+                element: <SellerInfoEnterPage /> //todo 판매자 정보 페이지 탭
+            },
+        ],
+    },
 ]);
 
 const AppRouter = () => {
-  return <RouterProvider router={router} />;
+    return <RouterProvider router={router} />;
 };
 
 export default AppRouter;
