@@ -16,7 +16,7 @@ export const ROUTES = {
     CATEGORIES: '/categories',
     WORKSHOPS: '/workshops',
     SUPPORT: '/support',
-    SELLER_DASHBOARD: '/seller-dashboard',
+    SELLER_DASHBOARD: '/seller',
 } as const;
 
 export const STORAGE_KEYS = {

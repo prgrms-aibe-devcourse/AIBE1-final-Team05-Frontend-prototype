@@ -10,10 +10,15 @@ import {
     Grid,
     useTheme
 } from '@mui/material';
-import SettlementTable from './SettlementTable';
-import SalesChart from './SalesChart';
-import SalesRanking from './SalesRanking';
-import { SettlementFilters, SettlementItem, SalesData, SalesRecommendation } from '../types';
+import SettlementTable from '@/domains/settlement/components/SettlementTable';
+import SalesChart from '@/domains/settlement/components/SalesChart';
+import SalesRanking from '@/domains/settlement/components/SalesRanking';
+import {
+    SettlementFilters,
+    SettlementItem,
+    SalesData,
+    SalesRecommendation
+} from '@/domains/settlement/types/settlement.types.ts';
 
 // 🚀 더 많은 더미 데이터 생성 (페이징 테스트용)
 const generateSettlementData = (): SettlementItem[] => {
@@ -102,7 +107,7 @@ const salesRecommendations: SalesRecommendation[] = [
     }
 ];
 
-const SettlementTab = () => {
+const SettlementPage = () => {
     const theme = useTheme();
     const [filters, setFilters] = useState<SettlementFilters>({
         paymentFilter: '전체',
@@ -385,4 +390,4 @@ const SettlementTab = () => {
     );
 };
 
-export default SettlementTab;
+export default SettlementPage;
