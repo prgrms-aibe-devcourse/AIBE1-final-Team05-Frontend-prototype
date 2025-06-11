@@ -16,7 +16,7 @@ import ProductsPage from "@/pages/ProductsPage";
 import ProductManagementPage from "@/pages/ProductManagementPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import SellerInfoEnterPage from "@/pages/SellerInfoEnterPage";
-import { SettlementTab } from "@/domains/settlement";
+import { SettlementPage } from "@/domains/settlement";
 import SellerDashboardDashboardPage from "@/pages/SellerDashboardPage";
 import CustomerManagementPage from "@/pages/seller/CustomerManagementPage.tsx";
 
@@ -72,7 +72,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "settlement",
-                element: <SettlementTab /> // 정산탭
+                element: <SettlementPage /> // 정산탭
             },
             {
                 path: "customers",
