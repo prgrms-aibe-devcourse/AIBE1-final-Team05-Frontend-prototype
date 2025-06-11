@@ -26,7 +26,7 @@ import {
     TableFooter
 } from '@mui/material';
 import { useState, useMemo } from 'react';
-import { SettlementTableProps, SettlementFilters } from '../types';
+import { SettlementTableProps, SettlementFilters } from '../../seller/types';
 
 // 날짜 유틸리티 함수들
 const formatDate = (date: Date): string => {

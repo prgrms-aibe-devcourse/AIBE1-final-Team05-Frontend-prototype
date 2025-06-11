@@ -7,7 +7,7 @@ import {
     Avatar,
     useTheme
 } from '@mui/material';
-import { SalesRankingProps } from '../types';
+import { SalesRankingProps } from '../../seller/types';
 
 const SalesRanking = ({
                           data,

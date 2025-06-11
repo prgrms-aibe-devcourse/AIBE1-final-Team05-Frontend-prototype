@@ -5,7 +5,7 @@ import {
     CardContent,
     useTheme
 } from '@mui/material';
-import { SalesChartProps } from '../types';
+import { SalesChartProps } from '../../seller/types';
 
 const SalesChart = ({ data, title = "기간별 매출액" }: SalesChartProps) => {
     const theme = useTheme();

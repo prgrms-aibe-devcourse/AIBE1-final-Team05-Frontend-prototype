@@ -13,11 +13,8 @@ import {
     IconButton,
     Typography
 } from '@mui/material';
-import { SellerHeader } from '@/domains/seller';
-import {
-    SellerInfo,
-    Notification,
-} from '@/domains/seller/types';
+import SellerHeader from './SellerHeader.tsx';
+import { SellerInfo, Notification } from '@/components/layout/sellerLayout/types/seller.types.ts';
 
 // 더미 데이터 (추후 전역 상태 관리로 이동)
 const mockSellerInfo: SellerInfo = {
@@ -90,7 +87,7 @@ const SellerLayout = () => {
             id: 'dashboard',
             label: '대시보드',
             icon: 'analytics',
-            path: '/seller/dashboard'
+            path: '/seller'
         },
         {
             id: 'products',

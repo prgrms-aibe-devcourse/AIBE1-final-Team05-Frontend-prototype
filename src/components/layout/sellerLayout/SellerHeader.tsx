@@ -13,7 +13,7 @@ import {
     Divider,
     useTheme
 } from '@mui/material';
-import { SellerHeaderProps, Notification } from '../types';
+import { SellerHeaderProps, Notification } from '@/components/layout/sellerLayout/types/seller.types.ts';
 
 const SellerHeader = ({
                           sellerInfo,
