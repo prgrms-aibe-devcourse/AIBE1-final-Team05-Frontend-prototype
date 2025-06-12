@@ -5,22 +5,22 @@ import { Box, Container, Grid, Card, CardContent } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 
 // 분리된 컴포넌트들 import
-import Sidebar from "../../components/account/Sidebar"
-import OrdersView from "../../components/account/OrdersView"
-import ReviewsView from "../../components/account/ReviewsView"
-import ReturnInquiryView from "../../components/account/ReturnInquiryView"
-import AddressesView from "../../components/account/AddressesView"
-import PetsView from "../../components/account/PetsView"
-import ShippingDetailView from "../../components/account/ShippingDetailView"
-import ReturnRequestView from "../../components/account/ReturnRequestView"
-import ReviewWriteView from "../../components/account/ReviewWriteView"
-import CancelDetailView from "../../components/account/CancelDetailView"
-import OrderDetail from "../../components/account/OrderDetail"
-import AddressDialog from "../../components/account/AddressDialog"
-import PetDialog from "../../components/account/PetDialog"
+import Sidebar from "@/components/Account/Sidebar"
+import OrdersView from "@/components/Account/OrdersView"
+import ReviewsView from "@/components/Account/ReviewsView"
+import ReturnInquiryView from "@/components/Account/ReturnInquiryView"
+import AddressesView from "@/components/Account/AddressesView"
+import PetsView from "@/components/Account/PetsView"
+import ShippingDetailView from "@/components/Account/ShippingDetailView"
+import ReturnRequestView from "@/components/Account/ReturnRequestView"
+import ReviewWriteView from "@/components/Account/ReviewWriteView"
+import CancelDetailView from "@/components/Account/CancelDetailView"
+import OrderDetail from "@/components/Account/OrderDetail"
+import AddressDialog from "@/components/Account/AddressDialog"
+import PetDialog from "@/components/Account/PetDialog"
 
 // 타입 import
-import type { Address, Pet, Order } from "@/components/account"
+import type { Address, Pet, Order } from "components/Account"
 
 const theme = createTheme({
     palette: {
