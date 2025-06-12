@@ -12,29 +12,9 @@ import {
     Avatar,
     Chip,
 } from "@mui/material"
-import { Close, Pets } from "@mui/icons-material"
+import { Close, Map } from "@mui/icons-material"
+import type { SavedAddress , AddressModalProps} from "./index"
 
-interface PetInfo {
-    name: string
-    breed: string
-    age: string
-    gender: string
-    hasAllergies: boolean
-    healthCondition: string
-    specialRequests: string
-}
-
-interface SavedPet extends PetInfo {
-    id: string
-    avatar?: string
-}
-
-interface PetModalProps {
-    open: boolean
-    onClose: () => void
-    onSelectPet: (pet: SavedPet) => void
-    savedPets: SavedPet[]
-}
 
 const modalStyle = {
     position: "absolute" as const,
@@ -50,18 +30,14 @@ const modalStyle = {
     overflow: "hidden",
 }
 
-export default function PetModal({ open, onClose, onSelectPet, savedPets }: PetModalProps) {
-    const handleSelectPet = (pet: SavedPet) => {
-        onSelectPet(pet)
+export default function AddressModal({ open, onClose, onSelectAddress, savedAddresses }: AddressModalProps) {
+    const handleSelectAddress = (address: SavedAddress) => {
+        onSelectAddress(address)
         onClose()
     }
 
-    const formatBreed = (breed: string) => {
-        return breed.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())
-    }
-
     return (
-        <Modal open={open} onClose={onClose} aria-labelledby="pet-modal-title">
+        <Modal open={open} onClose={onClose} aria-labelledby="address-modal-title">
             <Box sx={modalStyle}>
                 <Box
                     sx={{
@@ -73,7 +49,7 @@ export default function PetModal({ open, onClose, onSelectPet, savedPets }: PetM
                     }}
                 >
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        Select Saved Pet
+                        Select Saved Address
                     </Typography>
                     <IconButton onClick={onClose} size="small">
                         <Close />
@@ -81,10 +57,10 @@ export default function PetModal({ open, onClose, onSelectPet, savedPets }: PetM
                 </Box>
                 <Box sx={{ maxHeight: "60vh", overflow: "auto" }}>
                     <List sx={{ p: 0 }}>
-                        {savedPets.map((pet) => (
-                            <ListItem key={pet.id} disablePadding>
+                        {savedAddresses.map((address) => (
+                            <ListItem key={address.id} disablePadding>
                                 <ListItemButton
-                                    onClick={() => handleSelectPet(pet)}
+                                    onClick={() => handleSelectAddress(address)}
                                     sx={{
                                         py: 2,
                                         px: 3,
@@ -94,30 +70,36 @@ export default function PetModal({ open, onClose, onSelectPet, savedPets }: PetM
                                     }}
                                 >
                                     <ListItemAvatar>
-                                        <Avatar src={pet.avatar} sx={{ bgcolor: "primary.main" }}>
-                                            <Pets />
+                                        <Avatar sx={{ bgcolor: "primary.main" }}>
+                                            <Map />
                                         </Avatar>
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={
-                                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                                {pet.name}
-                                            </Typography>
+                                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                                    {address.fullName}
+                                                </Typography>
+                                                <Chip
+                                                    label={address.label}
+                                                    size="small"
+                                                    color="primary"
+                                                    variant="outlined"
+                                                    sx={{ fontSize: "0.75rem" }}
+                                                />
+                                            </Box>
                                         }
                                         secondary={
                                             <Box>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    {formatBreed(pet.breed)} • {pet.age} years • {pet.gender}
+                                                    {address.address}
                                                 </Typography>
-                                                {pet.hasAllergies && (
-                                                    <Chip
-                                                        label="Has Allergies"
-                                                        size="small"
-                                                        color="warning"
-                                                        variant="outlined"
-                                                        sx={{ mt: 0.5, fontSize: "0.75rem" }}
-                                                    />
-                                                )}
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {address.city}, {address.postalCode}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {address.phoneNumber}
+                                                </Typography>
                                             </Box>
                                         }
                                     />

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Box, Container, Grid, Card, CardContent } from "@mui/material"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { ThemeProvider } from "@mui/material/styles"
 
 // 분리된 컴포넌트들 import
 import Sidebar from "@/components/Account/Sidebar"
@@ -11,6 +11,7 @@ import ReviewsView from "@/components/Account/ReviewsView"
 import ReturnInquiryView from "@/components/Account/ReturnInquiryView"
 import AddressesView from "@/components/Account/AddressesView"
 import PetsView from "@/components/Account/PetsView"
+import CouponsView from "@/components/Account/CouponsView"
 import ShippingDetailView from "@/components/Account/ShippingDetailView"
 import ReturnRequestView from "@/components/Account/ReturnRequestView"
 import ReviewWriteView from "@/components/Account/ReviewWriteView"
@@ -21,69 +22,8 @@ import PetDialog from "@/components/Account/PetDialog"
 
 // 타입 import
 import type { Address, Pet, Order } from "components/Account"
-
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: "#f97316",
-            light: "#fed7aa",
-            dark: "#ea580c",
-        },
-        secondary: {
-            main: "#78716c",
-        },
-        background: {
-            default: "#fef3e2",
-            paper: "#ffffff",
-        },
-        text: {
-            primary: "#1c1917",
-            secondary: "#57534e",
-        },
-    },
-    typography: {
-        fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
-    },
-})
-
-const mockOrders: Order[] = [
-    {
-        id: "1",
-        orderNumber: "20250528001",
-        date: "2025. 5. 28 주문",
-        status: "배송완료",
-        statusColor: "success",
-        deliveryDate: "5/29(목) 도착",
-        products: [
-            {
-                id: "1",
-                name: "티아시아가진 치킨 마누카 커리 170g + 게살 푸팟퐁 커리 170g + 비프 마살라 커리 170g + 스파이시 비프 마살라 커리 170g 세트, 1세트",
-                price: 0,
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-        ],
-        total: 0,
-    },
-    {
-        id: "2",
-        orderNumber: "20250307001",
-        date: "2025. 3. 7 주문",
-        status: "배송완료",
-        statusColor: "success",
-        deliveryDate: "3/8(토) 도착",
-        products: [
-            {
-                id: "2",
-                name: "오리통다리 껌",
-                price: 28800,
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-        ],
-        total: 28800,
-    },
-]
+import {mockOrders} from "@/data/mock-data"
+import {theme} from "@/theme";
 
 export default function MyPage() {
     const [activeMenu, setActiveMenu] = useState("orders")
@@ -113,6 +53,7 @@ export default function MyPage() {
         breed: "",
         age: "",
         gender: "",
+        category: "",
         hasAllergies: false,
         healthCondition: "",
         specialRequests: "",
@@ -170,6 +111,7 @@ export default function MyPage() {
             breed: "",
             age: "",
             gender: "",
+            category: "",
             hasAllergies: false,
             healthCondition: "",
             specialRequests: "",
@@ -196,6 +138,7 @@ export default function MyPage() {
             breed: pet.breed,
             age: pet.age,
             gender: pet.gender,
+            category: pet.category,
             hasAllergies: pet.hasAllergies,
             healthCondition: pet.healthCondition,
             specialRequests: pet.specialRequests,
@@ -271,6 +214,8 @@ export default function MyPage() {
                         setPetDialogOpen={setPetDialogOpen}
                     />
                 )
+            case "coupons":
+                return <CouponsView />
             default:
                 return null
         }

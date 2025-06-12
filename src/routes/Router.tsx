@@ -7,7 +7,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
 import NotFoundPage from "@/pages/common/NotFoundPage.tsx";
 import SellerStorePage from "@/pages/SellerDashboardPage/SellerStorePage.tsx";
-import OrderCheckoutPage from "@/pages/OrderCheckoutPage.tsx";
+import OrderPayPage from "@/pages/OrderPaymentPage/OrderPaymentPage.tsx";
 import MyPage from "@/pages/Account/Account.tsx";
 import ProductListPage from "@/pages/ProductListPage.tsx";
 import ProductManagementPage from "@/pages/SellerDashboardPage/ProductManagementPage.tsx";
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
             { path: 'product-detail', element: <ProductDetailPage /> },
 
             //주문 결제 페이지
-            { path: 'checkout', element: <OrderCheckoutPage /> },
+            { path: 'checkout', element: <OrderPayPage /> },
 
             // 마이페이지
             { path: 'account', element: <MyPage /> },
@@ -56,7 +56,7 @@ const router = createBrowserRouter([
             { path: 'role-selection', element: <RoleSelectionPage /> },
 
             // 결제 및 계정 관련 페이지
-            { path: "payment", element: <OrderCheckoutPage /> },
+            { path: "orderpayment", element: <OrderPayPage /> },
             { path: "mypage", element: <MyPage /> },
 
             // 404 페이지
