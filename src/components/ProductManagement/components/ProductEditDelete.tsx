@@ -35,10 +35,7 @@ import {
   Visibility as ViewIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
-import {
-  ProductFormData,
-  PRODUCT_CATEGORIES,
-} from "./ProductManagement.ts";
+import { ProductFormData, PRODUCT_CATEGORIES } from "../types/product.types.ts";
 import ProductRegistrationForm from "./ProductRegistrationForm";
 
 // 목업 데이터
