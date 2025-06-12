@@ -11,13 +11,6 @@ import {
   Avatar,
   TextField,
   Alert,
-  List,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  AppBar,
-  Toolbar,
-  IconButton,
   Divider,
   Stack,
   Card,
@@ -26,44 +19,15 @@ import {
   CircularProgress,
 } from "@mui/material";
 import {
-  Info as InfoIcon,
-  Storefront as StorefrontIcon,
-  Schedule as ScheduleIcon,
-  Security as SecurityIcon,
-  Image as ImageIcon,
-  Campaign as CampaignIcon,
-  Settings as SettingsIcon,
-  Favorite as FavoriteIcon,
-  ShoppingBag as ShoppingBagIcon,
   Edit as EditIcon,
-  Pets as PetsIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import {
-  ProfilePreviewCard,
-  CompletionCard,
   BRAND_COLOR,
 } from "./SellerInfoEnterComponents";
 
 // 브랜드 컬러 상수
 const BRAND_COLOR_HOVER = "#c86a0e";
-
-// 스타일드 컴포넌트들
-const StyledAppBar = styled(AppBar)({
-  backgroundColor: "white",
-  color: "#1a1a1a",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  borderBottom: "1px solid #e5e7eb",
-});
-
-const LogoIcon = styled(Box)({
-  width: 24,
-  height: 24,
-  color: BRAND_COLOR,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
 
 const PrimaryButton = styled(Button)({
   backgroundColor: BRAND_COLOR,
@@ -86,38 +50,6 @@ const SecondaryButton = styled(Button)({
     backgroundColor: "#edeae6",
   },
 });
-
-const SidebarListItem = styled(ListItemButton)<{ active?: boolean }>(
-  ({ active }) => ({
-    borderRadius: 8,
-    margin: "4px 0",
-    padding: "12px 16px",
-    backgroundColor: active ? BRAND_COLOR : "transparent",
-    color: active ? "white" : "#374151",
-    "&:hover": {
-      backgroundColor: active ? BRAND_COLOR_HOVER : "#f3f4f6",
-    },
-    "& .MuiListItemIcon-root": {
-      color: active ? "white" : "#6b7280",
-      minWidth: "40px",
-    },
-    "& .MuiListItemText-primary": {
-      fontSize: "0.875rem",
-      fontWeight: 500,
-    },
-  })
-);
-
-// 네비게이션 메뉴 데이터
-const navigationItems = [
-  { id: "basic-info", label: "기본 정보", icon: InfoIcon, active: true },
-  { id: "workshop-intro", label: "워크샵 소개", icon: StorefrontIcon },
-  { id: "operation-info", label: "운영 정보", icon: ScheduleIcon },
-  { id: "certification", label: "인증 정보", icon: SecurityIcon },
-  { id: "workshop-images", label: "워크샵 이미지", icon: ImageIcon },
-  { id: "notice-management", label: "공지 관리", icon: CampaignIcon },
-  { id: "account-settings", label: "계정 설정", icon: SettingsIcon },
-];
 
 // 메인 컴포넌트
 const SellerInfoEnter: React.FC = () => {
@@ -174,153 +106,12 @@ const SellerInfoEnter: React.FC = () => {
         bgcolor: "#fafaf9",
       }}
     >
-      {/* 헤더 - 반응형 수정 */}
-      <StyledAppBar position="static">
-        <Toolbar
-          sx={{ px: { xs: 1, sm: 4 }, py: 1, minHeight: "64px !important" }}
-        >
-          {/* 로고 영역 - 축소 가능하도록 설정 */}
-          <Box
-            display="flex"
-            alignItems="center"
-            gap={{ xs: 1, sm: 2 }}
-            sx={{ minWidth: 0, flexShrink: 1 }}
-          >
-            <LogoIcon>
-              <PetsIcon />
-            </LogoIcon>
-            <Typography
-              variant="h6"
-              component="h1"
-              fontWeight="bold"
-              color="#1f2937"
-              sx={{
-                fontSize: { xs: "1rem", sm: "1.25rem" },
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              CatDogEats
-              <Typography
-                component="span"
-                fontWeight="medium"
-                color="#6b7280"
-                ml={1}
-                sx={{ display: { xs: "none", sm: "inline" } }}
-              >
-                판매자 센터
-              </Typography>
-            </Typography>
-          </Box>
-
-          <Box flexGrow={1} />
-
-          {/* 네비게이션 - 중간 크기 화면에서도 표시 */}
-          <Box
-            display={{ xs: "none", md: "flex" }}
-            alignItems="center"
-            gap={1}
-            mr={1}
-            sx={{ flexShrink: 1 }}
-          >
-            {["홈", "상품 전체", "강아지", "고양이"].map((item) => (
-              <Button
-                key={item}
-                sx={{
-                  color: "#374151",
-                  textTransform: "none",
-                  fontSize: { md: "0.75rem", lg: "0.875rem" },
-                  fontWeight: 500,
-                  minWidth: "auto",
-                  px: { md: 1, lg: 1.5 },
-                  py: 0.5,
-                  "&:hover": {
-                    color: BRAND_COLOR,
-                  },
-                }}
-              >
-                {item}
-              </Button>
-            ))}
-          </Box>
-
-          {/* 우측 아이콘들 - 작은 화면에서 일부 숨김 */}
-          <Box
-            display="flex"
-            alignItems="center"
-            gap={{ xs: 0.5, sm: 1 }}
-            sx={{ flexShrink: 0 }}
-          >
-            <IconButton
-              size="small"
-              sx={{
-                bgcolor: "#f3f4f6",
-                width: { xs: 32, sm: 40 },
-                height: { xs: 32, sm: 40 },
-                "&:hover": { bgcolor: "#e5e7eb" },
-                display: { xs: "none", sm: "flex" },
-              }}
-            >
-              <FavoriteIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              sx={{
-                bgcolor: "#f3f4f6",
-                width: { xs: 32, sm: 40 },
-                height: { xs: 32, sm: 40 },
-                "&:hover": { bgcolor: "#e5e7eb" },
-                display: { xs: "none", sm: "flex" },
-              }}
-            >
-              <ShoppingBagIcon fontSize="small" />
-            </IconButton>
-            <Avatar
-              sx={{
-                width: { xs: 32, sm: 40 },
-                height: { xs: 32, sm: 40 },
-                border: "1px solid #e5e7eb",
-              }}
-              src="/api/placeholder/40/40"
-            />
-          </Box>
-        </Toolbar>
-      </StyledAppBar>
-
       {/* 메인 콘텐츠 - 패딩 최적화 */}
       <Container
         maxWidth="xl"
         sx={{ flex: 1, py: 3, px: { xs: 1, sm: 2, md: 3 } }}
       >
         <Grid container spacing={{ xs: 2, sm: 3 }}>
-          {/* 사이드바 - 비율 조정 */}
-          <Grid item xs={12} md={3} lg={2.5}>
-            <Paper
-              sx={{
-                minHeight: 700,
-                p: 2,
-                borderRadius: 2,
-                border: "1px solid #e5e7eb",
-              }}
-            >
-              <List sx={{ p: 0 }}>
-                {navigationItems.map((item) => (
-                  <SidebarListItem
-                    key={item.id}
-                    active={activeSection === item.id}
-                    onClick={() => handleSectionChange(item.id)}
-                  >
-                    <ListItemIcon>
-                      <item.icon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary={item.label} />
-                  </SidebarListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
-
           {/* 메인 콘텐츠 영역 - 비율 조정 */}
           <Grid item xs={12} md={9} lg={9.5}>
             <Paper

@@ -3,7 +3,6 @@
 
 import React from "react";
 import { Box } from "@mui/material";
-import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import ProductDetail from "../../components/product/ProductDetail";
@@ -332,7 +331,6 @@ const breadcrumbItems: BreadcrumbItem[] = [
 const ProductDetailPage: React.FC = () => {
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#fcfaf8" }}>
-      <Header />
       <Breadcrumb items={breadcrumbItems} />
       <ProductDetail
         product={mockProduct}

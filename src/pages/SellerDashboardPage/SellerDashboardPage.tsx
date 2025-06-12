@@ -163,21 +163,6 @@ const SellerDashboardDashboardPage: React.FC = () => {
           width: "100%",
         }}
       >
-        {/* 사이드바 */}
-        {!isMobile && (
-          <Box
-            sx={{
-              width: 240,
-              backgroundColor: "white",
-              borderRight: "1px solid #F3EADD",
-              overflow: "hidden",
-              flexShrink: 0,
-            }}
-          >
-            <SidebarContent isMobile={isMobile} />
-          </Box>
-        )}
-
         {/* 메인 콘텐츠 */}
         <Box
           component="main"
