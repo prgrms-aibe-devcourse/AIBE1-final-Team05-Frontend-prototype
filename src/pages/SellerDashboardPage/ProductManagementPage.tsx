@@ -15,10 +15,12 @@ import {
   EditNote as EditIcon,
   Inventory as InventoryIcon,
 } from "@mui/icons-material";
-import ProductRegistrationForm from "@/components/ProductManagement/components/ProductRegistrationForm";
-import ProductEditDelete from "@/components/ProductManagement/components/ProductEditDelete";
-import InventoryManagement from "@/components/ProductManagement/components/InventoryManagement";
-import { ProductFormData } from "@/components/ProductManagement/types/product.types";
+import {
+  ProductRegistrationForm,
+  ProductEditDelete,
+  InventoryManagement,
+  ProductFormData,
+} from "@/components/ProductManagement";
 
 interface TabPanelProps {
   children?: React.ReactNode;
