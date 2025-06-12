@@ -47,7 +47,7 @@ const WrittenReviewsView: React.FC<WrittenReviewsViewProps> = () => {
                         {/* 리뷰 내용 */}
                         <Box style={{ flex: 1 }}>
                             {/* 상품명 */}
-                            <Typography variant="body1" style={{ fontWeight: 600, marginBottom: 12, color: "#1976d2" }}>
+                            <Typography variant="body1" style={{ fontWeight: 600, marginBottom: 12}}>
                                 {review.productName}
                             </Typography>
 

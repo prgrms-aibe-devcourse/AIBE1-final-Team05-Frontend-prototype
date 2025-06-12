@@ -119,7 +119,7 @@ const CouponCard: React.FC<CouponCardProps> = ({ coupon, onUse }) => {
                             },
                         }}
                     >
-                        적용 가능한 상품 보기
+                        적용 가능한 판매자 보기
                     </Button>
                 </Box>
             </CardContent>
