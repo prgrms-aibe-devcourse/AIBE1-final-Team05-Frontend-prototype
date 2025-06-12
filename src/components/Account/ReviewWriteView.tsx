@@ -43,7 +43,12 @@ const ReviewWriteView: React.FC<ReviewWriteViewProps> = ({ setDetailView }) => {
                             티아시아가진 치킨 마누카 커리 170g + 게살 푸팟퐁 커리 170g + 비프 마살라 커리 170g + 스파이시 비프 마살라
                             커리 170g 세트, 1세트
                         </Typography>
-                        <Rating size="large" defaultValue={0} />
+                        <Rating size="large" defaultValue={0}
+                                precision={0.5}
+                                max={5}           // 최대 별 개수 (기본값: 5)
+                                readOnly={false}  // 읽기 전용 여부
+                                disabled={false}  // 비활성화 여부
+                        />
                         <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                             (필수)*
                         </Typography>
