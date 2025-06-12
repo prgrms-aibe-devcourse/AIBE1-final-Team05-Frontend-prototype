@@ -8,7 +8,7 @@ import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
 import NotFoundPage from "@/pages/mainpage/NotFoundPage";
 import SellerStorePage from "@/pages/SellerDashboardPage/SellerStorePage.tsx";
 import OrderCheckoutPage from "@/pages/OrderCheckoutPage.tsx";
-import MyPage from "@/pages/MyPage.tsx";
+import MyPage from "@/pages/account/Account.tsx";
 import ProductListPage from "@/pages/ProductListPage.tsx";
 import ProductManagementPage from "@/pages/SellerDashboardPage/ProductManagementPage.tsx";
 import ProductDetailPage from "@/pages/ProductDetailPage";
