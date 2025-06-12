@@ -39,7 +39,7 @@ import {
     Add as AddIcon,
     Remove as RemoveIcon,
     ShoppingCart as ShoppingCartIcon,
-    Clear as ClearIcon,
+    // Clear as ClearIcon,
     Compare as CompareIcon,
     LocalOffer as CouponIcon,
     Close as CloseIcon,
@@ -196,12 +196,12 @@ const ShoppingCart: React.FC = () => {
         setSelectAll(false);
     };
 
-    // 장바구니 전체 삭제
-    const handleClearCart = () => {
-        setCartItems([]);
-        setSelectAll(false);
-        setSelectedCoupon('');
-    };
+    // // 장바구니 전체 삭제
+    // const handleClearCart = () => {
+    //     setCartItems([]);
+    //     setSelectAll(false);
+    //     setSelectedCoupon('');
+    // };
 
     // 가격 계산
     const calculateSubtotal = () => {
@@ -278,7 +278,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                         Shop
                     </Link>
                     <Typography color="#1b150e" sx={{ fontSize: '0.875rem' }}>
-                        Shopping Cart
+                        장바구니
                     </Typography>
                 </Breadcrumbs>
 
@@ -289,26 +289,27 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                         sx={{
                             fontWeight: 'bold',
                             color: '#1b150e',
-                            fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif'
+                            fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
+                            mb: 4
                         }}
                     >
-                        Shopping Cart
+                        장바구니
                     </Typography>
-                    <Button
-                        startIcon={<ClearIcon />}
-                        onClick={handleClearCart}
-                        sx={{
-                            color: '#e89830',
-                            '&:hover': {
-                                color: '#d18727',
-                                backgroundColor: 'transparent'
-                            },
-                            fontWeight: 600,
-                            textTransform: 'none',
-                        }}
-                    >
-                        Clear Cart
-                    </Button>
+                    {/*<Button*/}
+                    {/*    startIcon={<ClearIcon />}*/}
+                    {/*    onClick={handleClearCart}*/}
+                    {/*    sx={{*/}
+                    {/*        color: '#e89830',*/}
+                    {/*        '&:hover': {*/}
+                    {/*            color: '#d18727',*/}
+                    {/*            backgroundColor: 'transparent'*/}
+                    {/*        },*/}
+                    {/*        fontWeight: 600,*/}
+                    {/*        textTransform: 'none',*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    장바구니 비우기*/}
+                    {/*</Button>*/}
                 </Box>
 
                 <Grid container spacing={4}>
@@ -341,7 +342,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                                 fontSize: '0.75rem',
                                                 letterSpacing: '0.05em'
                                             }}>
-                                                Product
+                                                제품
                                             </TableCell>
                                             <TableCell sx={{
                                                 fontWeight: 600,
@@ -350,7 +351,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                                 fontSize: '0.75rem',
                                                 letterSpacing: '0.05em'
                                             }}>
-                                                Price
+                                                금액
                                             </TableCell>
                                             <TableCell sx={{
                                                 fontWeight: 600,
@@ -359,7 +360,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                                 fontSize: '0.75rem',
                                                 letterSpacing: '0.05em'
                                             }}>
-                                                Quantity
+                                                수량
                                             </TableCell>
                                             <TableCell sx={{
                                                 fontWeight: 600,
@@ -368,7 +369,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                                 fontSize: '0.75rem',
                                                 letterSpacing: '0.05em'
                                             }}>
-                                                Total
+                                                총 금액
                                             </TableCell>
                                             <TableCell />
                                         </TableRow>
@@ -528,7 +529,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                     },
                                 }}
                             >
-                                Remove Selected
+                                선택한 제품 삭제
                             </Button>
                             <Button
                                 variant="contained"
@@ -541,7 +542,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                     '&:hover': { bgcolor: '#d18727' },
                                 }}
                             >
-                                Compare Selected Items (AI)
+                                AI 제품 비교
                             </Button>
                         </Box>
 
@@ -785,7 +786,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                                 '&:hover': { bgcolor: '#d18727' },
                                             }}
                                         >
-                                            Proceed to Payment
+                                            결제하기
                                         </Button>
                                         <Button
                                             variant="outlined"
@@ -807,7 +808,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                                                 },
                                             }}
                                         >
-                                            Continue Shopping
+                                            쇼핑 계속하기
                                         </Button>
                                     </Box>
                                 </CardContent>
@@ -827,7 +828,7 @@ Salmon & Sweet Potato Treats는 오메가-3가 풍부하여 피모 건강에 도
                             fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif'
                         }}
                     >
-                        Customers Also Bought
+                        함께 구매하면 좋은 제품
                     </Typography>
                     <Grid container spacing={3}>
                         {recommendedProducts.map((product) => (
