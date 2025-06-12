@@ -1265,24 +1265,6 @@ export default function MyPage() {
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
-                {/* BuyerHeader */}
-                <Box sx={{ bgcolor: "white", boxShadow: 1, position: "sticky", top: 0, zIndex: 10 }}>
-                    <Container maxWidth="xl">
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 2 }}>
-                            <Typography variant="h5" sx={{ fontWeight: "bold", color: "primary.main" }}>
-                                CatDogEats
-                            </Typography>
-                            <Box sx={{ display: { xs: "none", md: "flex" }, gap: 3 }}>
-                                <Button color="inherit">홈</Button>
-                                <Button color="inherit">상품</Button>
-                                <Button color="primary" sx={{ fontWeight: 600 }}>
-                                    마이페이지
-                                </Button>
-                                <Button color="inherit">고객센터</Button>
-                            </Box>
-                        </Box>
-                    </Container>
-                </Box>
 
                 {/* Main Content */}
                 <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -1347,23 +1329,6 @@ export default function MyPage() {
                         </Grid>
                     </Grid>
                 </Container>
-
-                {/* BuyerFooter */}
-                <Box sx={{ bgcolor: "#1c1917", color: "#fef3e2", py: 6, mt: 8 }}>
-                    <Container maxWidth="xl">
-                        <Box sx={{ textAlign: "center" }}>
-                            <Typography variant="h6" sx={{ color: "primary.main", mb: 1 }}>
-                                CatDogEats
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "#a8a29e", mb: 0.5 }}>
-                                © 2024 CatDogEats. 모든 권리 보유.
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "#a8a29e" }}>
-                                건강하고 맛있는 수제 펫푸드 전문점
-                            </Typography>
-                        </Box>
-                    </Container>
-                </Box>
 
                 {/* Address Dialog */}
                 <Dialog open={addressDialogOpen} onClose={() => setAddressDialogOpen(false)} maxWidth="sm" fullWidth>
