@@ -23,7 +23,7 @@ import PetDialog from "@/components/Account/PetDialog"
 // 타입 import
 import type { Address, Pet, Order } from "components/Account"
 import {mockOrders} from "@/data/mock-data"
-import {theme} from "@/theme/theme.ts";
+import {theme} from "@/theme";
 
 export default function MyPage() {
     const [activeMenu, setActiveMenu] = useState("orders")

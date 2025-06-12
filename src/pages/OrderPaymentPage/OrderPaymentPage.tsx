@@ -18,7 +18,7 @@ import AddressModal from "@/components/OrderPayment/AddressModal"
 
 // Data imports
 import {savedPets, savedAddresses, type SavedPet, type SavedAddress, orderItems} from "@/data/mock-data"
-import {theme} from "@/theme/theme.ts";
+import {theme} from "@/theme";
 import type {PetInfo, ShippingInfo}from "@/components/OrderPayment"
 
 

@@ -1,4 +1,4 @@
-import type {Coupon, Order, ReturnOrder} from "@/components/Account";
+import type {Coupon, Order, ReturnOrder, WrittenReview} from "@/components/Account";
 import type {OrderItem} from "@/components/OrderPayment";
 
 interface PetInfo {
@@ -470,5 +470,66 @@ export const orderItems: OrderItem[] = [
         quantity: 1,
         price: 15.0,
         image: "/placeholder.svg?height=64&width=64",
+    },
+]
+
+export const mockWrittenReviews: WrittenReview[] = [
+    {
+        id: "1",
+        productName:
+            "티아시아가진 치킨 마누카 커리 170g + 게살 푸팟퐁 커리 170g + 비프 마살라 커리 170g + 스파이시 비프 마살라 커리 170g 세트, 1세트",
+        productImage: "/placeholder.svg?height=80&width=80",
+        rating: 4,
+        reviewDate: "2025.06.13",
+        reviewText: "3분 카레보다 약간 비싸데 큰 차이점은 없어서 조금 아쉽긴했지만 괜찮았습니다",
+        isEditable: true,
+    },
+    {
+        id: "2",
+        productName: "질레트 퓨전 프로쉴드 옐로우 면도기 + 여분날, 1세트",
+        productImage: "/placeholder.svg?height=80&width=80",
+        rating: 5,
+        reviewDate: "2025.05.28",
+        reviewText: "면도가 정말 깔끔하게 잘 됩니다. 여분날도 함께 있어서 오래 사용할 수 있을 것 같아요.",
+        summary: "면도 깔끔하고 좋아요",
+        isEditable: true,
+    },
+    {
+        id: "3",
+        productName: "미팩토리 3단 돼지코팩, 10개입, 1개",
+        productImage: "/placeholder.svg?height=80&width=80",
+        rating: 3,
+        reviewDate: "2025.05.15",
+        reviewText: "효과는 있는 것 같은데 생각보다 자극적이네요. 민감한 피부에는 조금 부담스러울 수 있어요.",
+        isEditable: true,
+    },
+    {
+        id: "4",
+        productName: "곰곰 매쉬드 포테이토(냉동), 1kg, 1개",
+        productImage: "/placeholder.svg?height=80&width=80",
+        rating: 4,
+        reviewDate: "2025.04.20",
+        reviewText: "간편하게 해먹기 좋아요. 맛도 괜찮고 양도 충분합니다.",
+        summary: "간편하고 맛있어요",
+        isEditable: true,
+    },
+    {
+        id: "5",
+        productName: "하림 자연실록 무항생제 인증 닭다리살 정육 (냉장), 350g, 2팩",
+        productImage: "/placeholder.svg?height=80&width=80",
+        rating: 5,
+        reviewDate: "2025.04.10",
+        reviewText: "신선하고 품질이 좋습니다. 요리해서 먹으니 정말 맛있어요.",
+        isEditable: true,
+    },
+    {
+        id: "6",
+        productName: "프리미엄 강아지 사료, 2kg, 1개",
+        productImage: "/placeholder.svg?height=80&width=80",
+        rating: 4,
+        reviewDate: "2025.03.25",
+        reviewText: "우리 강아지가 잘 먹어요. 소화도 잘 되는 것 같습니다.",
+        summary: "강아지가 좋아해요",
+        isEditable: true,
     },
 ]

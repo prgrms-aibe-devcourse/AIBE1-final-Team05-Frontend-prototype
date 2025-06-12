@@ -103,3 +103,19 @@ export interface OrdersViewProps {
     mockOrders: Order[]
     handleOrderAction: (action: string, order: Order) => void
 }
+
+export interface ReviewsViewProps {
+    mockOrders: Order[]
+    handleOrderAction: (action: string, order: Order) => void
+}
+
+export interface WrittenReview {
+    id: string
+    productName: string
+    productImage: string
+    rating: number
+    reviewDate: string
+    reviewText: string
+    summary?: string
+    isEditable: boolean
+}

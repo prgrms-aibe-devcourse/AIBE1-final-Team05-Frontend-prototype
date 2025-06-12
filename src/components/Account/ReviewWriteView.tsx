@@ -8,9 +8,6 @@ import {
     Paper,
     Avatar,
     TextField,
-    RadioGroup,
-    Radio,
-    FormControlLabel,
     Rating,
 } from "@mui/material"
 import { ChevronRight, PhotoCamera } from "@mui/icons-material"
@@ -51,20 +48,6 @@ const ReviewWriteView: React.FC<ReviewWriteViewProps> = ({ setDetailView }) => {
                             (필수)*
                         </Typography>
                     </Box>
-                </Box>
-
-                <Box sx={{ mb: 4 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                        리뷰
-                    </Typography>
-                    <Typography variant="body2" sx={{ mb: 2 }}>
-                        작성 드셨던 것은 어떠셨어요?
-                    </Typography>
-                    <RadioGroup>
-                        <FormControlLabel value="good" control={<Radio />} label="맛있어요" />
-                        <FormControlLabel value="normal" control={<Radio />} label="보통이에요" />
-                        <FormControlLabel value="bad" control={<Radio />} label="생각보다 별로예요" />
-                    </RadioGroup>
                 </Box>
 
                 <Box sx={{ mb: 4 }}>
