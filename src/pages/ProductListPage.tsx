@@ -18,12 +18,14 @@ import {
   FilterList as FilterListIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
-import { Breadcrumb } from "@/components/ProductList/Breadcrumb.tsx";
-import { ProductSorting } from "@/components/ProductList/ProductSorting";
-import ProductFilters from "@/components/ProductList/ProductFilters";
-import ProductGrid from "@/components/ProductList/ProductGrid";
-import MobileBottomNav from "@/components/ProductList/MobileBottomNav.tsx";
-import { ProductFilters as ProductFiltersType } from "@/components/ProductList/Product.ts";
+import {
+  Breadcrumb,
+  ProductSorting,
+  ProductFilters,
+  ProductGrid,
+  MobileBottomNav,
+} from "@/components/ProductList";
+import type { ProductFilters as ProductFiltersType } from "@/components/ProductList/types/product.types";
 import { mockProducts, getTotalProductCount } from "../data/mockProducts";
 
 const PRODUCTS_PER_PAGE = 8;
@@ -66,26 +68,26 @@ const ProductListPage: React.FC = () => {
     // 원재료 필터
     if (filters.ingredients.length > 0) {
       result = result.filter((product) =>
-          filters.ingredients.some((ingredient) =>
-              product.ingredients.includes(ingredient)
-          )
+        filters.ingredients.some((ingredient) =>
+          product.ingredients.includes(ingredient)
+        )
       );
     }
 
     // 건강 기능 필터
     if (filters.healthBenefits.length > 0) {
       result = result.filter((product) =>
-          filters.healthBenefits.some((benefit) =>
-              product.healthBenefits.includes(benefit)
-          )
+        filters.healthBenefits.some((benefit) =>
+          product.healthBenefits.includes(benefit)
+        )
       );
     }
 
     // 가격 범위 필터
     result = result.filter(
-        (product) =>
-            product.price >= filters.priceRange[0] &&
-            product.price <= filters.priceRange[1]
+      (product) =>
+        product.price >= filters.priceRange[0] &&
+        product.price <= filters.priceRange[1]
     );
 
     // 정렬
@@ -116,8 +118,8 @@ const ProductListPage: React.FC = () => {
   // 페이지네이션
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const currentProducts = filteredProducts.slice(
-      (currentPage - 1) * PRODUCTS_PER_PAGE,
-      currentPage * PRODUCTS_PER_PAGE
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
   );
 
   // 페이지 변경 시 첫 페이지로 리셋
@@ -157,128 +159,128 @@ const ProductListPage: React.FC = () => {
   };
 
   return (
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        {/* 브레드크럼 */}
-        <Breadcrumb items={breadcrumbItems} />
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* 브레드크럼 */}
+      <Breadcrumb items={breadcrumbItems} />
 
-        {/* MUI v7 Grid - size prop 사용 */}
-        <Grid container spacing={4}>
-          {/* 데스크톱 필터 사이드바 */}
-          <Grid
-              size={{ xs: 12, md: 3 }}
-              sx={{ display: { xs: "none", md: "block" } }}
-          >
-            <ProductFilters
-                filters={filters}
-                onFiltersChange={handleFiltersChange}
-            />
-          </Grid>
-
-          {/* 메인 컨텐츠 */}
-          <Grid size={{ xs: 12, md: 9 }}>
-            {/* 상품 정렬 및 제목 */}
-            <ProductSorting
-                sortBy={sortBy}
-                isHandmadeOnly={filters.isHandmadeOnly}
-                totalCount={getTotalProductCount()}
-                onSortChange={handleSortChange}
-                onHandmadeToggle={(isHandmadeOnly) =>
-                    setFilters({ ...filters, isHandmadeOnly })
-                }
-            />
-
-            {/* 모바일 필터 버튼 */}
-            <Button
-                variant="outlined"
-                startIcon={<FilterListIcon />}
-                onClick={handleMobileFilterOpen}
-                sx={{
-                  display: { xs: "flex", md: "none" },
-                  width: "100%",
-                  mb: 3,
-                  borderColor: theme.palette.grey[200],
-                  color: theme.palette.text.primary,
-                  fontSize: "0.875rem",
-                  fontWeight: 500,
-                  textTransform: "none",
-                  py: 1.5,
-                  "&:hover": {
-                    borderColor: theme.palette.primary.main,
-                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                  },
-                }}
-            >
-              필터 보기
-            </Button>
-
-            {/* 상품 그리드 */}
-            <ProductGrid
-                products={currentProducts}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                onFavoriteToggle={handleFavoriteToggle}
-            />
-          </Grid>
+      {/* MUI v7 Grid - size prop 사용 */}
+      <Grid container spacing={4}>
+        {/* 데스크톱 필터 사이드바 */}
+        <Grid
+          size={{ xs: 12, md: 3 }}
+          sx={{ display: { xs: "none", md: "block" } }}
+        >
+          <ProductFilters
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+          />
         </Grid>
 
-        {/* 모바일 필터 다이얼로그 */}
-        <Dialog
-            open={isFilterDialogOpen}
-            onClose={handleMobileFilterClose}
-            maxWidth="sm"
-            fullWidth
-            fullScreen={isMobile}
+        {/* 메인 컨텐츠 */}
+        <Grid size={{ xs: 12, md: 9 }}>
+          {/* 상품 정렬 및 제목 */}
+          <ProductSorting
+            sortBy={sortBy}
+            isHandmadeOnly={filters.isHandmadeOnly}
+            totalCount={getTotalProductCount()}
+            onSortChange={handleSortChange}
+            onHandmadeToggle={(isHandmadeOnly) =>
+              setFilters({ ...filters, isHandmadeOnly })
+            }
+          />
+
+          {/* 모바일 필터 버튼 */}
+          <Button
+            variant="outlined"
+            startIcon={<FilterListIcon />}
+            onClick={handleMobileFilterOpen}
             sx={{
-              "& .MuiDialog-paper": {
-                borderRadius: isMobile ? 0 : 2,
-                maxHeight: isMobile ? "100%" : "80vh",
+              display: { xs: "flex", md: "none" },
+              width: "100%",
+              mb: 3,
+              borderColor: theme.palette.grey[200],
+              color: theme.palette.text.primary,
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              textTransform: "none",
+              py: 1.5,
+              "&:hover": {
+                borderColor: theme.palette.primary.main,
+                backgroundColor: alpha(theme.palette.primary.main, 0.05),
               },
             }}
-        >
-          <DialogTitle
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderBottom: `1px solid ${theme.palette.grey[200]}`,
-                color: theme.palette.text.primary,
-              }}
           >
-            <span>필터</span>
-            <IconButton
-                onClick={handleMobileFilterClose}
-                sx={{
-                  color: theme.palette.text.secondary,
-                  "&:hover": {
-                    color: theme.palette.text.primary,
-                  },
-                }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ p: 0 }}>
-            <Box sx={{ p: 3 }}>
-              <ProductFilters
-                  filters={filters}
-                  onFiltersChange={(newFilters) => {
-                    handleFiltersChange(newFilters);
-                    if (!isMobile) {
-                      handleMobileFilterClose();
-                    }
-                  }}
-              />
-            </Box>
-          </DialogContent>
-        </Dialog>
+            필터 보기
+          </Button>
 
-        {/* 모바일 하단 네비게이션 */}
-        <MobileBottomNav
-            onSortClick={handleMobileSortClick}
-            onFilterClick={handleMobileFilterOpen}
-        />
-      </Container>
+          {/* 상품 그리드 */}
+          <ProductGrid
+            products={currentProducts}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            onFavoriteToggle={handleFavoriteToggle}
+          />
+        </Grid>
+      </Grid>
+
+      {/* 모바일 필터 다이얼로그 */}
+      <Dialog
+        open={isFilterDialogOpen}
+        onClose={handleMobileFilterClose}
+        maxWidth="sm"
+        fullWidth
+        fullScreen={isMobile}
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: isMobile ? 0 : 2,
+            maxHeight: isMobile ? "100%" : "80vh",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderBottom: `1px solid ${theme.palette.grey[200]}`,
+            color: theme.palette.text.primary,
+          }}
+        >
+          <span>필터</span>
+          <IconButton
+            onClick={handleMobileFilterClose}
+            sx={{
+              color: theme.palette.text.secondary,
+              "&:hover": {
+                color: theme.palette.text.primary,
+              },
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 0 }}>
+          <Box sx={{ p: 3 }}>
+            <ProductFilters
+              filters={filters}
+              onFiltersChange={(newFilters) => {
+                handleFiltersChange(newFilters);
+                if (!isMobile) {
+                  handleMobileFilterClose();
+                }
+              }}
+            />
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+      {/* 모바일 하단 네비게이션 */}
+      <MobileBottomNav
+        onSortClick={handleMobileSortClick}
+        onFilterClick={handleMobileFilterOpen}
+      />
+    </Container>
   );
 };
 
