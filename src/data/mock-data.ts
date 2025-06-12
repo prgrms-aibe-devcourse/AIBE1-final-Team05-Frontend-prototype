@@ -1,4 +1,5 @@
 import type {Coupon, Order, ReturnOrder} from "@/components/Account";
+import type {OrderItem} from "@/components/OrderPayment";
 
 interface PetInfo {
     name: string
@@ -452,5 +453,22 @@ export const extendedMockOrders: Order[] = [
             },
         ],
         total: 40000,
+    },
+]
+
+export const orderItems: OrderItem[] = [
+    {
+        id: "1",
+        name: "Handmade Chicken Treats",
+        quantity: 2,
+        price: 30.0,
+        image: "/placeholder.svg?height=64&width=64",
+    },
+    {
+        id: "2",
+        name: "Organic Beef Jerky",
+        quantity: 1,
+        price: 15.0,
+        image: "/placeholder.svg?height=64&width=64",
     },
 ]
