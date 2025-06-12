@@ -1,16 +1,10 @@
 "use client"
 
-import type React from "react"
-import { Box, Typography, Button, Card, CardContent, Chip, IconButton, Paper, Grid } from "@mui/material"
+import React, {useMemo, useState} from "react"
+import {Box, Typography, Button, Card, CardContent, Chip, IconButton, Paper, Grid} from "@mui/material"
 import { Add, Edit, Delete, Map } from "@mui/icons-material"
-import type { Address } from "./index"
-
-interface AddressesViewProps {
-    addresses: Address[]
-    handleEditAddress: (address: Address) => void
-    handleDeleteAddress: (id: string) => void
-    setAddressDialogOpen: (open: boolean) => void
-}
+import type { AddressesViewProps } from "./index"
+import Pagination from "../common/Pagination"
 
 const AddressesView: React.FC<AddressesViewProps> = ({
                                                          addresses,
@@ -18,6 +12,23 @@ const AddressesView: React.FC<AddressesViewProps> = ({
                                                          handleDeleteAddress,
                                                          setAddressDialogOpen,
                                                      }) => {
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 4
+
+    // 페이지네이션을 위한 펫 데이터 슬라이싱
+    const paginatedAddresses = useMemo(() => {
+        if (addresses.length <= itemsPerPage) {
+            return addresses;
+        }
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return addresses.slice(startIndex, endIndex);
+    }, [addresses, currentPage]);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page)
+    }
+
     return (
         <Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
@@ -30,7 +41,7 @@ const AddressesView: React.FC<AddressesViewProps> = ({
             </Box>
 
             <Grid container spacing={3}>
-                {addresses.map((address) => (
+                {paginatedAddresses.map((address) => (
                     <Grid size={{ xs: 12, md: 6 }} key={address.id}>
                         <Card sx={{ height: "100%" }}>
                             <CardContent>
@@ -84,6 +95,15 @@ const AddressesView: React.FC<AddressesViewProps> = ({
                     </Grid>
                 )}
             </Grid>
+            {/* 페이징 - 6개 초과일 때만 표시 */}
+            {addresses.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={addresses.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={handlePageChange}
+                />
+            )}
         </Box>
     )
 }

@@ -11,14 +11,15 @@ import {
     ListItemIcon,
     ListItemText,
 } from "@mui/material"
-import { Receipt, Description, Home, Pets, RateReview } from "@mui/icons-material"
+import {Receipt, Description, Home, Pets, RateReview, LocalOffer} from "@mui/icons-material"
 
 const menuItems = [
     { id: "orders", label: "주문/배송 조회", icon: Receipt },
-    { id: "return-inquiry", label: "반품/교환 조회", icon: Description },
+    { id: "return-inquiry", label: "취소/환불 조회", icon: Description },
     { id: "reviews", label: "리뷰 관리", icon: RateReview },
     { id: "addresses", label: "주소 관리", icon: Home },
     { id: "pets", label: "나의 애완동물", icon: Pets },
+    { id: "coupons", label: "나의 쿠폰함", icon: LocalOffer}
 ]
 
 interface SidebarProps {
