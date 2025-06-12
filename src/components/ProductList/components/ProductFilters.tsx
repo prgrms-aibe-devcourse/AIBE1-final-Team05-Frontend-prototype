@@ -12,6 +12,8 @@ import {
   Checkbox,
   FormGroup,
   Slider,
+  useTheme,
+  alpha,
 } from "@mui/material";
 import {
   ProductFilters as ProductFiltersType,
@@ -21,7 +23,7 @@ import {
   HEALTH_BENEFITS,
   PetType,
   ProductType,
-} from "@/components/ProductList/Product.ts";
+} from "@/components/ProductList/types/product.types";
 
 interface ProductFiltersProps {
   filters: ProductFiltersType;
@@ -32,6 +34,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   filters,
   onFiltersChange,
 }) => {
+  const theme = useTheme();
+
   const handlePetTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({
       ...filters,
@@ -99,15 +103,21 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                 control={
                   <Radio
                     sx={{
-                      color: "#E5D9D5",
+                      color: theme.palette.grey[200],
                       "&.Mui-checked": {
-                        color: "#E92933",
+                        color: theme.palette.primary.main,
                       },
                     }}
                   />
                 }
                 label={
-                  <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontSize: "0.875rem",
+                      color: theme.palette.text.primary,
+                    }}
+                  >
                     {petType}
                   </Typography>
                 }
@@ -117,7 +127,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   m: 0,
                   borderRadius: 2,
                   "&:hover": {
-                    backgroundColor: "#FFF7F5",
+                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
                   },
                 }}
               />
@@ -141,15 +151,21 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                 control={
                   <Radio
                     sx={{
-                      color: "#E5D9D5",
+                      color: theme.palette.grey[200],
                       "&.Mui-checked": {
-                        color: "#E92933",
+                        color: theme.palette.primary.main,
                       },
                     }}
                   />
                 }
                 label={
-                  <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontSize: "0.875rem",
+                      color: theme.palette.text.primary,
+                    }}
+                  >
                     {productType}
                   </Typography>
                 }
@@ -159,7 +175,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   m: 0,
                   borderRadius: 2,
                   "&:hover": {
-                    backgroundColor: "#FFF7F5",
+                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
                   },
                 }}
               />
@@ -180,15 +196,21 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   checked={filters.ingredients.includes(ingredient)}
                   onChange={handleIngredientChange(ingredient)}
                   sx={{
-                    color: "#E5D9D5",
+                    color: theme.palette.grey[200],
                     "&.Mui-checked": {
-                      color: "#E92933",
+                      color: theme.palette.primary.main,
                     },
                   }}
                 />
               }
               label={
-                <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: "0.875rem",
+                    color: theme.palette.text.primary,
+                  }}
+                >
                   {ingredient}
                 </Typography>
               }
@@ -198,7 +220,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                 m: 0,
                 borderRadius: 2,
                 "&:hover": {
-                  backgroundColor: "#FFF7F5",
+                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
                 },
               }}
             />
@@ -218,15 +240,21 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   checked={filters.healthBenefits.includes(benefit)}
                   onChange={handleHealthBenefitChange(benefit)}
                   sx={{
-                    color: "#E5D9D5",
+                    color: theme.palette.grey[200],
                     "&.Mui-checked": {
-                      color: "#E92933",
+                      color: theme.palette.primary.main,
                     },
                   }}
                 />
               }
               label={
-                <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: "0.875rem",
+                    color: theme.palette.text.primary,
+                  }}
+                >
                   {benefit}
                 </Typography>
               }
@@ -236,7 +264,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                 m: 0,
                 borderRadius: 2,
                 "&:hover": {
-                  backgroundColor: "#FFF7F5",
+                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
                 },
               }}
             />
@@ -249,7 +277,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   return (
     <Paper
       sx={{
-        backgroundColor: "white",
+        backgroundColor: theme.palette.background.paper,
         p: 3,
         borderRadius: 3,
         boxShadow:
@@ -262,9 +290,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         sx={{
           fontSize: "1.125rem",
           fontWeight: 600,
-          color: "#383838",
+          color: theme.palette.text.primary,
           mb: 3,
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontFamily: theme.typography.fontFamily,
         }}
       >
         필터
@@ -280,7 +308,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
             sx={{
               fontSize: "0.875rem",
               fontWeight: 500,
-              color: "#5A5A5A",
+              color: theme.palette.text.secondary,
               mb: 1.5,
             }}
           >
@@ -297,7 +325,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           sx={{
             fontSize: "0.875rem",
             fontWeight: 500,
-            color: "#5A5A5A",
+            color: theme.palette.text.secondary,
             mb: 1.5,
           }}
         >
@@ -312,22 +340,22 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
             max={100000}
             step={1000}
             sx={{
-              color: "#E92933",
+              color: theme.palette.primary.main,
               height: 8,
               "& .MuiSlider-track": {
-                backgroundColor: "#E92933",
+                backgroundColor: theme.palette.primary.main,
                 border: "none",
               },
               "& .MuiSlider-thumb": {
-                backgroundColor: "#E92933",
+                backgroundColor: theme.palette.primary.main,
                 width: 20,
                 height: 20,
                 "&:hover": {
-                  boxShadow: "0px 0px 0px 8px rgba(233, 41, 51, 0.16)",
+                  boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.primary.main, 0.16)}`,
                 },
               },
               "& .MuiSlider-rail": {
-                backgroundColor: "#F3ECE8",
+                backgroundColor: theme.palette.grey[100],
                 opacity: 1,
               },
             }}
@@ -336,13 +364,19 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
             <Typography
               variant="caption"
-              sx={{ color: "#7F7F7F", fontSize: "0.75rem" }}
+              sx={{
+                color: theme.palette.text.secondary,
+                fontSize: "0.75rem",
+              }}
             >
               ₩0
             </Typography>
             <Typography
               variant="caption"
-              sx={{ color: "#7F7F7F", fontSize: "0.75rem" }}
+              sx={{
+                color: theme.palette.text.secondary,
+                fontSize: "0.75rem",
+              }}
             >
               ₩100,000
             </Typography>

@@ -11,8 +11,10 @@ import {
   ToggleButtonGroup,
   Paper,
   SelectChangeEvent,
+  useTheme,
+  alpha,
 } from "@mui/material";
-import { SORT_OPTIONS } from "@/components/ProductList/Product.ts";
+import { SORT_OPTIONS } from "@/components/ProductList/types/product.types";
 
 interface ProductSortingProps {
   sortBy: string;
@@ -29,6 +31,8 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
   onSortChange,
   onHandmadeToggle,
 }) => {
+  const theme = useTheme();
+
   const handleSortChange = (event: SelectChangeEvent) => {
     onSortChange(event.target.value);
   };
@@ -59,16 +63,19 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
           sx={{
             fontSize: "2rem",
             fontWeight: 700,
-            color: "#383838",
+            color: theme.palette.text.primary,
             mb: 0.5,
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontFamily: theme.typography.fontFamily,
           }}
         >
           강아지 간식
         </Typography>
         <Typography
           variant="body2"
-          sx={{ color: "#7F7F7F", fontSize: "0.875rem" }}
+          sx={{
+            color: theme.palette.text.secondary,
+            fontSize: "0.875rem",
+          }}
         >
           총 {totalCount.toLocaleString()}개 상품
         </Typography>
@@ -86,8 +93,8 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
         <Paper
           sx={{
             display: "flex",
-            backgroundColor: "white",
-            border: "1px solid #E5D9D5",
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.grey[200]}`,
             borderRadius: 2,
             p: 0.25,
           }}
@@ -104,17 +111,17 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
                 py: 0.75,
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                color: "#7F7F7F",
+                color: theme.palette.text.secondary,
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "transparent",
                 },
                 "&.Mui-selected": {
-                  backgroundColor: "#FFF7F5",
-                  color: "#E92933",
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  color: theme.palette.primary.main,
                   fontWeight: 600,
                   "&:hover": {
-                    backgroundColor: "#FFF7F5",
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
                   },
                 },
               },
@@ -131,16 +138,16 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
             value={sortBy}
             onChange={handleSortChange}
             sx={{
-              backgroundColor: "white",
+              backgroundColor: theme.palette.background.paper,
               borderRadius: 2,
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#E5D9D5",
+                borderColor: theme.palette.grey[200],
               },
               "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#E92933",
+                borderColor: theme.palette.primary.main,
               },
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#E92933",
+                borderColor: theme.palette.primary.main,
                 borderWidth: 1,
               },
               "& .MuiSelect-select": {

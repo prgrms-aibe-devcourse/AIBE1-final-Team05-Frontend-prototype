@@ -1,4 +1,4 @@
-import { Workshop } from '@/domains/workshop/types';
+import { Workshop } from '@/data/workshop.ts';
 
 export const popularWorkshops: Workshop[] = [
     {

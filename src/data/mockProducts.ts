@@ -1,6 +1,6 @@
 // src/data/mockProducts.ts
 
-import { Product } from "@/components/ProductList/Product.ts";
+import { Product } from "@/components/ProductList/types/product.types";
 
 export const mockProducts: Product[] = [
   {

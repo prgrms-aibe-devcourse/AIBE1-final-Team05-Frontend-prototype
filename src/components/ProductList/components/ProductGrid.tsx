@@ -1,9 +1,17 @@
 // src/components/product/ProductGrid.tsx
 
 import React from "react";
-import { Grid, Box, Pagination, Button, Typography } from "@mui/material";
-import ProductCard from "./ProductCard";
-import { Product } from "@/components/ProductList/Product.ts";
+import {
+  Grid,
+  Box,
+  Pagination,
+  Button,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import ProductCard from "../ProductCard";
+import { Product } from "@/components/ProductList/types/product.types";
 
 interface ProductGridProps {
   products: Product[];
@@ -22,6 +30,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   onFavoriteToggle,
   onLoadMore,
 }) => {
+  const theme = useTheme();
+
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     onPageChange(page);
     // 페이지 변경 시 스크롤을 맨 위로
@@ -56,7 +66,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           <Typography
             variant="h6"
             sx={{
-              color: "#7F7F7F",
+              color: theme.palette.text.secondary,
               mb: 1,
             }}
           >
@@ -65,7 +75,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           <Typography
             variant="body2"
             sx={{
-              color: "#A0A0A0",
+              color: theme.palette.text.secondary,
+              opacity: 0.7,
             }}
           >
             다른 필터 조건을 시도해보세요
@@ -91,22 +102,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             size="medium"
             sx={{
               "& .MuiPaginationItem-root": {
-                color: "#383838",
+                color: theme.palette.text.primary,
                 fontWeight: 500,
                 "&:hover": {
-                  backgroundColor: "#FFF7F5",
-                  color: "#E92933",
+                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                  color: theme.palette.primary.main,
                 },
                 "&.Mui-selected": {
-                  backgroundColor: "#E92933",
-                  color: "white",
+                  backgroundColor: theme.palette.primary.main,
+                  color: theme.palette.primary.contrastText,
                   "&:hover": {
-                    backgroundColor: "#C0202A",
+                    backgroundColor: theme.palette.primary.dark,
                   },
                 },
               },
               "& .MuiPaginationItem-ellipsis": {
-                color: "#7F7F7F",
+                color: theme.palette.text.secondary,
               },
             }}
           />
@@ -117,8 +128,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
               onClick={onLoadMore}
               variant="contained"
               sx={{
-                backgroundColor: "#E92933",
-                color: "white",
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
                 px: 3,
                 py: 1.5,
                 borderRadius: 2,
@@ -126,7 +137,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                 fontWeight: 500,
                 textTransform: "none",
                 "&:hover": {
-                  backgroundColor: "#C0202A",
+                  backgroundColor: theme.palette.primary.dark,
                 },
               }}
             >

@@ -22,10 +22,7 @@ import {
   Save as SaveIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import {
-  ProductFormData,
-  PRODUCT_CATEGORIES,
-} from "./ProductManagement.ts";
+import { ProductFormData, PRODUCT_CATEGORIES } from "../types/product.types.ts";
 
 interface ProductRegistrationFormProps {
   onSubmit?: (data: ProductFormData) => void;

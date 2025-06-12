@@ -12,17 +12,20 @@ import {
   DialogTitle,
   DialogContent,
   IconButton,
+  alpha,
 } from "@mui/material";
 import {
   FilterList as FilterListIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
-import { Breadcrumb } from "@/components/ProductList/Breadcrumb.tsx";
-import { ProductSorting } from "@/components/ProductList/ProductSorting";
-import ProductFilters from "@/components/ProductList/ProductFilters";
-import ProductGrid from "@/components/ProductList/ProductGrid";
-import MobileBottomNav from "@/components/ProductList/MobileBottomNav.tsx";
-import { ProductFilters as ProductFiltersType } from "@/components/ProductList/Product.ts";
+import {
+  Breadcrumb,
+  ProductSorting,
+  ProductFilters,
+  ProductGrid,
+  MobileBottomNav,
+} from "@/components/ProductList";
+import type { ProductFilters as ProductFiltersType } from "@/components/ProductList/types/product.types";
 import { mockProducts, getTotalProductCount } from "../data/mockProducts";
 
 const PRODUCTS_PER_PAGE = 8;
@@ -195,15 +198,15 @@ const ProductListPage: React.FC = () => {
               display: { xs: "flex", md: "none" },
               width: "100%",
               mb: 3,
-              borderColor: "#E5D9D5",
-              color: "#383838",
+              borderColor: theme.palette.grey[200],
+              color: theme.palette.text.primary,
               fontSize: "0.875rem",
               fontWeight: 500,
               textTransform: "none",
               py: 1.5,
               "&:hover": {
-                borderColor: "#E92933",
-                backgroundColor: "#FFF7F5",
+                borderColor: theme.palette.primary.main,
+                backgroundColor: alpha(theme.palette.primary.main, 0.05),
               },
             }}
           >
@@ -240,11 +243,20 @@ const ProductListPage: React.FC = () => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: "1px solid #E5D9D5",
+            borderBottom: `1px solid ${theme.palette.grey[200]}`,
+            color: theme.palette.text.primary,
           }}
         >
           <span>필터</span>
-          <IconButton onClick={handleMobileFilterClose}>
+          <IconButton
+            onClick={handleMobileFilterClose}
+            sx={{
+              color: theme.palette.text.secondary,
+              "&:hover": {
+                color: theme.palette.text.primary,
+              },
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </DialogTitle>

@@ -44,7 +44,7 @@ import {
   StockMovement,
   StockMovementType,
   STOCK_MOVEMENT_TYPES,
-} from "./ProductManagement.ts";
+} from "../types/product.types.ts";
 
 // 목업 데이터
 const mockStockItems: StockItem[] = [
@@ -237,8 +237,8 @@ const InventoryManagement: React.FC = () => {
                 newStock === 0
                   ? "품절"
                   : newStock <= item.minStock
-                  ? "부족"
-                  : "충분",
+                    ? "부족"
+                    : "충분",
               lastUpdated: new Date().toISOString().split("T")[0],
             }
           : item
@@ -647,10 +647,10 @@ const InventoryManagement: React.FC = () => {
                               movement.type === "입고"
                                 ? "success"
                                 : movement.type === "출고"
-                                ? "info"
-                                : movement.type === "반품"
-                                ? "warning"
-                                : "default"
+                                  ? "info"
+                                  : movement.type === "반품"
+                                    ? "warning"
+                                    : "default"
                             }
                           />
                         </TableCell>

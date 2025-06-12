@@ -11,6 +11,7 @@ import {
   Chip,
   Rating,
   alpha,
+  useTheme,
 } from "@mui/material";
 import {
   FavoriteBorder as FavoriteIcon,
@@ -18,7 +19,7 @@ import {
   LocalShipping as ShippingIcon,
   Schedule as ScheduleIcon,
 } from "@mui/icons-material";
-import { Product } from "@/components/ProductList/Product.ts";
+import { Product } from "@/components/ProductList/types/product.types";
 
 interface ProductCardProps {
   product: Product;
@@ -29,6 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onFavoriteToggle,
 }) => {
+  const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(product.isFavorite || false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -51,9 +53,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         readOnly
         size="small"
         sx={{
-          color: "#FFB800",
+          color: theme.palette.primary.main, // 주황색으로 변경
           "& .MuiRating-iconEmpty": {
-            color: "#E0E0E0",
+            color: theme.palette.grey[200],
           },
         }}
       />
@@ -65,13 +67,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
       return {
         icon: <ScheduleIcon sx={{ fontSize: 14 }} />,
         text: product.restockDate,
-        color: "#D97706",
+        color: theme.palette.primary.dark, // 진한 주황색
       };
     }
     return {
       icon: <ShippingIcon sx={{ fontSize: 14 }} />,
       text: product.shippingInfo,
-      color: "#65A30D",
+      color: theme.palette.primary.main, // 주황색
     };
   };
 
@@ -80,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Card
       sx={{
-        backgroundColor: "white",
+        backgroundColor: theme.palette.background.paper,
         borderRadius: 3,
         overflow: "hidden",
         boxShadow:
@@ -122,14 +124,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
             position: "absolute",
             top: 12,
             right: 12,
-            backgroundColor: alpha("#FFFFFF", 0.8),
+            backgroundColor: alpha(theme.palette.background.paper, 0.8),
             backdropFilter: "blur(4px)",
-            color: isFavorite ? "#E92933" : "#7F7F7F",
+            color: isFavorite
+              ? theme.palette.primary.main
+              : theme.palette.text.secondary,
             width: 32,
             height: 32,
             "&:hover": {
-              backgroundColor: alpha("#FFFFFF", 0.9),
-              color: "#E92933",
+              backgroundColor: alpha(theme.palette.background.paper, 0.9),
+              color: theme.palette.primary.main,
             },
           }}
         >
@@ -143,14 +147,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* 배지 */}
         {product.isNew && (
           <Chip
-            label="신상품"
+            label="NEW"
             size="small"
             sx={{
               position: "absolute",
               top: 12,
               left: 12,
-              backgroundColor: "#E92933",
-              color: "white",
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
               fontSize: "0.75rem",
               fontWeight: 600,
               height: 24,
@@ -166,8 +170,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
               position: "absolute",
               top: 12,
               left: 12,
-              backgroundColor: "#FFB800",
-              color: "black",
+              backgroundColor: theme.palette.primary.light,
+              color: theme.palette.text.primary,
               fontSize: "0.75rem",
               fontWeight: 600,
               height: 24,
@@ -181,7 +185,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             sx={{
               position: "absolute",
               inset: 0,
-              backgroundColor: alpha("#000000", 0.3),
+              backgroundColor: alpha(theme.palette.secondary.main, 0.3),
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -190,8 +194,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Chip
               label="품절"
               sx={{
-                backgroundColor: alpha("#6B7280", 0.8),
-                color: "white",
+                backgroundColor: alpha(theme.palette.secondary.main, 0.8),
+                color: theme.palette.background.paper,
                 fontSize: "0.875rem",
                 fontWeight: 600,
               }}
@@ -208,7 +212,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           variant="body2"
           sx={{
             fontWeight: 600,
-            color: "#383838",
+            color: theme.palette.text.primary,
             fontSize: "0.875rem",
             mb: 0.5,
             height: 40,
@@ -225,7 +229,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Typography
           variant="caption"
           sx={{
-            color: "#7F7F7F",
+            color: theme.palette.text.secondary,
             fontSize: "0.75rem",
             mb: 1,
           }}
@@ -239,7 +243,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Typography
             variant="caption"
             sx={{
-              color: "#7F7F7F",
+              color: theme.palette.text.secondary,
               fontSize: "0.75rem",
               ml: 1,
             }}
@@ -254,7 +258,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             variant="h6"
             sx={{
               fontWeight: 700,
-              color: product.isOutOfStock ? "#383838" : "#E92933",
+              color: product.isOutOfStock
+                ? theme.palette.text.primary
+                : theme.palette.primary.main,
               fontSize: "1.125rem",
               mr: 1,
             }}
@@ -265,7 +271,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Typography
               variant="body2"
               sx={{
-                color: "#A0A0A0",
+                color: theme.palette.text.secondary,
                 fontSize: "0.875rem",
                 textDecoration: "line-through",
               }}

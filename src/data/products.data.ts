@@ -1,4 +1,4 @@
-import { Product } from '@/domains/product/types';
+import { Product } from '@/data/Product.ts';
 
 export const popularProducts: Product[] = [
     {
@@ -78,6 +78,45 @@ export const newProducts: Product[] = [
         isNew: true,
         description: '고양이가 좋아하는 참치와 영양 만점 시금치',
         tags: ['고양이', '참치', '시금치', '신상'],
+    },
+    {
+        id: '5',
+        name: '[신상] 블루베리 요거트볼',
+        price: 12990,
+        image: 'https://images.unsplash.com/photo-1544568100-847a948585b9?w=400&h=300&fit=crop',
+        category: 'dog',
+        brand: '댕댕이 쉐프',
+        rating: 3.5,
+        reviewCount: 23,
+        isNew: true,
+        description: '신선한 블루베리와 요거트로 만든 건강한 볼 간식',
+        tags: ['강아지', '블루베리', '요거트', '신상'],
+    },
+    {
+        id: '5',
+        name: '[신상] 블루베리 요거트볼',
+        price: 12990,
+        image: 'https://images.unsplash.com/photo-1544568100-847a948585b9?w=400&h=300&fit=crop',
+        category: 'dog',
+        brand: '댕댕이 쉐프',
+        rating: 3.5,
+        reviewCount: 23,
+        isNew: true,
+        description: '신선한 블루베리와 요거트로 만든 건강한 볼 간식',
+        tags: ['강아지', '블루베리', '요거트', '신상'],
+    },
+    {
+        id: '5',
+        name: '[신상] 블루베리 요거트볼',
+        price: 12990,
+        image: 'https://images.unsplash.com/photo-1544568100-847a948585b9?w=400&h=300&fit=crop',
+        category: 'dog',
+        brand: '댕댕이 쉐프',
+        rating: 3.5,
+        reviewCount: 23,
+        isNew: true,
+        description: '신선한 블루베리와 요거트로 만든 건강한 볼 간식',
+        tags: ['강아지', '블루베리', '요거트', '신상'],
     },
 ];
 

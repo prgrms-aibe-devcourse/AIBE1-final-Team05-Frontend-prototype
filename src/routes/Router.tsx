@@ -5,7 +5,7 @@ import SellerLayout from "@/components/layout/sellerLayout/SellerLayout.tsx";
 import HomePage from "@/pages/mainpage/HomePage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
-import NotFoundPage from "@/pages/mainpage/NotFoundPage";
+import NotFoundPage from "@/pages/common/NotFoundPage.tsx";
 import SellerStorePage from "@/pages/SellerDashboardPage/SellerStorePage.tsx";
 import OrderPayPage from "@/pages/OrderPaymentPage/OrderPaymentPage.tsx";
 import MyPage from "@/pages/Account/Account.tsx";
@@ -17,6 +17,7 @@ import { SettlementPage } from "@/components/SellerDashboard/settlement";
 import SellerDashboardDashboardPage from "@/components/SellerDashboard/Dashboard";
 import CustomerManagementPage from "@/pages/SellerDashboardPage/CustomerManagementPage.tsx";
 import OrdersManagementPage from "@/pages/SellerDashboardPage/OrderManagementPage.tsx";
+import ShoppingCartPage from "@/pages/ShoppingCartPage";
 
 
 
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
             // 마이페이지
             { path: 'account', element: <MyPage /> },
 
+            // 장바구니
+            { path: "cart", element: <ShoppingCartPage /> },
+
+
 
             // 판매자 스토어 페이지 (구매자가 보는 판매자 정보)
             { path: 'seller/:sellerId', element: <SellerStorePage /> },
@@ -56,6 +61,7 @@ const router = createBrowserRouter([
 
             // 404 페이지
             { path: "*", element: <NotFoundPage /> },
+
         ],
     },
     {
@@ -88,6 +94,7 @@ const router = createBrowserRouter([
             },
         ],
     },
+
 ]);
 
 const AppRouter = () => {
