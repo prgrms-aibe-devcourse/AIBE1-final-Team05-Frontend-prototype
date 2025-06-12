@@ -17,6 +17,7 @@ import { SettlementPage } from "@/components/SellerDashboard/settlement";
 import SellerDashboardDashboardPage from "@/components/SellerDashboard/Dashboard";
 import CustomerManagementPage from "@/pages/SellerDashboardPage/CustomerManagementPage.tsx";
 import OrdersManagementPage from "@/pages/SellerDashboardPage/OrderManagementPage.tsx";
+import ShoppingCartPage from "@/pages/ShoppingCartPage";
 
 
 
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
 
             // 마이페이지
             { path: 'account', element: <MyPage /> },
+
+            // 장바구니
+            { path: "cart", element: <ShoppingCartPage /> },
+
 
 
             // 판매자 스토어 페이지 (구매자가 보는 판매자 정보)

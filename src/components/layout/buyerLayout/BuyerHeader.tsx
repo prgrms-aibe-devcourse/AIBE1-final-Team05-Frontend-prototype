@@ -679,6 +679,7 @@ const BuyerHeader = () => {
                         {/* 장바구니 아이콘 */}
                         <IconButton
                             size="small"
+                            onClick={() => navigate('/cart')}
                             sx={{
                                 color: 'text.secondary',
                                 '&:hover': {
