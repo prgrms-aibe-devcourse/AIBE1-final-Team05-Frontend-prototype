@@ -5,9 +5,9 @@ import {
     RoleSelector,
     RoleSelectionContainer,
     RoleSelectionActions
-} from '@/domains/auth';
-import { UserRole } from '@/domains/auth/types';
-import { ROLE_INFO } from '@/domains/auth/constants';
+} from '@/components/Auth';
+import { UserRole } from '@/components/Auth/types';
+import { ROLE_INFO } from '@/components/Auth/constants';
 
 const RoleSelectionPage = () => {
     const navigate = useNavigate();

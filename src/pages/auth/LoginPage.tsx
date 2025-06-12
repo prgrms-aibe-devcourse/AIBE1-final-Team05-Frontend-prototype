@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
     LoginForm,
     LoginContainer
-} from '@/domains/auth';
-import { SocialProvider } from '@/domains/auth/types';
-import { ROUTES } from '@/domains/auth/constants';
+} from '@/components/Auth';
+import { SocialProvider } from '@/components/Auth/types';
+import { ROUTES } from '@/components/Auth/constants';
 
 const LoginPage = () => {
     const navigate = useNavigate();
