@@ -5,7 +5,7 @@ import SellerLayout from "@/components/layout/sellerLayout/SellerLayout.tsx";
 import HomePage from "@/pages/mainpage/HomePage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
-import NotFoundPage from "@/pages/mainpage/NotFoundPage";
+import NotFoundPage from "@/pages/common/NotFoundPage.tsx";
 import SellerStorePage from "@/pages/SellerDashboardPage/SellerStorePage.tsx";
 import OrderCheckoutPage from "@/pages/OrderCheckoutPage.tsx";
 import MyPage from "@/pages/MyPage.tsx";
@@ -56,6 +56,7 @@ const router = createBrowserRouter([
 
             // 404 페이지
             { path: "*", element: <NotFoundPage /> },
+
         ],
     },
     {
@@ -88,6 +89,7 @@ const router = createBrowserRouter([
             },
         ],
     },
+
 ]);
 
 const AppRouter = () => {
