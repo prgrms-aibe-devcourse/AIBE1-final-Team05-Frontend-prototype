@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { AddShoppingCart, FavoriteBorder, Favorite } from "@mui/icons-material";
 import { Product } from "../Product";
+import ReportModal from "../../common/ReportModal.tsx";
 
 interface ProductPurchaseOptionsProps {
     product: Product;
@@ -22,6 +23,7 @@ const ProductPurchaseOptions: React.FC<ProductPurchaseOptionsProps> = ({ product
         product.packaging?.[0]?.label || "기본 포장"
     );
     const [isFavorite, setIsFavorite] = useState(product.isFavorite || false);
+    const [reportModalOpen, setReportModalOpen] = useState(false);
 
     const handleAddToCart = () => {
         console.log("장바구니 추가:", {
@@ -49,7 +51,11 @@ const ProductPurchaseOptions: React.FC<ProductPurchaseOptionsProps> = ({ product
     };
 
     const handleReportProduct = () => {
-        console.log("상품 신고하기:", { productId: product.id, productName: product.name });
+        setReportModalOpen(true);
+    };
+
+    const handleReportModalClose = () => {
+        setReportModalOpen(false);
     };
 
     // 재고 상태 확인
@@ -275,6 +281,15 @@ const ProductPurchaseOptions: React.FC<ProductPurchaseOptionsProps> = ({ product
             >
                 상품 신고하기
             </Button>
+
+            {/* 상품 신고 모달 */}
+            <ReportModal
+                open={reportModalOpen}
+                onClose={handleReportModalClose}
+                type="product"
+                targetId={product.id}
+                targetName={product.name}
+            />
         </Box>
     );
 };
