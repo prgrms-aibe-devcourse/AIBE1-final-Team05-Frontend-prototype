@@ -1,3 +1,3 @@
-// src/components/product/ProductDetail/index.ts
-export { default } from "./ProductDetail.tsx";
+// 🔧 src/components/ProductDetail/index.ts
 
+export { default } from './ProductDetail';

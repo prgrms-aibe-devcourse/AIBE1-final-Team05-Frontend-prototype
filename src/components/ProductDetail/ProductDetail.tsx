@@ -1,11 +1,10 @@
-
-
+// src/components/ProductDetail/ProductDetail.tsx
 import React from "react";
 import { Container, Grid, Box } from "@mui/material";
-import { Product } from "@/../src/components/ProductDetail/Product.ts"; // 올바른 경로로 수정
-import { Review, ReviewStats } from "@/components/ProductDetail/review.ts"; // 올바른 경로로 수정
+import { Product } from "./Product";
+import { Review, ReviewStats } from "./review";
 import ProductImages from "./ProductImages";
-import ProductInfo from "./ProductInfo";
+import ProductInfo from "./ProductInfo"; // 자동으로 index.ts를 통해 import
 import ProductReviews from "./ProductReviews";
 import RelatedProducts from "./RelatedProducts";
 
@@ -36,7 +35,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     px: { xs: 2, sm: 4, md: 8, lg: 10 },
                 }}
             >
-                {/* 메인 상품 섹션 - MUI 7 호환 Grid 문법으로 확실한 2열 레이아웃 */}
+                {/* 메인 상품 섹션 */}
                 <Grid
                     container
                     spacing={{ xs: 3, md: 6 }}
