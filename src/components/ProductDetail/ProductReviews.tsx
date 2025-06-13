@@ -7,7 +7,6 @@ import {
   Rating,
   Avatar,
   Grid,
-  IconButton,
   Divider,
   Pagination,
   Tabs,
@@ -18,8 +17,6 @@ import {
 
 } from "@mui/material";
 import {
-  ThumbUpAlt,
-  ThumbDownAlt,
   AutoAwesome,
   TrendingUp,
   TrendingDown,
@@ -783,35 +780,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
                       }}
                     />
                   )}
-
-                  <Box sx={{ display: "flex", gap: 3 }}>
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                    >
-                      <IconButton size="small" sx={{ color: "#97784e" }}>
-                        <ThumbUpAlt fontSize="small" />
-                      </IconButton>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#97784e", fontSize: "0.75rem" }}
-                      >
-                        {review.likes}
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                    >
-                      <IconButton size="small" sx={{ color: "#97784e" }}>
-                        <ThumbDownAlt fontSize="small" />
-                      </IconButton>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#97784e", fontSize: "0.75rem" }}
-                      >
-                        {review.dislikes}
-                      </Typography>
-                    </Box>
-                  </Box>
                 </Box>
               </Box>
               {index < currentReviews.length - 1 && (

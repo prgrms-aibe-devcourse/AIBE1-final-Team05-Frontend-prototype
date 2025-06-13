@@ -15,8 +15,6 @@ export interface Review {
   content: string;
   date: string;
   image?: string; // 선택적 첨부 이미지
-  likes: number;
-  dislikes: number;
 }
 
 /** 리뷰 통계 */
