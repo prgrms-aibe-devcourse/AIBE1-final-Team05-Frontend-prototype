@@ -44,7 +44,7 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
     if (newValue !== null) {
       // 전체 보기 = null, 수제품만 = true, 완제품만 = false
       if (newValue === "all") {
-        onHandmadeToggle(null as any); // 전체 표시를 위해 null 전달
+        onHandmadeToggle(null);
       } else if (newValue === "handmade") {
         onHandmadeToggle(true);
       } else if (newValue === "ready-made") {
