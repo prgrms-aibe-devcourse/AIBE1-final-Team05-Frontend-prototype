@@ -372,17 +372,16 @@ const DateRangePicker = ({
 const SettlementTable = ({
                              data,
                              filters,
-                             onFiltersChange,
-                             onSettlementRequest
+                             onFiltersChange
                          }: SettlementTableProps) => {
     const theme = useTheme();
     const [datePickerAnchor, setDatePickerAnchor] = useState<HTMLElement | null>(null);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
-    // 페이지네이션 상태
+    // 페이지네이션 상태 - 10개로 고정
     const [page, setPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const rowsPerPage = 10; // 고정값
 
     const handleFilterChange = (filterKey: keyof SettlementFilters) =>
         (event: SelectChangeEvent) => {
@@ -414,11 +413,6 @@ const SettlementTable = ({
 
     const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
         setPage(newPage);
-    };
-
-    const handleRowsPerPageChange = (event: SelectChangeEvent) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(1); // 페이지 크기 변경 시 첫 페이지로 이동
     };
 
     const getDateRangeLabel = (): string => {
@@ -465,6 +459,20 @@ const SettlementTable = ({
     // 현재 페이지 정산 금액 계산
     const currentPageSettlementAmount = currentPageData.reduce((sum, item) => sum + item.settlementAmount, 0);
 
+    // 상태별 Chip 색상 및 스타일 함수
+    const getStatusChipProps = (status: '대기중' | '처리중' | '정산완료') => {
+        switch (status) {
+            case '대기중':
+                return { color: 'warning' as const, label: '대기중' };
+            case '처리중':
+                return { color: 'info' as const, label: '처리중' };
+            case '정산완료':
+                return { color: 'success' as const, label: '정산완료' };
+            default:
+                return { color: 'default' as const, label: status };
+        }
+    };
+
     return (
         <Box>
             <Typography
@@ -487,8 +495,8 @@ const SettlementTable = ({
                     onClick={handleDatePickerOpen}
                     placeholder="기간 선택"
                     sx={{
-                        minWidth: 250, // 200 → 250으로 확대
-                        maxWidth: 300, // 최대 너비 설정
+                        minWidth: 250,
+                        maxWidth: 300,
                         cursor: 'pointer',
                         '& .MuiInputBase-input': {
                             cursor: 'pointer',
@@ -546,38 +554,14 @@ const SettlementTable = ({
 
                 <FormControl size="small" sx={{ minWidth: 120 }}>
                     <Select
-                        value={filters.deliveryFilter}
-                        onChange={handleFilterChange('deliveryFilter')}
-                        displayEmpty
-                    >
-                        <MenuItem value="배송완료">배송완료</MenuItem>
-                        <MenuItem value="배송중">배송중</MenuItem>
-                        <MenuItem value="배송준비">배송준비</MenuItem>
-                        <MenuItem value="전체">전체</MenuItem>
-                    </Select>
-                </FormControl>
-
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                    <Select
-                        value={filters.confirmFilter}
-                        onChange={handleFilterChange('confirmFilter')}
-                        displayEmpty
-                    >
-                        <MenuItem value="구매확정">구매확정</MenuItem>
-                        <MenuItem value="구매대기">구매대기</MenuItem>
-                        <MenuItem value="전체">전체</MenuItem>
-                    </Select>
-                </FormControl>
-
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                    <Select
                         value={filters.settlementFilter}
                         onChange={handleFilterChange('settlementFilter')}
                         displayEmpty
                     >
-                        <MenuItem value="정산일">정산일</MenuItem>
-                        <MenuItem value="정산대기">정산대기</MenuItem>
-                        <MenuItem value="전체">전체</MenuItem>
+                        <MenuItem value="전체">전체 상태</MenuItem>
+                        <MenuItem value="대기중">대기중</MenuItem>
+                        <MenuItem value="처리중">처리중</MenuItem>
+                        <MenuItem value="정산완료">정산완료</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
@@ -592,59 +576,31 @@ const SettlementTable = ({
                 onClose={handleDatePickerClose}
             />
 
-            {/* 결과 요약 및 페이지 크기 선택 */}
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: 2,
-                flexWrap: 'wrap',
-                gap: 2
-            }}>
-                {/* 필터링 결과 요약 */}
-                <Box>
-                    {(startDate || endDate) ? (
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                color: theme.palette.text.primary,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
-                            }}
-                        >
-                            <span className="material-icons" style={{ fontSize: '16px', color: theme.palette.primary.main }}>
-                                filter_alt
-                            </span>
-                            선택한 기간: {getDateRangeLabel()} (총 {totalItems}건)
-                        </Typography>
-                    ) : (
-                        <Typography
-                            variant="body2"
-                            sx={{ color: theme.palette.text.secondary }}
-                        >
-                            총 {totalItems}건의 정산 내역
-                        </Typography>
-                    )}
-                </Box>
-
-                {/* 페이지 크기 선택 */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                        페이지당 표시:
+            {/* 결과 요약 - 페이지 크기 선택 제거 */}
+            <Box sx={{ mb: 2 }}>
+                {(startDate || endDate) ? (
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: theme.palette.text.primary,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                        }}
+                    >
+                        <span className="material-icons" style={{ fontSize: '16px', color: theme.palette.primary.main }}>
+                            filter_alt
+                        </span>
+                        선택한 기간: {getDateRangeLabel()} (총 {totalItems}건)
                     </Typography>
-                    <FormControl size="small" sx={{ minWidth: 80 }}>
-                        <Select
-                            value={rowsPerPage.toString()}
-                            onChange={handleRowsPerPageChange}
-                        >
-                            <MenuItem value="5">5개</MenuItem>
-                            <MenuItem value="10">10개</MenuItem>
-                            <MenuItem value="20">20개</MenuItem>
-                            <MenuItem value="50">50개</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Box>
+                ) : (
+                    <Typography
+                        variant="body2"
+                        sx={{ color: theme.palette.text.secondary }}
+                    >
+                        총 {totalItems}건의 정산 내역
+                    </Typography>
+                )}
             </Box>
 
             {/* 정산 테이블 */}
@@ -706,67 +662,70 @@ const SettlementTable = ({
                     </TableHead>
                     <TableBody>
                         {currentPageData.length > 0 ? (
-                            currentPageData.map((item) => (
-                                <TableRow
-                                    key={item.id}
-                                    sx={{
-                                        '&:nth-of-type(odd)': {
-                                            backgroundColor: theme.palette.background.default
-                                        },
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(232, 152, 48, 0.05)'
-                                        }
-                                    }}
-                                >
-                                    <TableCell sx={{
-                                        fontFamily: 'monospace',
-                                        fontWeight: 500,
-                                        color: theme.palette.text.primary
-                                    }}>
-                                        {item.id}
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        fontWeight: 500,
-                                        color: theme.palette.text.primary
-                                    }}>
-                                        {item.productName}
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        fontWeight: 600,
-                                        color: theme.palette.text.primary
-                                    }}>
-                                        ₩{item.orderAmount.toLocaleString()}
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        color: theme.palette.text.secondary
-                                    }}>
-                                        ₩{item.commission.toLocaleString()}
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        fontWeight: 600,
-                                        color: theme.palette.primary.main
-                                    }}>
-                                        ₩{item.settlementAmount.toLocaleString()}
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        color: theme.palette.text.secondary,
-                                        fontSize: '0.875rem'
-                                    }}>
-                                        {item.orderDate}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Chip
-                                            label={item.status}
-                                            color={item.status === '정산완료' ? 'success' : 'warning'}
-                                            size="small"
-                                            sx={{
-                                                fontWeight: 500,
-                                                minWidth: 70
-                                            }}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                            currentPageData.map((item) => {
+                                const chipProps = getStatusChipProps(item.status);
+                                return (
+                                    <TableRow
+                                        key={item.id}
+                                        sx={{
+                                            '&:nth-of-type(odd)': {
+                                                backgroundColor: theme.palette.background.default
+                                            },
+                                            '&:hover': {
+                                                backgroundColor: 'rgba(232, 152, 48, 0.05)'
+                                            }
+                                        }}
+                                    >
+                                        <TableCell sx={{
+                                            fontFamily: 'monospace',
+                                            fontWeight: 500,
+                                            color: theme.palette.text.primary
+                                        }}>
+                                            {item.id}
+                                        </TableCell>
+                                        <TableCell sx={{
+                                            fontWeight: 500,
+                                            color: theme.palette.text.primary
+                                        }}>
+                                            {item.productName}
+                                        </TableCell>
+                                        <TableCell sx={{
+                                            fontWeight: 600,
+                                            color: theme.palette.text.primary
+                                        }}>
+                                            ₩{item.orderAmount.toLocaleString()}
+                                        </TableCell>
+                                        <TableCell sx={{
+                                            color: theme.palette.text.secondary
+                                        }}>
+                                            ₩{item.commission.toLocaleString()}
+                                        </TableCell>
+                                        <TableCell sx={{
+                                            fontWeight: 600,
+                                            color: theme.palette.primary.main
+                                        }}>
+                                            ₩{item.settlementAmount.toLocaleString()}
+                                        </TableCell>
+                                        <TableCell sx={{
+                                            color: theme.palette.text.secondary,
+                                            fontSize: '0.875rem'
+                                        }}>
+                                            {item.orderDate}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Chip
+                                                label={chipProps.label}
+                                                color={chipProps.color}
+                                                size="small"
+                                                sx={{
+                                                    fontWeight: 500,
+                                                    minWidth: 70
+                                                }}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={7} sx={{ textAlign: 'center', py: 4 }}>
@@ -859,72 +818,262 @@ const SettlementTable = ({
                 </Box>
             )}
 
-            {/* 총 정산 금액 및 정산 신청 버튼 */}
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: theme.palette.grey[100],
-                p: 2,
-                borderRadius: 2,
-                border: `1px solid ${theme.palette.grey[200]}`,
-                flexWrap: 'wrap',
-                gap: 2
-            }}>
-                <Box>
+            {/* 이번달 정산내역 및 영수증 섹션 */}
+            <Box sx={{ mb: 3 }}>
+                {/* 이번달 정산 요약 - 필터와 무관하게 항상 이번달 데이터만 표시 */}
+                <Box sx={{
+                    backgroundColor: 'rgba(232, 152, 48, 0.08)',
+                    p: 3,
+                    borderRadius: 2,
+                    border: `1px solid rgba(232, 152, 48, 0.2)`,
+                    mb: 2
+                }}>
                     <Typography
                         variant="h6"
                         sx={{
                             fontWeight: 700,
                             color: theme.palette.text.primary,
-                            mb: 0.5
+                            mb: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
                         }}
                     >
-                        총 정산 금액:
-                        <span style={{ color: theme.palette.primary.main, marginLeft: '8px' }}>
-                            ₩{totalSettlementAmount.toLocaleString()}
+                        <span className="material-icons" style={{ fontSize: '20px', color: theme.palette.primary.main }}>
+                            calendar_month
                         </span>
+                        이번달 정산 현황 ({new Date().getMonth() + 1}월)
                     </Typography>
-                    {(startDate || endDate) && (
-                        <Typography
-                            variant="body2"
+
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 2
+                    }}>
+                        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                            {/* 이번달 총 정산금액 - 필터 무관하게 원본 데이터 사용 */}
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: theme.palette.text.secondary,
+                                        fontSize: '0.875rem'
+                                    }}
+                                >
+                                    이번달 총 정산금액
+                                </Typography>
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        fontWeight: 700,
+                                        color: theme.palette.primary.main
+                                    }}
+                                >
+                                    ₩{(() => {
+                                    const currentMonth = new Date().getMonth();
+                                    const currentYear = new Date().getFullYear();
+                                    // 원본 data 사용 (필터 적용 안됨)
+                                    const thisMonthData = data.filter(item => {
+                                        const itemDate = new Date(item.orderDate);
+                                        return itemDate.getMonth() === currentMonth &&
+                                            itemDate.getFullYear() === currentYear;
+                                    });
+                                    return thisMonthData.reduce((sum, item) => sum + item.settlementAmount, 0).toLocaleString();
+                                })()}
+                                </Typography>
+                            </Box>
+
+                            {/* 이번달 정산완료 금액 - 필터 무관하게 원본 데이터 사용 */}
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: theme.palette.text.secondary,
+                                        fontSize: '0.875rem'
+                                    }}
+                                >
+                                    정산완료 금액
+                                </Typography>
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        fontWeight: 700,
+                                        color: '#48bb78'
+                                    }}
+                                >
+                                    ₩{(() => {
+                                    const currentMonth = new Date().getMonth();
+                                    const currentYear = new Date().getFullYear();
+                                    // 원본 data 사용 (필터 적용 안됨)
+                                    const thisMonthCompletedData = data.filter(item => {
+                                        const itemDate = new Date(item.orderDate);
+                                        return itemDate.getMonth() === currentMonth &&
+                                            itemDate.getFullYear() === currentYear &&
+                                            item.status === '정산완료';
+                                    });
+                                    return thisMonthCompletedData.reduce((sum, item) => sum + item.settlementAmount, 0).toLocaleString();
+                                })()}
+                                </Typography>
+                            </Box>
+
+                            {/* 이번달 대기중/처리중 금액 - 필터 무관하게 원본 데이터 사용 */}
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: theme.palette.text.secondary,
+                                        fontSize: '0.875rem'
+                                    }}
+                                >
+                                    대기중/처리중 금액
+                                </Typography>
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        fontWeight: 700,
+                                        color: '#ed8936'
+                                    }}
+                                >
+                                    ₩{(() => {
+                                    const currentMonth = new Date().getMonth();
+                                    const currentYear = new Date().getFullYear();
+                                    // 원본 data 사용 (필터 적용 안됨)
+                                    const thisMonthPendingData = data.filter(item => {
+                                        const itemDate = new Date(item.orderDate);
+                                        return itemDate.getMonth() === currentMonth &&
+                                            itemDate.getFullYear() === currentYear &&
+                                            (item.status === '대기중' || item.status === '처리중');
+                                    });
+                                    return thisMonthPendingData.reduce((sum, item) => sum + item.settlementAmount, 0).toLocaleString();
+                                })()}
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        {/* 이번달 정산내역 영수증 다운로드 버튼 */}
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={() => {
+                                console.log('이번달 정산내역 영수증 다운로드');
+                                const currentMonth = new Date().getMonth();
+                                const currentYear = new Date().getFullYear();
+                                const thisMonthData = data.filter(item => {
+                                    const itemDate = new Date(item.orderDate);
+                                    return itemDate.getMonth() === currentMonth &&
+                                        itemDate.getFullYear() === currentYear;
+                                });
+                                console.log(`${currentYear}년 ${currentMonth + 1}월 정산내역:`, thisMonthData);
+                            }}
                             sx={{
-                                color: theme.palette.text.secondary,
-                                fontSize: '0.875rem'
+                                borderRadius: 6,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                px: 4,
+                                py: 1.5,
+                                backgroundColor: theme.palette.primary.main,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.primary.dark,
+                                    transform: 'translateY(-2px)'
+                                }
+                            }}
+                            startIcon={
+                                <span className="material-icons" style={{ fontSize: '18px' }}>
+                                    receipt
+                                </span>
+                            }
+                        >
+                            이번달 정산내역 영수증
+                        </Button>
+                    </Box>
+                </Box>
+
+                {/* 전체/선택기간 정산 금액 요약 */}
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    backgroundColor: theme.palette.grey[100],
+                    p: 2,
+                    borderRadius: 2,
+                    border: `1px solid ${theme.palette.grey[200]}`,
+                    flexWrap: 'wrap',
+                    gap: 2
+                }}>
+                    <Box>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontWeight: 700,
+                                color: theme.palette.text.primary,
+                                mb: 0.5
                             }}
                         >
-                            필터링된 {totalItems}건의 정산 내역
+                            {(startDate || endDate) ? '선택 기간 총 정산 금액' : '전체 정산 금액'}:
+                            <span style={{ color: theme.palette.primary.main, marginLeft: '8px' }}>
+                                ₩{totalSettlementAmount.toLocaleString()}
+                            </span>
                         </Typography>
+                        {(startDate || endDate) ? (
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: theme.palette.text.secondary,
+                                    fontSize: '0.875rem'
+                                }}
+                            >
+                                선택기간: {startDate || '시작일'} ~ {endDate || '종료일'} ({totalItems}건)
+                            </Typography>
+                        ) : (
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: theme.palette.text.secondary,
+                                    fontSize: '0.875rem'
+                                }}
+                            >
+                                전체 {totalItems}건의 정산 내역
+                            </Typography>
+                        )}
+                    </Box>
+
+                    {/* 선택기간이 있을 때만 선택기간 영수증 버튼 표시 */}
+                    {(startDate || endDate) && (
+                        <Button
+                            variant="outlined"
+                            size="large"
+                            onClick={() => {
+                                console.log('선택기간 정산내역 영수증 다운로드');
+                                console.log('선택기간:', { startDate, endDate });
+                                console.log('선택기간 데이터:', filteredData);
+                                console.log('선택기간 총 정산금액:', totalSettlementAmount.toLocaleString());
+                            }}
+                            sx={{
+                                borderRadius: 6,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                px: 4,
+                                py: 1.5,
+                                borderColor: theme.palette.primary.main,
+                                color: theme.palette.primary.main,
+                                '&:hover': {
+                                    borderColor: theme.palette.primary.dark,
+                                    backgroundColor: 'rgba(232, 152, 48, 0.04)',
+                                    transform: 'translateY(-2px)'
+                                }
+                            }}
+                            startIcon={
+                                <span className="material-icons" style={{ fontSize: '18px' }}>
+                                    description
+                                </span>
+                            }
+                        >
+                            선택기간 정산내역 영수증
+                        </Button>
                     )}
                 </Box>
-                <Button
-                    variant="contained"
-                    size="large"
-                    onClick={onSettlementRequest}
-                    disabled={totalSettlementAmount === 0}
-                    sx={{
-                        borderRadius: 6,
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        px: 4,
-                        py: 1.5,
-                        backgroundColor: theme.palette.primary.main,
-                        '&:hover': {
-                            backgroundColor: theme.palette.primary.dark,
-                            transform: 'translateY(-2px)'
-                        },
-                        '&:disabled': {
-                            backgroundColor: theme.palette.grey[200]
-                        }
-                    }}
-                    startIcon={
-                        <span className="material-icons" style={{ fontSize: '18px' }}>
-                            request_quote
-                        </span>
-                    }
-                >
-                    정산 신청하기
-                </Button>
             </Box>
         </Box>
     );

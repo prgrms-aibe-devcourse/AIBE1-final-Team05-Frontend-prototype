@@ -1,4 +1,4 @@
-// src/types/OrderShipping.ts
+// src/components/OrderManagement/types/order.types.ts
 
 export interface Order {
   id: string;
@@ -8,20 +8,22 @@ export interface Order {
   productName: string;
   quantity: number;
   amount: number;
-  shippingStatus: ShippingStatus;
+  shippingStatus: ShippingStatus | "order_cancelled" | "delay_requested";
   customerPhone?: string;
   shippingAddress?: string;
   trackingNumber?: string;
   shippingCompany?: string;
   notes?: string;
-  isDirect?: boolean; // 업체 직접 배송 여부
+  isDirect?: boolean;
+  delayReason?: string; // 출고 지연 사유
 }
 
 export interface OrderSummary {
   paymentCompleted: number;
-  preparing: number;
+  preparing: number; // 상품준비중 + 출고지연중 합산
   readyToShip: number;
-  shipping: number;
+  shipping: number; // 운송장 등록
+  inTransit: number; // 배송중 (신규 추가)
   delivered: number;
 }
 
@@ -31,12 +33,12 @@ export interface UrgentTasks {
 }
 
 export type ShippingStatus =
-  | "payment_completed" // 결제완료
+  | "payment_completed" // 주문확인
   | "preparing" // 상품준비중
   | "ready_to_ship" // 배송지시
-  | "shipping" // 배송중
-  | "delivered" // 배송완료
-  | "pending_confirmation"; // 확인 대기
+  | "shipping" // 운송장 등록
+  | "in_transit" // 배송중 (신규 추가)
+  | "delivered"; // 배송완료
 
 export type DateRange = "today" | "7days" | "30days" | "custom";
 
@@ -50,27 +52,31 @@ export interface OrderFilter {
   dateRange: DateRange;
   startDate?: string;
   endDate?: string;
-  shippingStatus: ShippingStatus | "all";
+  shippingStatus:
+    | ShippingStatus
+    | "all"
+    | "order_cancelled"
+    | "delay_requested";
   searchCondition: SearchCondition;
   searchKeyword: string;
   directShippingOnly: boolean;
 }
 
 export const SHIPPING_STATUS_LABELS = {
-  payment_completed: "결제완료",
+  payment_completed: "주문확인",
   preparing: "상품준비중",
   ready_to_ship: "배송지시",
-  shipping: "배송중",
+  shipping: "운송장 등록",
+  in_transit: "배송중", // 신규 추가
   delivered: "배송완료",
-  pending_confirmation: "확인 대기",
-  all: "전체",
+  delay_requested: "출고지연중", // 신규 추가
+  order_cancelled: "주문 취소",
 } as const;
 
 export const SEARCH_CONDITIONS = [
   { value: "customer_name", label: "주문자명" },
   { value: "order_number", label: "주문번호" },
   { value: "product_name", label: "상품명" },
-  { value: "recipient_name", label: "수취인명" },
 ] as const;
 
 export const DATE_RANGES = [

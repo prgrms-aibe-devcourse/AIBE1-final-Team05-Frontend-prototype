@@ -14,6 +14,7 @@ import {
   AddCircleOutline as AddIcon,
   EditNote as EditIcon,
   Inventory as InventoryIcon,
+  LocalOffer as CouponIcon,
 } from "@mui/icons-material";
 import {
   ProductRegistrationForm,
@@ -21,6 +22,7 @@ import {
   InventoryManagement,
   ProductFormData,
 } from "@/components/ProductManagement";
+import CouponManagement from "@/components/ProductManagement/components/CouponManagement";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -73,6 +75,11 @@ const ProductManagementPage: React.FC = () => {
       icon: <InventoryIcon />,
       component: <InventoryManagement />,
     },
+    {
+      label: "쿠폰 등록/관리",
+      icon: <CouponIcon />,
+      component: <CouponManagement />,
+    },
   ];
 
   return (
@@ -92,7 +99,7 @@ const ProductManagementPage: React.FC = () => {
           상품 관리
         </Typography>
         <Typography variant="body1" sx={{ color: "#5c5752", fontSize: "1rem" }}>
-          상품 등록, 수정, 재고 관리를 한 곳에서 편리하게 관리하세요.
+          상품 등록, 수정, 재고 관리, 쿠폰 관리를 한 곳에서 편리하게 관리하세요.
         </Typography>
       </Box>
 
@@ -114,7 +121,8 @@ const ProductManagementPage: React.FC = () => {
           <Tabs
             value={tabValue}
             onChange={handleTabChange}
-            variant={isMobile ? "fullWidth" : "standard"}
+            variant={isMobile ? "scrollable" : "standard"}
+            scrollButtons={isMobile ? "auto" : false}
             sx={{
               px: 2,
               "& .MuiTab-root": {

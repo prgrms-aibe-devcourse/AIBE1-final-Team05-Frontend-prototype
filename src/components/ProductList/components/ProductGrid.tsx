@@ -1,14 +1,7 @@
-// src/components/product/ProductGrid.tsx
+// src/components/ProductList/components/ProductGrid.tsx
 
 import React from "react";
-import {
-  Grid,
-  Box,
-  Pagination,
-  Button,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Grid, Box, Pagination, Typography, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import ProductCard from "../ProductCard";
 import { Product } from "@/components/ProductList/types/product.types";
@@ -19,7 +12,6 @@ interface ProductGridProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   onFavoriteToggle?: (productId: string) => void;
-  onLoadMore?: () => void;
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -28,7 +20,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   totalPages,
   onPageChange,
   onFavoriteToggle,
-  onLoadMore,
 }) => {
   const theme = useTheme();
 
@@ -112,38 +103,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                   backgroundColor: theme.palette.primary.main,
                   color: theme.palette.primary.contrastText,
                   "&:hover": {
-                    backgroundColor: theme.palette.primary.dark,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.8),
                   },
                 },
               },
-              "& .MuiPaginationItem-ellipsis": {
-                color: theme.palette.text.secondary,
-              },
             }}
           />
-
-          {/* 더보기 버튼 (옵션) */}
-          {onLoadMore && currentPage < totalPages && (
-            <Button
-              onClick={onLoadMore}
-              variant="contained"
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: theme.palette.primary.contrastText,
-                px: 3,
-                py: 1.5,
-                borderRadius: 2,
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: theme.palette.primary.dark,
-                },
-              }}
-            >
-              더보기
-            </Button>
-          )}
         </Box>
       )}
     </Box>
