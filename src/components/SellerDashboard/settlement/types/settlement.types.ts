@@ -4,7 +4,7 @@ export interface SettlementItem {
     orderAmount: number;
     commission: number;
     settlementAmount: number;
-    status: '대기중' | '정산완료';
+    status: '대기중' | '처리중' | '정산완료';
     orderDate: string;
     paymentDate?: string;
     deliveryDate?: string;
@@ -14,8 +14,6 @@ export interface SettlementItem {
 
 export interface SettlementFilters {
     paymentFilter: string;
-    deliveryFilter: string;
-    confirmFilter: string;
     settlementFilter: string;
     periodFilter: string;
     startDate?: string;
@@ -25,6 +23,21 @@ export interface SettlementFilters {
 export interface SalesData {
     month: string;
     amount: number;
+}
+
+// 새로 추가된 타입들
+export interface YearlyMonthData {
+    year: number;
+    monthlyData: { month: string; amount: number; }[];
+}
+
+export interface ProductSalesData {
+    productName: string;
+    amount: number;
+    percentage: number;
+    color: string;
+    totalSales?: number;
+    salesCount: number; // ? 제거하여 필수 속성으로 변경
 }
 
 export interface SalesRecommendation {
@@ -46,7 +59,6 @@ export interface SettlementTableProps {
     data: SettlementItem[];
     filters: SettlementFilters;
     onFiltersChange: (filters: Partial<SettlementFilters>) => void;
-    onSettlementRequest: () => void;
     totalCount?: number;
     currentPage?: number;
     pageSize?: number;
@@ -58,6 +70,14 @@ export interface SettlementTableProps {
 export interface SalesChartProps {
     data: SalesData[];
     title?: string;
+}
+
+// 확장된 SalesChart Props
+export interface EnhancedSalesChartProps extends SalesChartProps {
+    yearlyData?: YearlyMonthData[];
+    productData?: ProductSalesData[];
+    selectedYear?: number;
+    onYearChange?: (year: number) => void;
 }
 
 export interface SalesRankingProps {
@@ -89,4 +109,18 @@ export interface SalesResponse {
     data: SalesData[];
     totalSales: number;
     growthRate: number;
+}
+
+export interface YearlySalesResponse {
+    success: boolean;
+    data: YearlyMonthData[];
+    currentYear: number;
+    availableYears: number[];
+}
+
+export interface ProductSalesResponse {
+    success: boolean;
+    data: ProductSalesData[];
+    totalProducts: number;
+    totalAmount: number;
 }

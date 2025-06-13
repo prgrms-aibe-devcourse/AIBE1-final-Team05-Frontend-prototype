@@ -2,10 +2,6 @@ import { useState } from 'react';
 import {
     Box,
     Typography,
-    FormControl,
-    Select,
-    MenuItem,
-    SelectChangeEvent,
     Container,
     Grid,
     useTheme
@@ -16,11 +12,12 @@ import SalesRanking from '@/components/SellerDashboard/settlement/SalesRanking.t
 import {
     SettlementFilters,
     SettlementItem,
-    SalesData,
+    YearlyMonthData,
+    ProductSalesData,
     SalesRecommendation
 } from '@/components/SellerDashboard/settlement/types/settlement.types.ts';
 
-// 🚀 더 많은 더미 데이터 생성 (페이징 테스트용)
+// 🚀 더미 데이터 생성 함수들
 const generateSettlementData = (): SettlementItem[] => {
     const baseData = [
         { name: '닭가슴살 간식', category: 'dog' },
@@ -45,19 +42,17 @@ const generateSettlementData = (): SettlementItem[] => {
         { name: '고등어 간식', category: 'cat' }
     ];
 
-    const statuses = ['대기중', '정산완료'];
+    const statuses: ('대기중' | '처리중' | '정산완료')[] = ['대기중', '처리중', '정산완료'];
     const data: SettlementItem[] = [];
 
-    // 60개의 더미 데이터 생성
     for (let i = 0; i < 60; i++) {
         const baseItem = baseData[i % baseData.length];
-        const orderAmount = Math.floor(Math.random() * 40000) + 10000; // 10,000 ~ 50,000
-        const commission = Math.floor(orderAmount * 0.1); // 10% 수수료
+        const orderAmount = Math.floor(Math.random() * 40000) + 10000;
+        const commission = Math.floor(orderAmount * 0.1);
         const settlementAmount = orderAmount - commission;
 
-        // 날짜를 최근 3개월로 분산
         const date = new Date();
-        date.setDate(date.getDate() - Math.floor(Math.random() * 90)); // 0~90일 전
+        date.setDate(date.getDate() - Math.floor(Math.random() * 90));
 
         data.push({
             id: `#${12345 + i}`,
@@ -65,7 +60,7 @@ const generateSettlementData = (): SettlementItem[] => {
             orderAmount,
             commission,
             settlementAmount,
-            status: statuses[Math.floor(Math.random() * statuses.length)] as '대기중' | '정산완료',
+            status: statuses[Math.floor(Math.random() * statuses.length)],
             orderDate: date.toISOString().split('T')[0]
         });
     }
@@ -73,18 +68,56 @@ const generateSettlementData = (): SettlementItem[] => {
     return data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
 };
 
-// 더미 데이터 생성
-const settlementData = generateSettlementData();
+const generateYearlyData = (): YearlyMonthData[] => {
+    const years = [2022, 2023, 2024, 2025];
+    const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
-const salesChartData: SalesData[] = [
-    { month: '1월', amount: 150 },
-    { month: '2월', amount: 80 },
-    { month: '3월', amount: 120 },
-    { month: '4월', amount: 200 },
-    { month: '5월', amount: 180 },
-    { month: '6월', amount: 220 },
-    { month: '7월', amount: 160 }
-];
+    return years.map(year => ({
+        year,
+        monthlyData: months.map(month => ({
+            month,
+            amount: Math.floor(Math.random() * 300) + 50
+        }))
+    }));
+};
+
+const generateProductSalesData = (): ProductSalesData[] => {
+    const products = [
+        '닭가슴살 간식',
+        '고단백 면역 간식',
+        '강아지 소고기 젤리',
+        '고양이 참치 간식',
+        '프리미엄 덴탈 츄',
+        '연어 큐브',
+        '야채 믹스 간식',
+        '소고기 육포 스틱'
+    ];
+
+    const colors = [
+        '#e8984b', '#48bb78', '#3182ce', '#ed8936',
+        '#9f7aea', '#38b2ac', '#f56565', '#805ad5'
+    ];
+
+    const salesData = products.map((product, index) => ({
+        productName: product,
+        amount: Math.floor(Math.random() * 50000) + 10000,
+        percentage: 0,
+        color: colors[index % colors.length],
+        salesCount: Math.floor(Math.random() * 50) + 5,
+        totalSales: 0
+    }));
+
+    const totalAmount = salesData.reduce((sum, item) => sum + item.amount, 0);
+    return salesData.map(item => ({
+        ...item,
+        percentage: (item.amount / totalAmount) * 100,
+        totalSales: totalAmount
+    })).sort((a, b) => b.amount - a.amount);
+};
+
+const settlementData = generateSettlementData();
+const yearlyData = generateYearlyData();
+const productData = generateProductSalesData();
 
 const salesRecommendations: SalesRecommendation[] = [
     {
@@ -109,153 +142,70 @@ const salesRecommendations: SalesRecommendation[] = [
 
 const SettlementPage = () => {
     const theme = useTheme();
-    const [filters, setFilters] = useState<SettlementFilters>({
+
+    // 정산 현황 필터 상태
+    const [settlementFilters, setSettlementFilters] = useState<SettlementFilters>({
         paymentFilter: '전체',
-        deliveryFilter: '배송완료',
-        confirmFilter: '구매확정',
-        settlementFilter: '정산일',
-        periodFilter: '구매 확정일 기준',
+        settlementFilter: '전체',
+        periodFilter: '결제일 기준',
         startDate: '',
         endDate: ''
     });
 
-    const handleFiltersChange = (newFilters: Partial<SettlementFilters>) => {
-        setFilters(prev => ({ ...prev, ...newFilters }));
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+    // 정산 현황 필터 변경 핸들러
+    const handleSettlementFiltersChange = (newFilters: Partial<SettlementFilters>) => {
+        setSettlementFilters(prev => ({ ...prev, ...newFilters }));
     };
 
-    const handlePeriodFilterChange = (event: SelectChangeEvent) => {
-        setFilters(prev => ({ ...prev, periodFilter: event.target.value }));
-    };
-
-    const handleSettlementRequest = () => {
-        console.log('정산 신청 요청');
-        console.log('현재 필터 상태:', filters);
-        console.log('총 데이터 개수:', settlementData.length);
-
-        // 선택된 기간 정보 로그
-        if (filters.startDate || filters.endDate) {
-            console.log('선택된 기간:', {
-                시작일: filters.startDate || '없음',
-                종료일: filters.endDate || '없음'
-            });
-        }
+    const handleYearChange = (year: number) => {
+        setSelectedYear(year);
+        console.log('선택된 년도:', year);
     };
 
     const handleDownloadReport = () => {
         console.log('보고서 다운로드 요청');
-        console.log('현재 필터 상태:', filters);
-
-        // 현재 데이터 통계
-        const pendingCount = settlementData.filter(item => item.status === '대기중').length;
-        const completedCount = settlementData.filter(item => item.status === '정산완료').length;
-        const totalAmount = settlementData.reduce((sum, item) => sum + item.settlementAmount, 0);
-
-        console.log('데이터 통계:', {
-            전체: settlementData.length,
-            정산대기: pendingCount,
-            정산완료: completedCount,
-            총정산금액: totalAmount.toLocaleString()
-        });
+        console.log('정산 현황 필터:', settlementFilters);
+        console.log('선택된 년도:', selectedYear);
     };
 
     return (
         <Container maxWidth="xl" sx={{ py: 3 }}>
-
-
             {/* 정산 현황 섹션 */}
             <Box sx={{ mb: 6 }}>
                 <SettlementTable
                     data={settlementData}
-                    filters={filters}
-                    onFiltersChange={handleFiltersChange}
-                    onSettlementRequest={handleSettlementRequest}
+                    filters={settlementFilters}
+                    onFiltersChange={handleSettlementFiltersChange}
                 />
             </Box>
 
-            {/* 매출 내역 섹션 */}
+            {/* 매출 내역 섹션 - 기간 선택 제거 */}
             <Box sx={{ mb: 4 }}>
-                <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mb: 3,
-                    flexWrap: 'wrap',
-                    gap: 2
-                }}>
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            fontWeight: 700,
-                            color: theme.palette.text.primary
-                        }}
-                    >
-                        매출 내역
-                        {(filters.startDate || filters.endDate) && (
-                            <Typography
-                                component="span"
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.secondary,
-                                    ml: 2,
-                                    fontSize: '0.875rem'
-                                }}
-                            >
-                                ({filters.startDate || '시작일'} ~ {filters.endDate || '종료일'})
-                            </Typography>
-                        )}
-                    </Typography>
-
-                    <FormControl size="small" sx={{ minWidth: 200 }}>
-                        <Select
-                            value={filters.periodFilter}
-                            onChange={handlePeriodFilterChange}
-                            displayEmpty
-                        >
-                            <MenuItem value="구매 확정일 기준">구매 확정일 기준</MenuItem>
-                            <MenuItem value="결제일 기준">결제일 기준</MenuItem>
-                            <MenuItem value="배송완료일 기준">배송완료일 기준</MenuItem>
-                            <MenuItem value="정산일 기준">정산일 기준</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Box>
-
-                {/* 필터 상태 표시 */}
-                {(filters.startDate || filters.endDate) && (
-                    <Box sx={{
+                <Typography
+                    variant="h5"
+                    sx={{
                         mb: 3,
-                        p: 2,
-                        backgroundColor: 'rgba(232, 152, 48, 0.05)',
-                        borderRadius: 2,
-                        border: `1px solid rgba(232, 152, 48, 0.2)`
-                    }}>
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                color: theme.palette.text.primary,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                fontWeight: 500
-                            }}
-                        >
-                            <span className="material-icons" style={{ fontSize: '16px', color: theme.palette.primary.main }}>
-                                info
-                            </span>
-                            매출 차트와 순위는 선택된 기간({filters.startDate || '시작일'} ~ {filters.endDate || '종료일'})을 기준으로 표시됩니다.
-                        </Typography>
-                    </Box>
-                )}
+                        fontWeight: 700,
+                        color: theme.palette.text.primary
+                    }}
+                >
+                    매출 내역
+                </Typography>
 
                 <Grid container spacing={4}>
-                    {/* 월간 매출 차트 */}
                     <Grid size={{ xs: 12, md: 7 }}>
                         <SalesChart
-                            data={salesChartData}
-                            title="기간별 매출액"
+                            data={[]}
+                            title="매출 분석"
+                            yearlyData={yearlyData}
+                            productData={productData}
+                            selectedYear={selectedYear}
+                            onYearChange={handleYearChange}
                         />
                     </Grid>
 
-                    {/* 상품별 판매 순위 */}
                     <Grid size={{ xs: 12, md: 5 }}>
                         <SalesRanking
                             data={salesRecommendations}
@@ -263,6 +213,76 @@ const SettlementPage = () => {
                             onDownloadReport={handleDownloadReport}
                         />
                     </Grid>
+                </Grid>
+            </Box>
+
+            {/* 상품 매출 상세 정보 섹션 */}
+            <Box sx={{ mb: 4 }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        mb: 3,
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                    }}
+                >
+                    <span className="material-icons" style={{ fontSize: '20px', color: theme.palette.primary.main }}>
+                        inventory_2
+                    </span>
+                    상품별 매출 상세
+                </Typography>
+
+                <Grid container spacing={3}>
+                    {productData.slice(0, 4).map((product, index) => (
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+                            <Box sx={{
+                                p: 2,
+                                backgroundColor: theme.palette.background.paper,
+                                borderRadius: 2,
+                                border: `1px solid ${theme.palette.grey[200]}`,
+                                textAlign: 'center',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                }
+                            }}>
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        fontWeight: 600,
+                                        color: product.color,
+                                        mb: 1,
+                                        fontSize: '1.1rem'
+                                    }}
+                                >
+                                    ₩{product.amount.toLocaleString()}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: theme.palette.text.primary,
+                                        fontWeight: 500,
+                                        mb: 0.5
+                                    }}
+                                >
+                                    {product.productName}
+                                </Typography>
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        color: theme.palette.text.secondary,
+                                        fontSize: '0.75rem'
+                                    }}
+                                >
+                                    전체의 {product.percentage.toFixed(1)}% • {product.salesCount}회 판매
+                                </Typography>
+                            </Box>
+                        </Grid>
+                    ))}
                 </Grid>
             </Box>
 
@@ -293,7 +313,7 @@ const SettlementPage = () => {
                 </Typography>
 
                 <Grid container spacing={3}>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                         <Box sx={{ textAlign: 'center' }}>
                             <Typography
                                 variant="h4"
@@ -316,30 +336,7 @@ const SettlementPage = () => {
                         </Box>
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    color: '#48bb78',
-                                    fontWeight: 700,
-                                    mb: 0.5
-                                }}
-                            >
-                                {settlementData.filter(item => item.status === '정산완료').length}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.secondary
-                                }}
-                            >
-                                정산 완료
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                         <Box sx={{ textAlign: 'center' }}>
                             <Typography
                                 variant="h4"
@@ -357,12 +354,58 @@ const SettlementPage = () => {
                                     color: theme.palette.text.secondary
                                 }}
                             >
-                                정산 대기
+                                대기중
                             </Typography>
                         </Box>
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Typography
+                                variant="h4"
+                                sx={{
+                                    color: '#3182ce',
+                                    fontWeight: 700,
+                                    mb: 0.5
+                                }}
+                            >
+                                {settlementData.filter(item => item.status === '처리중').length}
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: theme.palette.text.secondary
+                                }}
+                            >
+                                처리중
+                            </Typography>
+                        </Box>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Typography
+                                variant="h4"
+                                sx={{
+                                    color: '#48bb78',
+                                    fontWeight: 700,
+                                    mb: 0.5
+                                }}
+                            >
+                                {settlementData.filter(item => item.status === '정산완료').length}
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: theme.palette.text.secondary
+                                }}
+                            >
+                                정산완료
+                            </Typography>
+                        </Box>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                         <Box sx={{ textAlign: 'center' }}>
                             <Typography
                                 variant="h4"
@@ -386,6 +429,112 @@ const SettlementPage = () => {
                     </Grid>
                 </Grid>
             </Box>
+
+            {/* 매출 성장 인사이트 섹션 */}
+            <Box sx={{
+                mt: 4,
+                p: 3,
+                backgroundColor: 'rgba(232, 152, 48, 0.05)',
+                borderRadius: 3,
+                border: `1px solid rgba(232, 152, 48, 0.2)`
+            }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        mb: 2,
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                    }}
+                >
+                    <span className="material-icons" style={{ fontSize: '20px', color: theme.palette.primary.main }}>
+                        lightbulb
+                    </span>
+                    매출 인사이트
+                </Typography>
+
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Box sx={{
+                            p: 2,
+                            backgroundColor: 'white',
+                            borderRadius: 2,
+                            border: `1px solid ${theme.palette.grey[200]}`
+                        }}>
+                            <Typography
+                                variant="subtitle1"
+                                sx={{
+                                    fontWeight: 600,
+                                    color: theme.palette.text.primary,
+                                    mb: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1
+                                }}
+                            >
+                                <span className="material-icons" style={{ fontSize: '16px', color: '#48bb78' }}>
+                                    trending_up
+                                </span>
+                                베스트 상품
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: theme.palette.text.secondary, mb: 1 }}
+                            >
+                                {productData[0]?.productName}이(가) 가장 높은 매출을 기록했습니다.
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: theme.palette.primary.main, fontWeight: 500 }}
+                            >
+                                월 평균 ₩{Math.floor((productData[0]?.amount || 0) / 4).toLocaleString()} 매출
+                            </Typography>
+                        </Box>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Box sx={{
+                            p: 2,
+                            backgroundColor: 'white',
+                            borderRadius: 2,
+                            border: `1px solid ${theme.palette.grey[200]}`
+                        }}>
+                            <Typography
+                                variant="subtitle1"
+                                sx={{
+                                    fontWeight: 600,
+                                    color: theme.palette.text.primary,
+                                    mb: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1
+                                }}
+                            >
+                                <span className="material-icons" style={{ fontSize: '16px', color: '#3182ce' }}>
+                                    insights
+                                </span>
+                                성장률 분석
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: theme.palette.text.secondary, mb: 1 }}
+                            >
+                                {selectedYear}년 대비 매출이 꾸준히 증가하고 있습니다.
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: '#48bb78', fontWeight: 500 }}
+                            >
+                                평균 월 성장률: +12.5%
+                            </Typography>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Box>
+
+
         </Container>
     );
 };
