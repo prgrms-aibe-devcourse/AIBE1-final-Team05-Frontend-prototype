@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Typography, Rating, Avatar, Divider } from "@mui/material";
 import { Review } from "../review";
+
 interface ReviewListProps {
     reviews: Review[];
 }
@@ -23,8 +24,9 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                 <Box
                     key={review.id}
                     sx={{
-                        backgroundColor: "#ffffff",
-                        border: "1px solid #e7ddd0",
+                        backgroundColor: "background.paper",
+                        border: "1px solid",
+                        borderColor: "grey.200",
                         borderRadius: 2,
                         p: 3,
                     }}
@@ -47,20 +49,29 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                                 <Box>
                                     <Typography
                                         variant="body1"
-                                        sx={{ fontWeight: 600, color: "#1b150e" }}
+                                        sx={{
+                                            fontWeight: 600,
+                                            color: "text.primary"
+                                        }}
                                     >
                                         {review.reviewer.name}
                                     </Typography>
                                     <Typography
                                         variant="body2"
-                                        sx={{ color: "#97784e", fontSize: "0.75rem" }}
+                                        sx={{
+                                            color: "text.secondary",
+                                            fontSize: "0.75rem"
+                                        }}
                                     >
                                         {review.reviewer.petInfo}
                                     </Typography>
                                 </Box>
                                 <Typography
                                     variant="body2"
-                                    sx={{ color: "#97784e", fontSize: "0.75rem" }}
+                                    sx={{
+                                        color: "text.secondary",
+                                        fontSize: "0.75rem"
+                                    }}
                                 >
                                     {formatTimeAgo(review.date)}
                                 </Typography>
@@ -72,9 +83,9 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                                 size="small"
                                 sx={{
                                     mb: 1,
-                                    color: "#e89830",
+                                    color: "primary.main",
                                     "& .MuiRating-iconEmpty": {
-                                        color: "#d5c4ae",
+                                        color: "grey.200",
                                     },
                                 }}
                             />
@@ -84,8 +95,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                                 sx={{
                                     mb: 2,
                                     lineHeight: 1.6,
-                                    fontSize: "0.875rem",
-                                    color: "#1b150e",
+                                    color: "text.primary",
                                 }}
                             >
                                 {review.content}

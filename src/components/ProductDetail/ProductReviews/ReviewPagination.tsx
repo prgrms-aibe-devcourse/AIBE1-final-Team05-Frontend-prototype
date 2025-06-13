@@ -27,27 +27,27 @@ const ReviewPagination: React.FC<ReviewPaginationProps> = ({
                 showLastButton
                 sx={{
                     "& .MuiPaginationItem-root": {
-                        color: "#97784e",
-                        borderColor: "#e7ddd0",
+                        color: "text.secondary",
+                        borderColor: "grey.200",
                         "&:hover": {
-                            backgroundColor: "#f3eee7",
-                            borderColor: "#e89830",
+                            backgroundColor: "grey.100",
+                            borderColor: "primary.main",
                         },
                         "&.Mui-selected": {
-                            backgroundColor: "#e89830",
-                            color: "#ffffff",
+                            backgroundColor: "primary.main",
+                            color: "primary.contrastText",
                             "&:hover": {
-                                backgroundColor: "#d4861f",
+                                backgroundColor: "primary.dark",
                             },
                         },
                     },
                     "& .MuiPaginationItem-previousNext": {
-                        color: "#97784e",
+                        color: "text.secondary",
                         "&:hover": {
-                            backgroundColor: "#f3eee7",
+                            backgroundColor: "grey.100",
                         },
                         "&.Mui-disabled": {
-                            color: "#d5c4ae",
+                            color: "grey.200",
                         },
                     },
                 }}

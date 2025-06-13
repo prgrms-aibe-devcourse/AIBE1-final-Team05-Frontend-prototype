@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Product } from "./Product";
+
 interface ProductImagesProps {
     product: Product; // Product 타입 전체를 받아서 images와 image 모두 활용
     productName: string;
@@ -67,11 +68,12 @@ const ProductImages: React.FC<ProductImagesProps> = ({
                             cursor: "pointer",
                             border:
                                 selectedImage === index
-                                    ? "2px solid #e89830"
+                                    ? "2px solid"
                                     : "2px solid transparent",
+                            borderColor: selectedImage === index ? "primary.main" : "transparent",
                             transition: "all 0.2s ease",
                             "&:hover": {
-                                borderColor: "#e89830",
+                                borderColor: "primary.main",
                                 opacity: selectedImage !== index ? 0.8 : 1,
                             },
                         }}
