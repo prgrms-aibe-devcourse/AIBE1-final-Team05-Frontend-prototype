@@ -18,10 +18,10 @@ import { SORT_OPTIONS } from "@/components/ProductList/types/product.types";
 
 interface ProductSortingProps {
   sortBy: string;
-  isHandmadeOnly: boolean;
+  isHandmadeOnly: boolean | null; // null = 전체, true = 수제품만, false = 완제품만
   totalCount: number;
   onSortChange: (sortBy: string) => void;
-  onHandmadeToggle: (isHandmadeOnly: boolean) => void;
+  onHandmadeToggle: (isHandmadeOnly: boolean | null) => void;
 }
 
 const ProductSorting: React.FC<ProductSortingProps> = ({
