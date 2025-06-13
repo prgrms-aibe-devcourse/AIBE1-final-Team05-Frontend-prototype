@@ -165,7 +165,6 @@ const statusColorMap: Record<
   shipping: { label: "운송장등록", color: "secondary" },
   in_transit: { label: "배송중", color: "info" },
   delivered: { label: "배송완료", color: "success" },
-  pending_confirmation: { label: "확인 대기", color: "error" },
   order_cancelled: { label: "주문 취소", color: "error" },
 };
 
