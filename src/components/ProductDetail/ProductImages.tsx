@@ -3,8 +3,7 @@
 
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import { Product } from "@/components/ProductDetail/Product.ts";
-
+import { Product } from "./Product";
 interface ProductImagesProps {
     product: Product; // Product 타입 전체를 받아서 images와 image 모두 활용
     productName: string;
