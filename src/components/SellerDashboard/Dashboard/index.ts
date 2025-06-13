@@ -1,3 +1,3 @@
-// src/pages/SellerDashboardPage/index.ts
+// src/components/SellerDashboard/Dashboard/index.ts
 
-export { default } from "@/pages/SellerDashboardPage/SellerDashboardPage.tsx";
+export { default } from "../../../pages/SellerDashboardPage/SellerDashboardPage";

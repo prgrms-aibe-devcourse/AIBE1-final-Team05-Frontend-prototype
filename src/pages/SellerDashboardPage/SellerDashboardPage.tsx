@@ -1,4 +1,4 @@
-// src/components/SellerDashboard/Dashboard/index.tsx
+// src/pages/SellerDashboardPage/SellerDashboardPage.tsx
 
 import React from "react";
 import { Box, Typography } from "@mui/material";
@@ -8,6 +8,7 @@ import {
     ProductChart,
     AIForecastPanel,
     ReorderPanel,
+    demandForecastData,
 } from "@/components/SellerDashboard/Dashboard/SellerDashboardComponents";
 
 const SellerDashboardDashboardPage: React.FC = () => {
@@ -75,10 +76,10 @@ const SellerDashboardDashboardPage: React.FC = () => {
                     }}
                 >
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <AIForecastPanel />
+                        <AIForecastPanel data={demandForecastData} />
                     </Box>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <ReorderPanel />
+                        <ReorderPanel data={demandForecastData} />
                     </Box>
                 </Box>
             </Box>
