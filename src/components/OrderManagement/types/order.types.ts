@@ -38,8 +38,7 @@ export type ShippingStatus =
   | "ready_to_ship" // 배송지시
   | "shipping" // 운송장 등록
   | "in_transit" // 배송중 (신규 추가)
-  | "delivered" // 배송완료
-  | "pending_confirmation"; // 확인 대기
+  | "delivered"; // 배송완료
 
 export type DateRange = "today" | "7days" | "30days" | "custom";
 
@@ -70,10 +69,8 @@ export const SHIPPING_STATUS_LABELS = {
   shipping: "운송장 등록",
   in_transit: "배송중", // 신규 추가
   delivered: "배송완료",
-  pending_confirmation: "확인 대기",
   delay_requested: "출고지연중", // 신규 추가
   order_cancelled: "주문 취소",
-  all: "전체",
 } as const;
 
 export const SEARCH_CONDITIONS = [
