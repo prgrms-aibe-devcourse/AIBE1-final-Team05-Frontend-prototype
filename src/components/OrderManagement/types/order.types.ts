@@ -1,4 +1,4 @@
-// src/types/OrderShipping.ts
+// src/components/OrderManagement/types/order.types.ts
 
 export interface Order {
   id: string;
@@ -8,7 +8,7 @@ export interface Order {
   productName: string;
   quantity: number;
   amount: number;
-  shippingStatus: ShippingStatus;
+  shippingStatus: ShippingStatus | "order_cancelled";
   customerPhone?: string;
   shippingAddress?: string;
   trackingNumber?: string;
@@ -31,10 +31,10 @@ export interface UrgentTasks {
 }
 
 export type ShippingStatus =
-  | "payment_completed" // 결제완료
+  | "payment_completed" // 주문확인
   | "preparing" // 상품준비중
   | "ready_to_ship" // 배송지시
-  | "shipping" // 배송중
+  | "shipping" // 운송장 등록
   | "delivered" // 배송완료
   | "pending_confirmation"; // 확인 대기
 
@@ -50,17 +50,17 @@ export interface OrderFilter {
   dateRange: DateRange;
   startDate?: string;
   endDate?: string;
-  shippingStatus: ShippingStatus | "all";
+  shippingStatus: ShippingStatus | "all" | "order_cancelled";
   searchCondition: SearchCondition;
   searchKeyword: string;
   directShippingOnly: boolean;
 }
 
 export const SHIPPING_STATUS_LABELS = {
-  payment_completed: "결제완료",
+  payment_completed: "주문확인",
   preparing: "상품준비중",
   ready_to_ship: "배송지시",
-  shipping: "배송중",
+  shipping: "운송장 등록",
   delivered: "배송완료",
   pending_confirmation: "확인 대기",
   all: "전체",
