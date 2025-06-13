@@ -8,10 +8,12 @@ import {
     Select,
     MenuItem,
     IconButton,
+    Divider,
 } from "@mui/material";
-import { AddShoppingCart, FavoriteBorder, Favorite } from "@mui/icons-material";
+import { AddShoppingCart, FavoriteBorder, Favorite, LocalOffer } from "@mui/icons-material";
 import { Product } from "../Product";
 import ReportModal from "../../common/ReportModal.tsx";
+import CouponIssueModal from "./CouponIssueModal";
 
 interface ProductPurchaseOptionsProps {
     product: Product;
@@ -24,6 +26,7 @@ const ProductPurchaseOptions: React.FC<ProductPurchaseOptionsProps> = ({ product
     );
     const [isFavorite, setIsFavorite] = useState(product.isFavorite || false);
     const [reportModalOpen, setReportModalOpen] = useState(false);
+    const [couponModalOpen, setCouponModalOpen] = useState(false);
 
     const handleAddToCart = () => {
         console.log("장바구니 추가:", {
@@ -58,6 +61,14 @@ const ProductPurchaseOptions: React.FC<ProductPurchaseOptionsProps> = ({ product
         setReportModalOpen(false);
     };
 
+    const handleCouponModalOpen = () => {
+        setCouponModalOpen(true);
+    };
+
+    const handleCouponModalClose = () => {
+        setCouponModalOpen(false);
+    };
+
     // 재고 상태 확인
     const isOutOfStock = product.isOutOfStock;
     const totalPrice = product.price * quantity;
@@ -81,6 +92,32 @@ const ProductPurchaseOptions: React.FC<ProductPurchaseOptionsProps> = ({ product
                     </Typography>
                 </Box>
             )}
+
+            {/* 쿠폰 발급 버튼 */}
+            <Box sx={{ mb: 2 }}>
+                <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<LocalOffer />}
+                    onClick={handleCouponModalOpen}
+                    sx={{
+                        height: 48,
+                        color: "primary.main",
+                        borderColor: "primary.main",
+                        backgroundColor: "rgba(232, 152, 48, 0.05)",
+                        "&:hover": {
+                            borderColor: "primary.dark",
+                            backgroundColor: "rgba(232, 152, 48, 0.1)",
+                            color: "primary.dark",
+                        },
+                        fontWeight: 600,
+                    }}
+                >
+                    이 상품에 사용할 수 있는 쿠폰 받기
+                </Button>
+            </Box>
+
+            <Divider sx={{ my: 2, borderColor: "grey.200" }} />
 
             {/* 총 금액 표시 */}
             <Box sx={{ mb: 2, textAlign: "right" }}>
@@ -289,6 +326,14 @@ const ProductPurchaseOptions: React.FC<ProductPurchaseOptionsProps> = ({ product
                 type="product"
                 targetId={product.id}
                 targetName={product.name}
+            />
+
+            {/* 쿠폰 발급 모달 */}
+            <CouponIssueModal
+                open={couponModalOpen}
+                onClose={handleCouponModalClose}
+                productId={product.id}
+                productName={product.name}
             />
         </Box>
     );
