@@ -16,7 +16,6 @@ import {
   TableRow,
   TablePagination,
   Chip,
-  IconButton,
   FormControl,
   InputLabel,
   Select,
@@ -35,7 +34,6 @@ import {
   Info as InfoIcon,
   Error as ErrorIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
 } from "@mui/icons-material";
 import {
   Order,
@@ -43,7 +41,6 @@ import {
   UrgentTasks,
   OrderFilter,
   ShippingStatus,
-  DateRange,
   SHIPPING_STATUS_LABELS,
   SEARCH_CONDITIONS,
   DATE_RANGES,
@@ -352,7 +349,7 @@ const OrderShippingManagement: React.FC = () => {
           먼저 확인하고 처리해주세요!
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card sx={{ border: 1, borderColor: "#e0e0e0", borderRadius: 2 }}>
               <CardContent>
                 <Box
@@ -383,7 +380,7 @@ const OrderShippingManagement: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card sx={{ border: 1, borderColor: "#e0e0e0", borderRadius: 2 }}>
               <CardContent>
                 <Box
@@ -426,7 +423,7 @@ const OrderShippingManagement: React.FC = () => {
           주문 현황
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={6} md={2.4}>
+          <Grid size={{ xs: 6, md: 2.4 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography
                 variant="h4"
@@ -439,7 +436,7 @@ const OrderShippingManagement: React.FC = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2.4}>
+          <Grid size={{ xs: 6, md: 2.4 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography
                 variant="h4"
@@ -452,7 +449,7 @@ const OrderShippingManagement: React.FC = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2.4}>
+          <Grid size={{ xs: 6, md: 2.4 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography
                 variant="h4"
@@ -465,7 +462,7 @@ const OrderShippingManagement: React.FC = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2.4}>
+          <Grid size={{ xs: 6, md: 2.4 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography
                 variant="h4"
@@ -478,7 +475,7 @@ const OrderShippingManagement: React.FC = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={6} md={2.4}>
+          <Grid size={{ xs: 6, md: 2.4 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography
                 variant="h4"
@@ -497,7 +494,7 @@ const OrderShippingManagement: React.FC = () => {
       {/* 필터 및 검색 */}
       <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={6} md={2}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <FormControl fullWidth size="small">
               <InputLabel>기간</InputLabel>
               <Select
@@ -513,7 +510,7 @@ const OrderShippingManagement: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6} md={2}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <FormControl fullWidth size="small">
               <InputLabel>배송상태</InputLabel>
               <Select
@@ -533,7 +530,7 @@ const OrderShippingManagement: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6} md={2}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <FormControl fullWidth size="small">
               <InputLabel>검색조건</InputLabel>
               <Select
@@ -549,7 +546,7 @@ const OrderShippingManagement: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
               fullWidth
               size="small"
@@ -558,7 +555,7 @@ const OrderShippingManagement: React.FC = () => {
               onChange={handleTextFieldChange("searchKeyword")}
             />
           </Grid>
-          <Grid item xs={12} md={2}>
+          <Grid size={{ xs: 12, md: 2 }}>
             <Button
               fullWidth
               variant="contained"
