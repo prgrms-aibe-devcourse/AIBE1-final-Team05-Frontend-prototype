@@ -8,9 +8,6 @@ import {
     Paper,
     Avatar,
     TextField,
-    RadioGroup,
-    Radio,
-    FormControlLabel,
     Rating,
 } from "@mui/material"
 import { ChevronRight, PhotoCamera } from "@mui/icons-material"
@@ -46,25 +43,16 @@ const ReviewWriteView: React.FC<ReviewWriteViewProps> = ({ setDetailView }) => {
                             티아시아가진 치킨 마누카 커리 170g + 게살 푸팟퐁 커리 170g + 비프 마살라 커리 170g + 스파이시 비프 마살라
                             커리 170g 세트, 1세트
                         </Typography>
-                        <Rating size="large" defaultValue={0} />
+                        <Rating size="large" defaultValue={0}
+                                precision={0.5}
+                                max={5}           // 최대 별 개수 (기본값: 5)
+                                readOnly={false}  // 읽기 전용 여부
+                                disabled={false}  // 비활성화 여부
+                        />
                         <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                             (필수)*
                         </Typography>
                     </Box>
-                </Box>
-
-                <Box sx={{ mb: 4 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                        리뷰
-                    </Typography>
-                    <Typography variant="body2" sx={{ mb: 2 }}>
-                        작성 드셨던 것은 어떠셨어요?
-                    </Typography>
-                    <RadioGroup>
-                        <FormControlLabel value="good" control={<Radio />} label="맛있어요" />
-                        <FormControlLabel value="normal" control={<Radio />} label="보통이에요" />
-                        <FormControlLabel value="bad" control={<Radio />} label="생각보다 별로예요" />
-                    </RadioGroup>
                 </Box>
 
                 <Box sx={{ mb: 4 }}>

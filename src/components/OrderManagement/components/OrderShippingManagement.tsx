@@ -1,4 +1,4 @@
-// src/components/admin/OrderShippingManagement.tsx
+// src/components/OrderManagement/components/OrderShippingManagement.tsx
 
 import React, { useState } from "react";
 import {
@@ -25,6 +25,7 @@ import {
   TableRow,
   TablePagination,
   Chip,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
   Info as InfoIcon,
@@ -42,7 +43,7 @@ import {
   SHIPPING_STATUS_LABELS,
   SEARCH_CONDITIONS,
   DATE_RANGES,
-} from "./OrderShipping.ts";
+} from "../types/order.types";
 
 // 목업 데이터
 const mockUrgentTasks: UrgentTasks = {
@@ -153,109 +154,138 @@ const mockOrders: Order[] = [
   },
 ];
 
-const OrderShippingManagement: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>(mockOrders);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+// 배송 상태별 색상 정의
+const statusColorMap: Record<
+  ShippingStatus,
+  {
+    label: string;
+    color: "primary" | "warning" | "info" | "secondary" | "success" | "error";
+  }
+> = {
+  payment_completed: { label: "결제완료", color: "primary" },
+  preparing: { label: "상품준비중", color: "warning" },
+  ready_to_ship: { label: "배송지시", color: "info" },
+  shipping: { label: "배송중", color: "secondary" },
+  delivered: { label: "배송완료", color: "success" },
+  pending_confirmation: { label: "확인 대기", color: "error" },
+};
 
+const OrderShippingManagement: React.FC = () => {
   const [filter, setFilter] = useState<OrderFilter>({
     dateRange: "30days",
-    startDate: "2021-03-02",
-    endDate: "2021-04-01",
+    startDate: "",
+    endDate: "",
     shippingStatus: "all",
     searchCondition: "customer_name",
     searchKeyword: "",
     directShippingOnly: false,
   });
 
-  // 실제 데이터 기반으로 주문 요약 계산
-  const calculateOrderSummary = (): OrderSummary => {
-    const paymentCompleted = orders.filter(
-      (order) => order.shippingStatus === "payment_completed"
-    ).length;
-    const preparing = orders.filter(
-      (order) => order.shippingStatus === "preparing"
-    ).length;
-    const readyToShip = orders.filter(
-      (order) => order.shippingStatus === "ready_to_ship"
-    ).length;
-    const shipping = orders.filter(
-      (order) => order.shippingStatus === "shipping"
-    ).length;
-    const delivered = orders.filter(
-      (order) => order.shippingStatus === "delivered"
-    ).length;
-
-    return {
-      paymentCompleted,
-      preparing,
-      readyToShip,
-      shipping,
-      delivered,
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  // 이벤트 핸들러들
+  const handleFilterChange =
+    (field: keyof OrderFilter) =>
+    (event: SelectChangeEvent<string | boolean>) => {
+      const value = event.target.value;
+      setFilter((prev: OrderFilter) => ({
+        ...prev,
+        [field]: value,
+      }));
     };
-  };
 
-  const orderSummary = calculateOrderSummary();
+  // TextField 전용 핸들러 추가
+  const handleTextFieldChange =
+    (field: keyof OrderFilter) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setFilter((prev: OrderFilter) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
 
   const handleDateRangeChange = (range: DateRange) => {
-    setFilter((prev) => ({ ...prev, dateRange: range }));
+    setFilter((prev: OrderFilter) => ({
+      ...prev,
+      dateRange: range,
+    }));
   };
 
-  const handleFilterChange = (field: keyof OrderFilter) => (event: any) => {
-    const value =
-      event.target.type === "checkbox"
-        ? event.target.checked
-        : event.target.value;
-    setFilter((prev) => ({ ...prev, [field]: value }));
+  const handleChangePage = (_: unknown, newPage: number) => {
+    setPage(newPage);
   };
 
-  const handleConfirmOrder = (orderId: string) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId
-          ? { ...order, shippingStatus: "preparing" as ShippingStatus }
-          : order
-      )
-    );
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const getStatusChip = (status: ShippingStatus) => {
-    const statusConfig = {
-      payment_completed: { label: "결제완료", color: "primary" as const },
-      preparing: { label: "상품준비중", color: "warning" as const },
-      ready_to_ship: { label: "배송지시", color: "info" as const },
-      shipping: { label: "배송중", color: "secondary" as const },
-      delivered: { label: "배송완료", color: "success" as const },
-      pending_confirmation: { label: "확인 대기", color: "warning" as const },
-    };
-
-    const config = statusConfig[status];
+    const statusConfig = statusColorMap[status];
     return (
       <Chip
-        label={config.label}
-        color={config.color}
+        label={statusConfig.label}
+        color={statusConfig.color}
         size="small"
         variant="outlined"
       />
     );
   };
 
-  const filteredOrders = orders.filter((order) => {
+  // 주문 요약 계산
+  const orderSummary: OrderSummary = mockOrders.reduce(
+    (acc, order) => {
+      switch (order.shippingStatus) {
+        case "payment_completed":
+          acc.paymentCompleted++;
+          break;
+        case "preparing":
+          acc.preparing++;
+          break;
+        case "ready_to_ship":
+          acc.readyToShip++;
+          break;
+        case "shipping":
+          acc.shipping++;
+          break;
+        case "delivered":
+          acc.delivered++;
+          break;
+      }
+      return acc;
+    },
+    {
+      paymentCompleted: 0,
+      preparing: 0,
+      readyToShip: 0,
+      shipping: 0,
+      delivered: 0,
+    }
+  );
+
+  // 필터링된 주문 목록
+  const filteredOrders = mockOrders.filter((order) => {
+    // 배송 상태 필터
     if (
       filter.shippingStatus !== "all" &&
       order.shippingStatus !== filter.shippingStatus
     ) {
       return false;
     }
+
+    // 검색 키워드 필터
     if (filter.searchKeyword) {
       const searchField =
         filter.searchCondition === "customer_name"
           ? order.customerName
           : filter.searchCondition === "order_number"
-          ? order.orderNumber
-          : filter.searchCondition === "product_name"
-          ? order.productName
-          : order.customerName; // recipient_name fallback
+            ? order.orderNumber
+            : filter.searchCondition === "product_name"
+              ? order.productName
+              : order.customerName; // recipient_name fallback
       return searchField
         .toLowerCase()
         .includes(filter.searchKeyword.toLowerCase());
@@ -338,48 +368,23 @@ const OrderShippingManagement: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card sx={{ border: 1, borderColor: "#e0e0e0", borderRadius: 2 }}>
-              <CardContent>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 1,
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    장기미배송(최근 1일)
-                  </Typography>
-                  <InfoIcon sx={{ fontSize: 16, color: "#bdbdbd" }} />
-                </Box>
-                <Typography
-                  variant="h3"
-                  sx={{ fontWeight: 700, color: "#2d2a27" }}
-                >
-                  {mockUrgentTasks.longTermUndelivered}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
         </Grid>
       </Paper>
 
-      {/* 배송 처리 현황 */}
+      {/* 주문 현황 요약 */}
       <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
         <Typography
           variant="h6"
           sx={{ fontWeight: 600, color: "#2d2a27", mb: 2 }}
         >
-          배송처리를 진행해주세요
+          주문 현황
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid size={{ xs: 6, md: 2.4 }}>
             <Card
               sx={{
-                border: 2,
-                borderColor: "#1976d2",
+                border: 1,
+                borderColor: "#e0e0e0",
                 borderRadius: 2,
                 textAlign: "center",
               }}
@@ -394,7 +399,7 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
                 <Typography
                   variant="h3"
-                  sx={{ fontWeight: 700, color: "#1976d2" }}
+                  sx={{ fontWeight: 700, color: "#2d2a27" }}
                 >
                   {orderSummary.paymentCompleted}
                 </Typography>
@@ -494,7 +499,7 @@ const OrderShippingManagement: React.FC = () => {
                   color="text.secondary"
                   sx={{ mb: 1 }}
                 >
-                  배송완료(최근 3주)
+                  배송완료
                 </Typography>
                 <Typography
                   variant="h3"
@@ -508,13 +513,13 @@ const OrderShippingManagement: React.FC = () => {
         </Grid>
       </Paper>
 
-      {/* 필터링 섹션 */}
-      <Paper sx={{ p: { xs: 3, md: 5 }, mb: 3, borderRadius: 3 }}>
-        <Grid container spacing={4} alignItems="center">
-          {/* 기간 */}
+      {/* 필터 섹션 */}
+      <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+        <Grid container spacing={3} alignItems="center">
+          {/* 주문일 */}
           <Grid size={{ xs: 12, md: 2 }}>
             <Typography variant="body2" fontWeight={600} color="text.primary">
-              기간
+              주문일
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, md: 10 }}>
@@ -522,18 +527,19 @@ const OrderShippingManagement: React.FC = () => {
               sx={{
                 display: "flex",
                 gap: 1,
-                flexWrap: "wrap",
                 alignItems: "center",
+                flexWrap: "wrap",
               }}
             >
               {DATE_RANGES.map((range) => (
                 <Button
                   key={range.value}
-                  size="small"
                   variant={
                     filter.dateRange === range.value ? "contained" : "outlined"
                   }
-                  onClick={() => handleDateRangeChange(range.value)}
+                  onClick={() =>
+                    handleDateRangeChange(range.value as DateRange)
+                  }
                   sx={{
                     minWidth: 60,
                     fontSize: "0.75rem",
@@ -550,18 +556,16 @@ const OrderShippingManagement: React.FC = () => {
                 size="small"
                 type="date"
                 value={filter.startDate}
-                onChange={handleFilterChange("startDate")}
+                onChange={handleTextFieldChange("startDate")} // ✅ 수정됨
                 sx={{ width: 140 }}
                 InputProps={{ style: { fontSize: "0.75rem" } }}
               />
-              <Typography variant="body2" color="text.secondary">
-                ~
-              </Typography>
+
               <TextField
                 size="small"
                 type="date"
                 value={filter.endDate}
-                onChange={handleFilterChange("endDate")}
+                onChange={handleTextFieldChange("endDate")} // ✅ 수정됨
                 sx={{ width: 140 }}
                 InputProps={{ style: { fontSize: "0.75rem" } }}
               />
@@ -597,67 +601,68 @@ const OrderShippingManagement: React.FC = () => {
                       label={<Typography variant="body2">{label}</Typography>}
                     />
                   ))}
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={filter.directShippingOnly}
-                      onChange={handleFilterChange("directShippingOnly")}
-                    />
-                  }
-                  label={
-                    <Typography variant="body2">업체 직접 배송</Typography>
-                  }
-                />
               </RadioGroup>
             </FormControl>
           </Grid>
 
-          {/* 상세조건 */}
+          {/* 검색 조건 */}
           <Grid size={{ xs: 12, md: 2 }}>
             <Typography variant="body2" fontWeight={600} color="text.primary">
-              상세조건
+              검색조건
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <FormControl fullWidth size="small">
-              <Select
-                value={filter.searchCondition}
-                onChange={handleFilterChange("searchCondition")}
-                sx={{ fontSize: "0.75rem" }}
-              >
-                {SEARCH_CONDITIONS.map((condition) => (
-                  <MenuItem key={condition.value} value={condition.value}>
-                    {condition.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <TextField
-              size="small"
-              placeholder="검색어를 입력하세요"
-              value={filter.searchKeyword}
-              onChange={handleFilterChange("searchKeyword")}
-              fullWidth
-              InputProps={{
-                style: { fontSize: "0.75rem" },
-              }}
-            />
+          <Grid size={{ xs: 12, md: 10 }}>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <Select
+                  value={filter.searchCondition}
+                  onChange={handleFilterChange("searchCondition")}
+                  displayEmpty
+                >
+                  {SEARCH_CONDITIONS.map((condition) => (
+                    <MenuItem key={condition.value} value={condition.value}>
+                      {condition.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                size="small"
+                placeholder="검색어를 입력하세요"
+                value={filter.searchKeyword}
+                onChange={handleTextFieldChange("searchKeyword")} // ✅ 수정됨
+                sx={{ width: 200 }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={filter.directShippingOnly}
+                    onChange={handleFilterChange("directShippingOnly")}
+                    size="small"
+                  />
+                }
+                label={<Typography variant="body2">업체직송만</Typography>}
+              />
+            </Box>
           </Grid>
         </Grid>
 
-        {/* 검색 버튼 */}
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 1,
+            mt: 2,
+          }}
+        >
           <Button
             variant="outlined"
             startIcon={<RefreshIcon />}
             onClick={() =>
               setFilter({
                 dateRange: "30days",
-                startDate: "2021-03-02",
-                endDate: "2021-04-01",
+                startDate: "",
+                endDate: "",
                 shippingStatus: "all",
                 searchCondition: "customer_name",
                 searchKeyword: "",
@@ -749,16 +754,7 @@ const OrderShippingManagement: React.FC = () => {
                     textTransform: "uppercase",
                   }}
                 >
-                  배송 정보
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: "0.75rem",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  처리
+                  배송상태
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -766,96 +762,27 @@ const OrderShippingManagement: React.FC = () => {
               {filteredOrders
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((order) => (
-                  <TableRow
-                    key={order.id}
-                    hover
-                    sx={{ "&:hover": { backgroundColor: "#fafafa" } }}
-                  >
-                    <TableCell>
-                      <Typography variant="body2" fontWeight={600}>
-                        {order.orderNumber}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        {order.orderDate}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        {order.customerName}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        {order.productName}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        {order.quantity}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        ₩{order.amount.toLocaleString()}
-                      </Typography>
-                    </TableCell>
+                  <TableRow key={order.id}>
+                    <TableCell>{order.orderNumber}</TableCell>
+                    <TableCell>{order.orderDate}</TableCell>
+                    <TableCell>{order.customerName}</TableCell>
+                    <TableCell>{order.productName}</TableCell>
+                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>₩{order.amount.toLocaleString()}</TableCell>
                     <TableCell>{getStatusChip(order.shippingStatus)}</TableCell>
-                    <TableCell>
-                      {order.shippingStatus === "pending_confirmation" && (
-                        <Button
-                          size="small"
-                          variant="contained"
-                          onClick={() => handleConfirmOrder(order.id)}
-                          sx={{
-                            backgroundColor: "#ef9942",
-                            color: "white",
-                            fontSize: "0.75rem",
-                            "&:hover": {
-                              backgroundColor: "#e08830",
-                            },
-                          }}
-                        >
-                          주문 확인
-                        </Button>
-                      )}
-                      {order.shippingStatus === "preparing" && (
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="primary"
-                          sx={{ fontSize: "0.75rem" }}
-                        >
-                          배송 지시
-                        </Button>
-                      )}
-                      {order.shippingStatus === "ready_to_ship" && (
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="secondary"
-                          sx={{ fontSize: "0.75rem" }}
-                        >
-                          운송장 등록
-                        </Button>
-                      )}
-                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={filteredOrders.length}
-          page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
           rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            setPage(0);
-          }}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="페이지당 행 수:"
           labelDisplayedRows={({ from, to, count }) =>
             `${count}개 중 ${from}-${to}`

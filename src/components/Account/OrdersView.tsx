@@ -1,30 +1,25 @@
 "use client"
 
-import type React from "react"
+import React, {useMemo, useState} from "react"
 import { Box, Typography, Paper, TextField, Chip, Button, Alert, Stepper, Step, StepLabel } from "@mui/material"
 import { Search } from "@mui/icons-material"
-import type { Order } from "./index"
+import type { OrdersViewProps } from "./index"
 import OrderItem from "./OrderItem"
 import CustomStepIcon from "./CustomStepIcon"
 import ArrowConnector from "./ArrowConnector"
+import Pagination from "../common/Pagination"
+import {extendedMockOrders} from "@/data/mock-data"
 
-interface OrdersViewProps {
-    searchQuery: string
-    setSearchQuery: (query: string) => void
-    selectedPeriod: string
-    setSelectedPeriod: (period: string) => void
-    mockOrders: Order[]
-    handleOrderAction: (action: string, order: Order) => void
-}
 
 const OrdersView: React.FC<OrdersViewProps> = ({
                                                    searchQuery,
                                                    setSearchQuery,
                                                    selectedPeriod,
                                                    setSelectedPeriod,
-                                                   mockOrders,
                                                    handleOrderAction,
                                                }) => {
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 5
     const shippingSteps = ["결제 완료", "상품 준비중", "배송 준비 완료", "배송중", "배송 완료"]
 
     const descriptions = [
@@ -35,31 +30,59 @@ const OrdersView: React.FC<OrdersViewProps> = ({
         "상품이 주문자에게\n전달 완료되었습니다.",
     ]
 
+    // 검색 및 기간 필터링
+    const filteredOrders = useMemo(() => {
+        let filtered = extendedMockOrders
+
+        // 검색 필터
+        if (searchQuery.trim()) {
+            filtered = filtered.filter((order) =>
+                order.products.some((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase())),
+            )
+        }
+
+        // 기간 필터
+        if (selectedPeriod !== "최근 6개월") {
+            filtered = filtered.filter((order) => order.date.includes(selectedPeriod))
+        }
+
+        return filtered
+    }, [searchQuery, selectedPeriod])
+
+    // 페이지네이션을 위한 주문 슬라이싱
+    const paginatedOrders = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage
+        const endIndex = startIndex + itemsPerPage
+        return filteredOrders.slice(startIndex, endIndex)
+    }, [filteredOrders, currentPage])
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page)
+    }
+
     return (
         <Box>
-            <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4, color: "text.primary" }}>
+            <Typography variant="h4" style={{ fontWeight: "bold", marginBottom: 32, color: "text.primary" }}>
                 주문/배송 조회
             </Typography>
 
-            <Paper sx={{ p: 3, mb: 4, bgcolor: "#fef3e2" }}>
-                <Box sx={{ display: "flex", gap: 2, alignItems: "end", mb: 3 }}>
+            <Paper style={{ padding: 24, marginBottom: 32, backgroundColor: "#fef3e2" }}>
+                <Box style={{ display: "flex", gap: 16, alignItems: "end", marginBottom: 24 }}>
                     <TextField
                         fullWidth
                         placeholder="주문한 상품을 검색할 수 있어요!"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         variant="outlined"
-                        InputProps={{
-                            endAdornment: <Search color="action" />,
-                        }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                bgcolor: "white",
-                            },
-                        }}
+                        slotProps={{
+                        input: {
+                            endAdornment: <Search color="action" />
+                        }
+                    }}
+
                     />
                 </Box>
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                <Box style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {["최근 6개월", "2025", "2024", "2023", "2022", "2021", "2020"].map((period) => (
                         <Chip
                             key={period}
@@ -73,13 +96,26 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                 </Box>
             </Paper>
 
-            {mockOrders.map((order) => (
-                <OrderItem key={order.id} order={order} handleOrderAction={handleOrderAction} />
-            ))}
+            {/* 페이지네이션된 주문 목록 */}
+            <Box style={{ marginBottom: 32 }}>
+                {paginatedOrders.map((order) => (
+                    <OrderItem key={order.id} order={order} handleOrderAction={handleOrderAction} />
+                ))}
+            </Box>
 
-            <Paper sx={{ p: 3, mb: 4 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            {/* 페이지네이션 */}
+            <Box style={{ marginBottom: 32 }}>
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={filteredOrders.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={handlePageChange}
+                />
+            </Box>
+
+            <Paper style={{ padding: 24, marginBottom: 32 }}>
+                <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                    <Typography variant="h6" style={{ fontWeight: 600 }}>
                         배송상품 주문상태 안내
                     </Typography>
                     <Button variant="text" color="primary" size="small">
@@ -87,7 +123,7 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                     </Button>
                 </Box>
 
-                <Stepper activeStep={-1} alternativeLabel connector={<ArrowConnector />} sx={{ mb: 4 }}>
+                <Stepper activeStep={-1} alternativeLabel connector={<ArrowConnector />} style={{ marginBottom: 32 }}>
                     {shippingSteps.map((label, index) => (
                         <Step key={label}>
                             <StepLabel
@@ -100,13 +136,13 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                                     },
                                 }}
                             >
-                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                <Typography variant="body2" style={{ fontWeight: 600 }}>
                                     {label}
                                 </Typography>
                                 <Typography
                                     variant="caption"
                                     color="text.secondary"
-                                    sx={{ textAlign: "center", whiteSpace: "pre-line" }}
+                                    style={{ textAlign: "center", whiteSpace: "pre-line" }}
                                 >
                                     {descriptions[index]}
                                 </Typography>
@@ -116,18 +152,18 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                 </Stepper>
             </Paper>
 
-            <Paper sx={{ p: 3 }}>
-                <Alert severity="error" sx={{ mb: 3 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            <Paper style={{ padding: 24 }}>
+                <Alert severity="error" style={{ marginBottom: 24 }}>
+                    <Typography variant="body2" style={{ fontWeight: 600 }}>
                         취소/반품/교환 신청전 확인해주세요!
                     </Typography>
                 </Alert>
 
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                <Box style={{ marginBottom: 24 }}>
+                    <Typography variant="subtitle2" style={{ fontWeight: 600, marginBottom: 8 }}>
                         취소
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" style={{ marginBottom: 8 }}>
                         • 취소수수료를 확인하여 2일 이내(주말,공휴일 제외) 처리결과를 안내해드립니다.(공휴 경우 기준 마감시간 오후
                         4시)
                     </Typography>
@@ -136,14 +172,14 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                     </Typography>
                 </Box>
 
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                <Box style={{ marginBottom: 24 }}>
+                    <Typography variant="subtitle2" style={{ fontWeight: 600, marginBottom: 8 }}>
                         반품
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" style={{ marginBottom: 8 }}>
                         • 상품 수령 후 7일 이내 신청하여 주세요.
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" style={{ marginBottom: 8 }}>
                         • 상품의 불량된 이유에는 택배 완료 후, 반품 상품을 회수합니다.
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -155,7 +191,7 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                 </Box>
 
                 <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                    <Typography variant="subtitle2" style={{ fontWeight: 600, marginBottom: 8 }}>
                         교환
                     </Typography>
                     <Typography variant="body2" color="text.secondary">

@@ -40,11 +40,11 @@ export type PetType = "강아지" | "고양이" | "새" | "토끼";
 export type ProductType = "간식" | "영양제" | "껌";
 
 export type ProductCategory =
-    | "훈련용 간식"
-    | "건강 간식"
-    | "치아 건강"
-    | "수제 간식"
-    | "무첨가 간식";
+  | "훈련용 간식"
+  | "건강 간식"
+  | "치아 건강"
+  | "수제 간식"
+  | "무첨가 간식";
 
 export const PET_TYPES: PetType[] = ["강아지", "고양이", "새", "토끼"];
 
