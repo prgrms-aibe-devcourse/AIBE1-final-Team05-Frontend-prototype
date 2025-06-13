@@ -1,20 +1,25 @@
 // src/pages/ProductDetailPage/ProductDetailPage.tsx
-// 상품 상세 페이지 (헤더 + 브레드크럼 + 상세 컴포넌트 조합)
 
 import React from "react";
 import { Box } from "@mui/material";
 import ProductDetail from "@/components/ProductDetail";
-import { Product } from "@/components/ProductDetail/Product.ts";
-import { Review, ReviewStats } from "@/components/ProductDetail/review.ts";
 
-// Mock 데이터 - Product.ts의 타입 정의에 맞게 수정
+import { Product } from "@/components/ProductDetail/Product";
+import { Review, ReviewStats } from "@/components/ProductDetail/review";
+
+// Mock 데이터 - image 속성 추가 및 완전한 데이터 제공
 const mockProduct: Product = {
   id: "1",
   name: "우리 아이 건강 닭가슴살 져키",
   brand: "장인의 손길 공방",
   price: 25000,
-  originalPrice: 30000, // 할인가 설정
+  originalPrice: 30000,
+
+  // 👇 중요! image 속성 추가 (ProductImages 컴포넌트에서 사용)
+  image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAKKRu5fbeV0xTu5bsCxhKosrIOabbjk5QarpnkQbEJj8lnRUy-3BtsUosYvRZiKykdWmWuj1Q6EzNsfJPTm-1oSsAol2vnBhukB0U4RvR7atN-YhCT_3ZbDSZEqKwbYwlU0SJBPSD-kkt3Kiofl_7ZjT5tskvEwDxInhtrfkJrfcNlkF-qvaXf22-6LcFSrCmFWKJMLZNRFQxfumgck0eA29qgYivpLIK9mNTxqK_ZKkhnG5xOx62qaEyAXL-Yw57Malq9DFzHvVs",
+
   imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAKKRu5fbeV0xTu5bsCxhKosrIOabbjk5QarpnkQbEJj8lnRUy-3BtsUosYvRZiKykdWmWuj1Q6EzNsfJPTm-1oSsAol2vnBhukB0U4RvR7atN-YhCT_3ZbDSZEqKwbYwlU0SJBPSD-kkt3Kiofl_7ZjT5tskvEwDxInhtrfkJrfcNlkF-qvaXf22-6LcFSrCmFWKJMLZNRFQxfumgck0eA29qgYivpLIK9mNTxqK_ZKkhnG5xOx62qaEyAXL-Yw57Malq9DFzHvVs",
+
   rating: 4.8,
   reviewCount: 125,
   isNew: false,
@@ -23,29 +28,47 @@ const mockProduct: Product = {
   shippingInfo: "당일 배송 가능 (오후 2시 이전 주문시)",
   category: "수제 간식",
   petType: "강아지",
-  ingredients: ["닭가슴살 (국내산)", "식물성 글리세린"], // 배열로 수정
-  healthBenefits: ["고단백", "저지방", "무첨가"], // 배열로 수정
+  ingredients: ["닭가슴살 (국내산)", "식물성 글리세린"],
+  healthBenefits: ["고단백", "저지방", "무첨가"],
   isFavorite: false,
-  // ProductDetail이 필요로 하는 추가 속성들
+
+  // ProductDetail 전용 추가 속성들
   description: "100% 국내산 닭가슴살로 만든 건강하고 맛있는 수제 간식입니다.\n인공 첨가물과 방부제가 전혀 들어가지 않았습니다.",
+
   images: [
     "https://lh3.googleusercontent.com/aida-public/AB6AXuAKKRu5fbeV0xTu5bsCxhKosrIOabbjk5QarpnkQbEJj8lnRUy-3BtsUosYvRZiKykdWmWuj1Q6EzNsfJPTm-1oSsAol2vnBhukB0U4RvR7atN-YhCT_3ZbDSZEqKwbYwlU0SJBPSD-kkt3Kiofl_7ZjT5tskvEwDxInhtrfkJrfcNlkF-qvaXf22-6LcFSrCmFWKJMLZNRFQxfumgck0eA29qgYivpLIK9mNTxqK_ZKkhnG5xOx62qaEyAXL-Yw57Malq9DFzHvVs",
     "https://lh3.googleusercontent.com/aida-public/AB6AXuD1LExQScrbn77L0O9UX22Sj7nG2YhS4y3nS6Ok0BuR-v3NiZoqlSHD__OUsGmZ8Vluex-dpWrTlnSP_5evrZlkq_nipQ1s83SbpwWVFnM5Qk4ySOOiWbuLcGbZkdN5JGFSx6YoBErspP3KCOlHTaxj-aeTjjThZKuSDKjIFBD8cAGInCgzqlo_KVFz_nIdHdNmESATwN9a-6Y_6hZ3-NpkFW-DGUlT6vUuso1oufPFEjuD2WB5knop-6IaSbMUBTR8IzAMBmzCIKc",
     "https://lh3.googleusercontent.com/aida-public/AB6AXuBXCrO3ubZJn7HpNI2KjbOdh1walSbjFMNdfV4QqyCIheVcUVGbsoLjEnl3YkpC5Oh-zZ3o8RiyYPTjXMgOR-S4amq7vp-fIRdd77WWvwh0cLf-lH5G5sf4rbrptb55KEQfX-HD509EQyX1uXm6IR-ujmakbIdBUIiipds1j4uGtLEoppfUXNw4cI95qR8ciVYs6jlmrCZQDMy_kZi857gMDAb9RbGelHOknz6nMqv3TCQU589KSBjTqWAs6-iZojM2RwkoQf8_Nnk",
     "https://lh3.googleusercontent.com/aida-public/AB6AXuAepKpq-eurk_nZ0azm-BKw59WBmLSnqVIqZt_qOR0LCyP7mGh7sEw-zVvkLccE08FcGYxx7xT_XmT1Xkdgvz9wRJSs5sJDg8bBViXTvu9jVGqEm9Oa2tL1AzJ60t2aJ9rsOe1jSq_jUMkDMowdD0awi1kU7JPskVvjXopTplZ7Ath8PEfMA1IuiO54JIp79FOLieSFbUwt1YLM_ROYn5YPG9lYCtC-koG06aeni2mmqfadJZXrPXZDgc0KBBKZSODtLfl-7Zo4q7U",
   ],
+
   nutritionalInfo: "조단백질 70% 이상, 조지방 5% 이상, 조섬유 2% 이하, 수분 15% 이하",
   allergenInfo: "일반적인 알러지 유발 물질 없음. 견과류를 처리하는 시설에서 생산될 수 있습니다.",
+
   maker: {
     name: "장인의 손길 공방",
     description: "사랑으로 만드는 수제 간식",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBog2gnA031MIlZbELfbyrC3qNhNoVmVsa4J_QRTCRt2gJLoW9TFAgoOKC1O3tPkPw9e-4fDOcZ9zylZ59X-mJpCgJZGq2U93WNCmrf7Y7ubhSx7Dik5s2m8MrUCm0OH7vvc6w8QprKIIt-nzmXXWEgu3Pl8eoiUCQSIcCyDDMqx5K4HqG0MsFceHRhfLCpSCDdx81wiT4odconNubFi0_grIOITZbAwGvI2UD6jcjrVu8squSGAt9kf4UMNs7YB_SuP1bscuwYNLU",
   },
+
   suitableFor: "모든 연령 및 견종의 강아지 (2개월 이상)",
   packaging: [
     { value: "basic", label: "기본 포장" },
     { value: "gift", label: "선물 포장" },
   ],
+
+  // 👇 중요! tags 추가 (ProductBasicInfo에서 사용)
+  tags: ["국내산", "무첨가", "수제", "건강간식"],
+
+  // 👇 중요! nutritionInfo 추가 (ProductSpecTable에서 사용)
+  nutritionInfo: {
+    protein: "70% 이상",
+    fat: "5% 이상",
+    fiber: "2% 이하",
+    moisture: "15% 이하"
+  },
+
+  weight: "100g"
 };
 
 // 확장된 Mock 리뷰 데이터
@@ -61,8 +84,6 @@ const mockReviews: Review[] = [
     content: "우리집 댕댕이가 너무 좋아해요! 건강한 간식이라 안심하고 줄 수 있어서 만족스럽습니다. 인공첨가물이 없어서 더욱 믿음이 가네요.",
     date: "2024-05-15",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuApP_3yp5zNwjzDnSAxIaVV3UbIk-jUR_KCXTp_ePNMaO528Z2oyjezunXdweY1Usc0CHASwaPK-w92PREH-LqWO_lV0mXwXNH5KLQTTtsBcPRos1FrVL0Go6hZGkX3_h0OlRHgeSLTfCERSaVN8Wzz4iMGuCQS95NikSh77JBeOqzowxIye2QKbrz838qA_heIL6hnXjYPz5xYz_qAJGbqnr0mK2DHsyYURHGvyVzKxyusdm5cEAw9ja9Uih6XSi2Ihh7fp1PsaR0",
-    likes: 23,
-    dislikes: 0,
   },
   {
     id: "2",
@@ -74,8 +95,6 @@ const mockReviews: Review[] = [
     rating: 4,
     content: "좋아하긴 하는데 가격이 조금 비싸네요. 품질은 만족해요! 우리 비글이 맛있게 잘 먹습니다.",
     date: "2024-05-10",
-    likes: 18,
-    dislikes: 2,
   },
   {
     id: "3",
@@ -87,21 +106,18 @@ const mockReviews: Review[] = [
     rating: 5,
     content: "완전 대박이에요! 알레르기 있는 우리 강아지도 문제없이 잘 먹어요. 재주문 예정입니다.",
     date: "2024-05-08",
-    likes: 31,
-    dislikes: 0,
   },
-  // 더 많은 리뷰들을 추가할 수 있습니다...
 ];
 
 const mockReviewStats: ReviewStats = {
   averageRating: 4.8,
   totalReviews: 125,
   ratingDistribution: {
-    5: 70,
-    4: 20,
-    3: 5,
-    2: 3,
-    1: 2,
+    "5": 70, // 👈 문자열 키로 수정 (ratingDistribution 타입 맞춤)
+    "4": 20,
+    "3": 5,
+    "2": 3,
+    "1": 2,
   },
 };
 
