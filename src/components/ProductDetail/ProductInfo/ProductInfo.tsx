@@ -28,7 +28,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             {/* 추천 정보 */}
             <ProductSuggestions />
 
-            <Divider sx={{ borderColor: "#f3eee7" }} />
+            <Divider sx={{ borderColor: "grey.100" }} />
 
             {/* 구매 옵션 및 버튼 */}
             <ProductPurchaseOptions product={product} />

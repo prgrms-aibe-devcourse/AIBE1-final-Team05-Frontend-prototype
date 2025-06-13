@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Typography, Rating, Chip } from "@mui/material";
 import { Product } from "../Product";
+
 interface ProductBasicInfoProps {
     product: Product;
 }
@@ -15,9 +16,7 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({ product }) => {
                 variant="h1"
                 sx={{
                     mb: 2,
-                    fontSize: "2rem",
-                    fontWeight: 700,
-                    color: "#1b150e",
+                    color: "text.primary",
                     lineHeight: 1.2,
                 }}
             >
@@ -29,9 +28,7 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({ product }) => {
                 variant="body1"
                 sx={{
                     mb: 3,
-                    lineHeight: 1.6,
-                    color: "#97784e",
-                    fontSize: "1rem",
+                    color: "text.secondary",
                     whiteSpace: "pre-line",
                 }}
             >
@@ -46,15 +43,15 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({ product }) => {
                     readOnly
                     size="small"
                     sx={{
-                        color: "#e89830",
+                        color: "primary.main",
                         "& .MuiRating-iconEmpty": {
-                            color: "#d5c4ae",
+                            color: "grey.200",
                         },
                     }}
                 />
                 <Typography
                     variant="body2"
-                    sx={{ color: "#97784e", fontSize: "0.875rem" }}
+                    sx={{ color: "text.secondary" }}
                 >
                     {product.rating} (리뷰 {product.reviewCount}개)
                 </Typography>
@@ -64,11 +61,10 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({ product }) => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
                 {product.originalPrice && (
                     <Typography
-                        variant="body2"
+                        variant="body1"
                         sx={{
-                            color: "#97784e",
+                            color: "text.secondary",
                             textDecoration: "line-through",
-                            fontSize: "1rem",
                         }}
                     >
                         {product.originalPrice.toLocaleString()}원
@@ -77,9 +73,8 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({ product }) => {
                 <Typography
                     variant="h2"
                     sx={{
-                        color: "#e89830",
+                        color: "primary.main",
                         fontWeight: 700,
-                        fontSize: "1.875rem",
                     }}
                 >
                     {product.price.toLocaleString()}원
@@ -96,9 +91,8 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({ product }) => {
                             size="small"
                             variant="outlined"
                             sx={{
-                                borderColor: "#e89830",
-                                color: "#e89830",
-                                fontSize: "0.75rem",
+                                borderColor: "primary.main",
+                                color: "primary.main",
                             }}
                         />
                     ))}

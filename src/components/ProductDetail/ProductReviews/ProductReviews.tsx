@@ -17,14 +17,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 10;
 
-    // 데이터 안전성 체크
-    if (!stats || !stats.ratingDistribution) {
-        return (
-            <div style={{ color: "red", fontSize: "2rem" }}>
-                ERROR: stats 데이터가 없습니다!
-            </div>
-        );
-    }
 
     // 페이지네이션 계산
     const totalPages = Math.ceil(reviews.length / reviewsPerPage);
@@ -34,7 +26,17 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
         return reviews.slice(startIndex, endIndex);
     }, [reviews, currentPage, reviewsPerPage]);
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    // 데이터 안전성 체크 - useMemo 아래로 이동
+    if (!stats || !stats.ratingDistribution) {
+        return (
+            <div style={{ color: "red", fontSize: "2rem" }}>
+                ERROR: stats 데이터가 없습니다!
+            </div>
+        );
+    }
+
+    // 🔥 event 매개변수를 _로 변경하여 사용하지 않음을 명시
+    const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);
         const reviewSection = document.getElementById("review-section");
         if (reviewSection) {
@@ -46,7 +48,11 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
         <Box sx={{ mt: 6, py: 4 }}>
             <Box
                 id="review-section"
-                sx={{ backgroundColor: "#f8f4f0", p: 4, borderRadius: 2 }}
+                sx={{
+                    backgroundColor: "grey.100",
+                    p: 4,
+                    borderRadius: 2
+                }}
             >
                 <Typography
                     variant="h2"
@@ -54,7 +60,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
                         mb: 4,
                         fontSize: "1.25rem",
                         fontWeight: 600,
-                        color: "#1b150e",
+                        color: "text.primary",
                     }}
                 >
                     고객 리뷰
@@ -75,7 +81,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
                 >
                     <Typography
                         variant="body2"
-                        sx={{ color: "#97784e", fontSize: "0.875rem" }}
+                        sx={{ color: "text.secondary" }}
                     >
                         총 {stats.totalReviews}개 리뷰 중{" "}
                         {(currentPage - 1) * reviewsPerPage + 1}-
@@ -83,7 +89,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
                     </Typography>
                     <Typography
                         variant="body2"
-                        sx={{ color: "#97784e", fontSize: "0.875rem" }}
+                        sx={{ color: "text.secondary" }}
                     >
                         {currentPage} / {totalPages} 페이지
                     </Typography>
@@ -107,13 +113,13 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, stats }) => {
                     <Box sx={{ textAlign: "center", py: 8 }}>
                         <Typography
                             variant="body1"
-                            sx={{ color: "#97784e", fontSize: "1rem" }}
+                            sx={{ color: "text.secondary", fontSize: "1rem" }}
                         >
                             아직 등록된 리뷰가 없습니다.
                         </Typography>
                         <Typography
                             variant="body2"
-                            sx={{ color: "#d5c4ae", fontSize: "0.875rem", mt: 1 }}
+                            sx={{ color: "grey.200", mt: 1 }}
                         >
                             첫 번째 리뷰를 남겨보세요!
                         </Typography>

@@ -4,7 +4,7 @@ import { Container, Grid, Box } from "@mui/material";
 import { Product } from "./Product";
 import { Review, ReviewStats } from "./review";
 import ProductImages from "./ProductImages";
-import ProductInfo from "./ProductInfo"; // 자동으로 index.ts를 통해 import
+import ProductInfo from "./ProductInfo";
 import ProductReviews from "./ProductReviews";
 import RelatedProducts from "./RelatedProducts";
 
@@ -27,7 +27,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                                                          relatedProducts,
                                                      }) => {
     return (
-        <Box sx={{ backgroundColor: "#fcfaf8", minHeight: "100vh" }}>
+        <Box sx={{ backgroundColor: "background.default", minHeight: "100vh" }}>
             <Container
                 maxWidth="xl"
                 sx={{

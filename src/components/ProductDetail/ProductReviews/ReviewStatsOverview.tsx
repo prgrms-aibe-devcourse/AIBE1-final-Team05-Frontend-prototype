@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Typography, Rating, Grid } from "@mui/material";
 import { ReviewStats } from "../review";
+
 interface ReviewStatsOverviewProps {
     stats: ReviewStats;
 }
@@ -24,7 +25,7 @@ const ReviewStatsOverview: React.FC<ReviewStatsOverviewProps> = ({ stats }) => {
                         sx={{
                             fontSize: "3rem",
                             fontWeight: 700,
-                            color: "#1b150e",
+                            color: "text.primary",
                             mb: 1,
                         }}
                     >
@@ -36,15 +37,15 @@ const ReviewStatsOverview: React.FC<ReviewStatsOverviewProps> = ({ stats }) => {
                         readOnly
                         sx={{
                             mb: 1,
-                            color: "#e89830",
+                            color: "primary.main",
                             "& .MuiRating-iconEmpty": {
-                                color: "#d5c4ae",
+                                color: "grey.200",
                             },
                         }}
                     />
                     <Typography
                         variant="body2"
-                        sx={{ color: "#97784e", fontSize: "0.875rem" }}
+                        sx={{ color: "text.secondary" }}
                     >
                         {stats.totalReviews}개 리뷰
                     </Typography>
@@ -52,10 +53,12 @@ const ReviewStatsOverview: React.FC<ReviewStatsOverviewProps> = ({ stats }) => {
             </Grid>
 
             {/* 평점 분포 섹션 */}
-            <Grid item xs={12} md={9}>
+            <Grid size={{ xs: 12, md: 8 }}>
                 <Box sx={{ width: "100%" }}>
                     {[5, 4, 3, 2, 1].map((rating) => {
-                        const percentage = stats.ratingDistribution[rating.toString()] || 0;
+
+                        const ratingKey = rating as unknown as keyof typeof stats.ratingDistribution;
+                        const percentage = stats.ratingDistribution[ratingKey] || 0;
 
                         return (
                             <Box
@@ -72,9 +75,8 @@ const ReviewStatsOverview: React.FC<ReviewStatsOverviewProps> = ({ stats }) => {
                                     variant="body2"
                                     sx={{
                                         width: "8px",
-                                        color: "#1b150e",
+                                        color: "text.primary",
                                         textAlign: "center",
-                                        fontSize: "0.875rem",
                                         fontWeight: 400,
                                     }}
                                 >
@@ -82,7 +84,7 @@ const ReviewStatsOverview: React.FC<ReviewStatsOverviewProps> = ({ stats }) => {
                                 </Typography>
                                 <Box
                                     sx={{
-                                        width: "1100px",
+                                        width: "100%",
                                         height: 8,
                                         backgroundColor: "#f0f0f0",
                                         borderRadius: 2,
@@ -93,7 +95,7 @@ const ReviewStatsOverview: React.FC<ReviewStatsOverviewProps> = ({ stats }) => {
                                         sx={{
                                             width: `${Math.max(Number(percentage), 0)}%`,
                                             height: "100%",
-                                            backgroundColor: "#e89830",
+                                            backgroundColor: "primary.main",
                                             borderRadius: 0,
                                             minWidth: percentage > 0 ? "4px" : "0px",
                                             transition: "width 0.3s ease-in-out",
@@ -105,8 +107,7 @@ const ReviewStatsOverview: React.FC<ReviewStatsOverviewProps> = ({ stats }) => {
                                     sx={{
                                         width: "28px",
                                         textAlign: "right",
-                                        color: "#97784e",
-                                        fontSize: "0.875rem",
+                                        color: "text.secondary",
                                         fontWeight: 400,
                                     }}
                                 >

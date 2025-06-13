@@ -2,6 +2,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { Product } from "../Product";
+
 interface ProductSpecTableProps {
     product: Product;
 }
@@ -16,7 +17,7 @@ const SpecRow: React.FC<SpecRowProps> = ({ label, value }) => (
         <Typography
             variant="body2"
             sx={{
-                color: "#97784e",
+                color: "text.secondary",
                 fontWeight: 500,
                 minWidth: "80px",
                 mr: 2,
@@ -24,7 +25,13 @@ const SpecRow: React.FC<SpecRowProps> = ({ label, value }) => (
         >
             {label}:
         </Typography>
-        <Typography variant="body2" sx={{ color: "#1b150e", flex: 1 }}>
+        <Typography
+            variant="body2"
+            sx={{
+                color: "text.primary",
+                flex: 1
+            }}
+        >
             {value}
         </Typography>
     </Box>
@@ -50,14 +57,16 @@ const ProductSpecTable: React.FC<ProductSpecTableProps> = ({ product }) => {
     };
 
     return (
-        <Box sx={{ backgroundColor: "#f7f3ef", p: 3, borderRadius: 2 }}>
+        <Box sx={{
+            backgroundColor: "grey.100",
+            p: 3,
+            borderRadius: 2
+        }}>
             <Typography
                 variant="h3"
                 sx={{
                     mb: 2,
-                    fontSize: "1.125rem",
-                    fontWeight: 600,
-                    color: "#1b150e",
+                    color: "text.primary",
                 }}
             >
                 상품 정보

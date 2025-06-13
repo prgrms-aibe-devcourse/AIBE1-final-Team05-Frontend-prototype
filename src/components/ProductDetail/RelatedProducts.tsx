@@ -33,14 +33,14 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                     mb: 4,
                     fontSize: "1.5rem",
                     fontWeight: 700,
-                    color: "#1b150e",
+                    color: "text.primary",
                 }}
             >
                 추천 상품
             </Typography>
 
             {/* 리뷰 배경과 동일한 너비, 카드들이 전체 너비를 꽉 채움 */}
-            <Box sx={{ width: "1376px" }}>
+            <Box sx={{ width: "100%", maxWidth: "1376px" }}>
                 <Grid container spacing={3}>
                     {products.map((product) => (
                         <Grid
@@ -77,7 +77,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                                         zIndex: 2,
                                         "&:hover": {
                                             backgroundColor: "rgba(255,255,255,1)",
-                                            color: "#e89830",
+                                            color: "primary.main",
                                         },
                                         width: 28,
                                         height: 28,
@@ -108,16 +108,14 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                                 <CardContent sx={{ p: 1.5 }}>
                                     <Typography
                                         variant="body1"
+                                        className="truncate"
                                         sx={{
                                             fontWeight: 600,
                                             fontSize: "0.8rem",
                                             mb: 0.5,
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                            color: "#1b150e",
+                                            color: "text.primary",
                                             "&:hover": {
-                                                color: "#e89830",
+                                                color: "primary.main",
                                             },
                                         }}
                                     >
@@ -126,7 +124,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                                     <Typography
                                         variant="body1"
                                         sx={{
-                                            color: "#e89830",
+                                            color: "primary.main",
                                             fontWeight: 700,
                                             fontSize: "0.9rem",
                                         }}

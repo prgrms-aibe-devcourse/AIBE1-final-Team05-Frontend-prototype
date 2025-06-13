@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { AutoAwesome, TrendingUp, TrendingDown } from "@mui/icons-material";
 import { Review } from "../review";
+
 interface ReviewSummaryAIProps {
     reviews: Review[];
     totalReviews: number;
@@ -45,12 +46,12 @@ const mockReviewSummary = {
     },
 };
 
-const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews }) => {
+const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews: _reviews, totalReviews }) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setSelectedTab(newValue);
     };
 
@@ -76,8 +77,9 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
         <Card
             sx={{
                 mb: 4,
-                backgroundColor: "#ffffff",
-                border: "1px solid #e7ddd0",
+                backgroundColor: "background.paper",
+                border: "1px solid",
+                borderColor: "grey.200",
                 borderRadius: 2,
                 overflow: "hidden",
                 transition: "all 0.3s ease-in-out",
@@ -92,23 +94,23 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    backgroundColor: isExpanded ? "#fcfaf8" : "#ffffff",
+                    backgroundColor: isExpanded ? "background.default" : "background.paper",
                     borderBottom: isExpanded ? "1px solid #f0f0f0" : "none",
                     transition: "all 0.3s ease-in-out",
                     "&:hover": {
-                        backgroundColor: "#fcfaf8",
+                        backgroundColor: "background.default",
                     },
                 }}
             >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <AutoAwesome sx={{ color: "#e89830", fontSize: "1.5rem" }} />
+                    <AutoAwesome sx={{ color: "primary.main", fontSize: "1.5rem" }} />
                     <Box>
                         <Typography
                             variant="h3"
                             sx={{
                                 fontSize: "1.125rem",
                                 fontWeight: 600,
-                                color: "#1b150e",
+                                color: "text.primary",
                                 mb: 0.5,
                             }}
                         >
@@ -117,7 +119,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                         <Typography
                             variant="body2"
                             sx={{
-                                color: "#97784e",
+                                color: "text.secondary",
                                 fontSize: "0.8125rem",
                             }}
                         >
@@ -131,7 +133,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                             <Typography
                                 variant="body2"
-                                sx={{ color: "#97784e", fontSize: "0.75rem" }}
+                                sx={{ color: "text.secondary", fontSize: "0.75rem" }}
                             >
                                 분석 중...
                             </Typography>
@@ -140,7 +142,8 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                                     width: 16,
                                     height: 16,
                                     border: "2px solid #f0f0f0",
-                                    borderTop: "2px solid #e89830",
+                                    borderTop: "2px solid",
+                                    borderTopColor: "primary.main",
                                     borderRadius: "50%",
                                     animation: "spin 1s linear infinite",
                                     "@keyframes spin": {
@@ -154,7 +157,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                     <Typography
                         variant="body2"
                         sx={{
-                            color: "#97784e",
+                            color: "text.secondary",
                             fontSize: "0.8125rem",
                             fontWeight: 500,
                         }}
@@ -165,7 +168,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                         sx={{
                             transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
                             transition: "transform 0.3s ease-in-out",
-                            color: "#97784e",
+                            color: "text.secondary",
                         }}
                     >
                         ▼
@@ -190,15 +193,15 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                                 sx={{
                                     px: 3,
                                     "& .MuiTabs-indicator": {
-                                        backgroundColor: "#e89830",
+                                        backgroundColor: "primary.main",
                                     },
                                     "& .MuiTab-root": {
-                                        color: "#97784e",
+                                        color: "text.secondary",
                                         fontWeight: 500,
                                         fontSize: "0.875rem",
                                         minHeight: 48,
                                         "&.Mui-selected": {
-                                            color: "#e89830",
+                                            color: "primary.main",
                                         },
                                     },
                                 }}
@@ -226,7 +229,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                                             mb: 3,
                                             lineHeight: 1.6,
                                             fontSize: "0.875rem",
-                                            color: "#1b150e",
+                                            color: "text.primary",
                                             backgroundColor: "#f8fdf8",
                                             p: 2,
                                             borderRadius: 1,
@@ -241,7 +244,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                                         sx={{
                                             mb: 2,
                                             fontWeight: 600,
-                                            color: "#1b150e",
+                                            color: "text.primary",
                                             fontSize: "0.875rem",
                                         }}
                                     >
@@ -263,7 +266,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                                                 />
                                                 <Typography
                                                     variant="body2"
-                                                    sx={{ fontSize: "0.8125rem", color: "#1b150e", lineHeight: 1.5 }}
+                                                    sx={{ fontSize: "0.8125rem", color: "text.primary", lineHeight: 1.5 }}
                                                 >
                                                     {point}
                                                 </Typography>
@@ -273,7 +276,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
 
                                     <Typography
                                         variant="subtitle2"
-                                        sx={{ mb: 1.5, fontWeight: 600, color: "#1b150e", fontSize: "0.875rem" }}
+                                        sx={{ mb: 1.5, fontWeight: 600, color: "text.primary", fontSize: "0.875rem" }}
                                     >
                                         자주 언급되는 키워드
                                     </Typography>
@@ -304,7 +307,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                                             mb: 3,
                                             lineHeight: 1.6,
                                             fontSize: "0.875rem",
-                                            color: "#1b150e",
+                                            color: "text.primary",
                                             backgroundColor: "#fff8f8",
                                             p: 2,
                                             borderRadius: 1,
@@ -316,7 +319,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
 
                                     <Typography
                                         variant="subtitle2"
-                                        sx={{ mb: 2, fontWeight: 600, color: "#1b150e", fontSize: "0.875rem" }}
+                                        sx={{ mb: 2, fontWeight: 600, color: "text.primary", fontSize: "0.875rem" }}
                                     >
                                         주요 개선 요구사항
                                     </Typography>
@@ -336,7 +339,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
                                                 />
                                                 <Typography
                                                     variant="body2"
-                                                    sx={{ fontSize: "0.8125rem", color: "#1b150e", lineHeight: 1.5 }}
+                                                    sx={{ fontSize: "0.8125rem", color: "text.primary", lineHeight: 1.5 }}
                                                 >
                                                     {point}
                                                 </Typography>
@@ -346,7 +349,7 @@ const ReviewSummaryAI: React.FC<ReviewSummaryAIProps> = ({ reviews, totalReviews
 
                                     <Typography
                                         variant="subtitle2"
-                                        sx={{ mb: 1.5, fontWeight: 600, color: "#1b150e", fontSize: "0.875rem" }}
+                                        sx={{ mb: 1.5, fontWeight: 600, color: "text.primary", fontSize: "0.875rem" }}
                                     >
                                         주요 불만 키워드
                                     </Typography>
