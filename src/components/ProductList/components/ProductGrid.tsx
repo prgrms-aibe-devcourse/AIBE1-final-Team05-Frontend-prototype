@@ -12,7 +12,6 @@ interface ProductGridProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   onFavoriteToggle?: (productId: string) => void;
-  onLoadMore?: () => void;
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -21,7 +20,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   totalPages,
   onPageChange,
   onFavoriteToggle,
-  onLoadMore,
 }) => {
   const theme = useTheme();
 
