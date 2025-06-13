@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 import { Box, Typography, Chip } from "@mui/material"
 
@@ -11,10 +13,36 @@ interface AnnouncementProps {
         content: string
         date: string
         views: number
+        importance: "일반" | "중요" | "긴급"
     }
+    onClick: () => void
 }
 
-const AnnouncementItem: React.FC<AnnouncementProps> = ({ announcement }) => {
+const AnnouncementItem: React.FC<AnnouncementProps> = ({ announcement, onClick }) => {
+    // 중요도에 따른 스타일 설정
+    const getImportanceStyle = (importance: string) => {
+        switch (importance) {
+            case "긴급":
+                return {
+                    display: "inline-block",
+                    color: "#ef4444",
+                    fontWeight: 600,
+                    fontSize: "0.75rem",
+                    ml: 1,
+                }
+            case "중요":
+                return {
+                    display: "inline-block",
+                    color: "#f38b24",
+                    fontWeight: 600,
+                    fontSize: "0.75rem",
+                    ml: 1,
+                }
+            default:
+                return { display: "none" }
+        }
+    }
+
     return (
         <Box
             sx={{
@@ -29,6 +57,7 @@ const AnnouncementItem: React.FC<AnnouncementProps> = ({ announcement }) => {
                 },
                 cursor: "pointer",
             }}
+            onClick={onClick}
         >
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 0.5 }}>
                 <Chip
@@ -45,9 +74,14 @@ const AnnouncementItem: React.FC<AnnouncementProps> = ({ announcement }) => {
                     {announcement.date} | 조회수 {announcement.views}
                 </Typography>
             </Box>
-            <Typography variant="h6" sx={{ fontSize: "1.125rem", fontWeight: 600, color: "#1c140d", mb: 0.5 }}>
-                {announcement.title}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="h6" sx={{ fontSize: "1.125rem", fontWeight: 600, color: "#1c140d", mb: 0.5 }}>
+                    {announcement.title}
+                </Typography>
+                <Box component="span" sx={getImportanceStyle(announcement.importance)}>
+                    {announcement.importance !== "일반" ? `[${announcement.importance}]` : ""}
+                </Box>
+            </Box>
             <Typography
                 variant="body2"
                 sx={{ color: "#9c7349", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
