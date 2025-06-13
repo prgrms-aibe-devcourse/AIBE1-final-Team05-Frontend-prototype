@@ -1,4 +1,4 @@
-// src/types/Product.ts
+// src/components/ProductList/types/product.types.ts
 
 export interface Product {
   id: string;
@@ -27,7 +27,7 @@ export interface ProductFilters {
   ingredients: string[];
   healthBenefits: string[];
   priceRange: [number, number];
-  isHandmadeOnly: boolean;
+  isHandmadeOnly: boolean | null; // null = 전체, true = 수제품만, false = 완제품만
 }
 
 export interface SortOption {

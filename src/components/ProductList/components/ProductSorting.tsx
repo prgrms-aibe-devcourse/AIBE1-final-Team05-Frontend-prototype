@@ -1,4 +1,4 @@
-// src/components/product/ProductSorting.tsx
+// src/components/ProductList/components/ProductSorting.tsx
 
 import React from "react";
 import {
@@ -18,10 +18,10 @@ import { SORT_OPTIONS } from "@/components/ProductList/types/product.types";
 
 interface ProductSortingProps {
   sortBy: string;
-  isHandmadeOnly: boolean;
+  isHandmadeOnly: boolean | null; // null = 전체, true = 수제품만, false = 완제품만
   totalCount: number;
   onSortChange: (sortBy: string) => void;
-  onHandmadeToggle: (isHandmadeOnly: boolean) => void;
+  onHandmadeToggle: (isHandmadeOnly: boolean | null) => void;
 }
 
 const ProductSorting: React.FC<ProductSortingProps> = ({
@@ -42,8 +42,23 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
     newValue: string | null
   ) => {
     if (newValue !== null) {
-      onHandmadeToggle(newValue === "handmade");
+      // 전체 보기 = null, 수제품만 = true, 완제품만 = false
+      if (newValue === "all") {
+        onHandmadeToggle(null);
+      } else if (newValue === "handmade") {
+        onHandmadeToggle(true);
+      } else if (newValue === "ready-made") {
+        onHandmadeToggle(false);
+      }
     }
+  };
+
+  // 현재 선택된 값 결정
+  const getSelectedValue = () => {
+    if (isHandmadeOnly === null || isHandmadeOnly === undefined) {
+      return "all";
+    }
+    return isHandmadeOnly ? "handmade" : "ready-made";
   };
 
   return (
@@ -89,7 +104,7 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
           mt: { xs: 2, md: 0 },
         }}
       >
-        {/* 상품 타입 토글 */}
+        {/* 상품 타입 토글 - 3개 버튼으로 확장 */}
         <Paper
           sx={{
             display: "flex",
@@ -100,7 +115,7 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
           }}
         >
           <ToggleButtonGroup
-            value={isHandmadeOnly ? "handmade" : "all"}
+            value={getSelectedValue()}
             exclusive
             onChange={handleProductTypeChange}
             sx={{
@@ -113,6 +128,7 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
                 fontWeight: 500,
                 color: theme.palette.text.secondary,
                 textTransform: "none",
+                minWidth: "auto",
                 "&:hover": {
                   backgroundColor: "transparent",
                 },
@@ -127,8 +143,9 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
               },
             }}
           >
+            <ToggleButton value="all">전체 보기</ToggleButton>
             <ToggleButton value="handmade">수제품만 보기</ToggleButton>
-            <ToggleButton value="all">완제품만 보기</ToggleButton>
+            <ToggleButton value="ready-made">완제품만 보기</ToggleButton>
           </ToggleButtonGroup>
         </Paper>
 

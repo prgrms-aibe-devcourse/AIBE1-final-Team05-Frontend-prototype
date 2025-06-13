@@ -34,14 +34,14 @@ const ProductListPage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  // 상태 관리
+  // 상태 관리 - isHandmadeOnly를 null로 초기화 (전체 보기)
   const [filters, setFilters] = useState<ProductFiltersType>({
     petType: "강아지",
     productType: "간식",
     ingredients: [],
     healthBenefits: [],
     priceRange: [0, 100000],
-    isHandmadeOnly: true,
+    isHandmadeOnly: null, // 전체 보기로 초기화
   });
 
   const [sortBy, setSortBy] = useState("sales");
@@ -62,7 +62,13 @@ const ProductListPage: React.FC = () => {
 
     // 상품 유형 필터
     if (filters.productType) {
-      // 실제로는 product.type 같은 필드가 있어야 하지만 임시로 생략
+      // 실제로는 product.productType 같은 필드가 있어야 하지만 임시로 생략
+    }
+
+    // 수제품/완제품 필터 - null이면 전체 표시
+    if (filters.isHandmadeOnly !== null) {
+      // 실제로는 product.isHandmade 같은 필드를 확인
+      // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 생략
     }
 
     // 원재료 필터
@@ -141,7 +147,6 @@ const ProductListPage: React.FC = () => {
   };
 
   const handleFavoriteToggle = (productId: string) => {
-    // 실제로는 API 호출이나 상태 관리 라이브러리 사용
     console.log("Toggle favorite for product:", productId);
   };
 
@@ -154,7 +159,6 @@ const ProductListPage: React.FC = () => {
   };
 
   const handleMobileSortClick = () => {
-    // 실제로는 정렬 다이얼로그를 열거나 바텀시트 표시
     console.log("Open sort dialog");
   };
 
