@@ -9,11 +9,6 @@ import {
     Button,
     Avatar,
     TextField,
-    Alert,
-    List,
-    ListItemIcon,
-    ListItemText,
-    ListItemButton,
     Divider,
     Stack,
     Card,
@@ -22,13 +17,6 @@ import {
     CircularProgress,
 } from "@mui/material";
 import {
-    Info as InfoIcon,
-    Storefront as StorefrontIcon,
-    Schedule as ScheduleIcon,
-    Security as SecurityIcon,
-    Image as ImageIcon,
-    Campaign as CampaignIcon,
-    Settings as SettingsIcon,
     Edit as EditIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
@@ -59,38 +47,6 @@ const SecondaryButton = styled(Button)({
         backgroundColor: "#edeae6",
     },
 });
-
-const SidebarListItem = styled(ListItemButton)<{ active?: boolean }>(
-    ({ active }) => ({
-        borderRadius: 8,
-        margin: "4px 0",
-        padding: "12px 16px",
-        backgroundColor: active ? BRAND_COLOR : "transparent",
-        color: active ? "white" : "#374151",
-        "&:hover": {
-            backgroundColor: active ? BRAND_COLOR_HOVER : "#f3f4f6",
-        },
-        "& .MuiListItemIcon-root": {
-            color: active ? "white" : "#6b7280",
-            minWidth: "40px",
-        },
-        "& .MuiListItemText-primary": {
-            fontSize: "0.875rem",
-            fontWeight: 500,
-        },
-    })
-);
-
-// 네비게이션 메뉴 데이터
-const navigationItems = [
-    { id: "basic-info", label: "기본 정보", icon: InfoIcon, active: true },
-    { id: "workshop-intro", label: "워크샵 소개", icon: StorefrontIcon },
-    { id: "operation-info", label: "운영 정보", icon: ScheduleIcon },
-    { id: "certification", label: "인증 정보", icon: SecurityIcon },
-    { id: "workshop-images", label: "워크샵 이미지", icon: ImageIcon },
-    { id: "notice-management", label: "공지 관리", icon: CampaignIcon },
-    { id: "account-settings", label: "계정 설정", icon: SettingsIcon },
-];
 
 // 메인 컴포넌트
 const SellerInfoPage: React.FC = () => {
@@ -145,32 +101,6 @@ const SellerInfoPage: React.FC = () => {
             </Box>
 
             <Grid container spacing={{ xs: 2, sm: 3 }}>
-                {/* 사이드바 */}
-                <Grid size={{ xs: 12, md: 3 }}>
-                    <Paper
-                        sx={{
-                            minHeight: 500,
-                            p: 2,
-                            borderRadius: 3,
-                            border: "1px solid #F5EFEA",
-                        }}
-                    >
-                        <List sx={{ p: 0 }}>
-                            {navigationItems.map((item) => (
-                                <SidebarListItem
-                                    key={item.id}
-                                    active={activeSection === item.id}
-                                    onClick={() => handleSectionChange(item.id)}
-                                >
-                                    <ListItemIcon>
-                                        <item.icon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.label} />
-                                </SidebarListItem>
-                            ))}
-                        </List>
-                    </Paper>
-                </Grid>
 
                 {/* 메인 콘텐츠 영역 */}
                 <Grid size={{ xs: 12, md: 9 }}>
@@ -352,30 +282,6 @@ const SellerInfoPage: React.FC = () => {
                                 </Card>
                             </Grid>
                         </Grid>
-
-                        {/* 경고 알림 */}
-                        <Alert
-                            icon={<EditIcon sx={{ color: BRAND_COLOR }} />}
-                            action={
-                                <SecondaryButton size="small">소개 작성하기</SecondaryButton>
-                            }
-                            sx={{
-                                mb: 4,
-                                backgroundColor: "#fefce8",
-                                border: "1px solid #fde047",
-                                borderRadius: 2,
-                                "& .MuiAlert-icon": {
-                                    color: BRAND_COLOR,
-                                },
-                            }}
-                        >
-                            <Typography fontWeight="500">
-                                워크샵 소개를 작성하여 프로필을 완성하세요!
-                            </Typography>
-                            <Typography variant="body2" color="#5c5752">
-                                매력적인 소개글은 고객의 관심을 끌고 신뢰를 높입니다.
-                            </Typography>
-                        </Alert>
 
                         {/* 기본 정보 설정 폼 */}
                         <Box>
