@@ -18,6 +18,7 @@ import SellerDashboardDashboardPage from "@/components/SellerDashboard/Dashboard
 import CustomerManagementPage from "@/pages/SellerDashboardPage/CustomerManagementPage.tsx";
 import OrdersManagementPage from "@/pages/SellerDashboardPage/OrderManagementPage.tsx";
 import ShoppingCartPage from "@/pages/ShoppingCartPage";
+import CustomerServiceCenterPageServicePage from "@/pages/CusServiceCenterPage/CustomerServiceCenterPage.tsx";
 
 
 
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
             // 장바구니
             { path: "cart", element: <ShoppingCartPage /> },
 
-
+            {path: "customerServiceCenter", element: <CustomerServiceCenterPageServicePage />},
 
             // 판매자 스토어 페이지 (구매자가 보는 판매자 정보)
             { path: 'seller/:sellerId', element: <SellerStorePage /> },

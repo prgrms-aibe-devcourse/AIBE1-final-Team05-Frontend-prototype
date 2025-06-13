@@ -182,7 +182,7 @@ export const mockOrders: Order[] = [
         products: [
             {
                 id: "1",
-                name: "티아시아가진 치킨 마누카 커리 170g + 게살 푸팟퐁 커리 170g + 비프 마살라 커리 170g + 스파이시 비프 마살라 커리 170g 세트, 1세트",
+                name: "티아시아가진 치킨 마누카 커리 세트",
                 price: 0,
                 quantity: 1,
                 image: "/placeholder.svg?height=80&width=80",
@@ -208,7 +208,152 @@ export const mockOrders: Order[] = [
         ],
         total: 28800,
     },
+    {
+        id: "3",
+        orderNumber: "20250415002",
+        date: "2025. 4. 15 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "4/16(화) 도착",
+        products: [
+            {
+                id: "3",
+                name: "캣츠웰 닭가슴살 85g x 12캔",
+                price: 15800,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 15800,
+    },
+    {
+        id: "4",
+        orderNumber: "20250417001",
+        date: "2025. 4. 17 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "4/18(수) 도착",
+        products: [
+            {
+                id: "4",
+                name: "바른먹거리 수제간식 소간 말랭이 200g",
+                price: 9800,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 9800,
+    },
+    {
+        id: "5",
+        orderNumber: "20250501001",
+        date: "2025. 5. 1 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "5/2(금) 도착",
+        products: [
+            {
+                id: "5",
+                name: "강아지 방석 사계절용",
+                price: 19800,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 19800,
+    },
+    {
+        id: "6",
+        orderNumber: "20250505002",
+        date: "2025. 5. 5 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "5/6(토) 도착",
+        products: [
+            {
+                id: "6",
+                name: "고양이 자동급식기",
+                price: 49900,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 49900,
+    },
+    {
+        id: "7",
+        orderNumber: "20250510001",
+        date: "2025. 5. 10 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "5/11(일) 도착",
+        products: [
+            {
+                id: "7",
+                name: "네츄럴코어 강아지 사료 2kg",
+                price: 23800,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 23800,
+    },
+    {
+        id: "8",
+        orderNumber: "20250512001",
+        date: "2025. 5. 12 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "5/13(월) 도착",
+        products: [
+            {
+                id: "8",
+                name: "고양이 스크래쳐 하우스",
+                price: 35800,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 35800,
+    },
+    {
+        id: "9",
+        orderNumber: "20250513002",
+        date: "2025. 5. 13 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "5/14(화) 도착",
+        products: [
+            {
+                id: "9",
+                name: "강아지 배변패드 100매",
+                price: 22800,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 22800,
+    },
+    {
+        id: "10",
+        orderNumber: "20250515001",
+        date: "2025. 5. 15 주문",
+        status: "배송완료",
+        statusColor: "success",
+        deliveryDate: "5/16(수) 도착",
+        products: [
+            {
+                id: "10",
+                name: "펫 전용 샴푸 500ml",
+                price: 12800,
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        total: 12800,
+    },
 ]
+
 
 export const mockReturnOrders: ReturnOrder[] = [
     {
