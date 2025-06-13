@@ -1,9 +1,9 @@
 // src/pages/ShoppingCartPage.tsx
-import React from 'react';
-import ShoppingCart from '@/components/ShoppingCart';
+import type React from "react"
+import ShoppingCart from "@/components/ShoppingCart"
 
 const ShoppingCartPage: React.FC = () => {
-    return <ShoppingCart />;
-};
+    return <ShoppingCart />
+}
 
-export default ShoppingCartPage;
+export default ShoppingCartPage
