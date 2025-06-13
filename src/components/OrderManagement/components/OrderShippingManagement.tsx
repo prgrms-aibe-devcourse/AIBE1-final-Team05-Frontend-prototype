@@ -31,7 +31,7 @@ import {
   SelectChangeEvent,
   FormControlLabel,
   Checkbox,
-  ButtonGroup,
+  Radio,
 } from "@mui/material";
 import {
   Info as InfoIcon,
@@ -655,32 +655,33 @@ const OrderShippingManagement: React.FC = () => {
                 flexWrap: "wrap",
               }}
             >
-              <ButtonGroup variant="outlined" size="small">
-                <Button
-                  variant={
-                    filter.dateRange === "today" ? "contained" : "outlined"
-                  }
-                  onClick={() => handleDateRangeClick("today")}
-                >
-                  오늘
-                </Button>
-                <Button
-                  variant={
-                    filter.dateRange === "7days" ? "contained" : "outlined"
-                  }
-                  onClick={() => handleDateRangeClick("7days")}
-                >
-                  7일
-                </Button>
-                <Button
-                  variant={
-                    filter.dateRange === "30days" ? "contained" : "outlined"
-                  }
-                  onClick={() => handleDateRangeClick("30days")}
-                >
-                  30일
-                </Button>
-              </ButtonGroup>
+              <Button
+                variant={
+                  filter.dateRange === "today" ? "contained" : "outlined"
+                }
+                onClick={() => handleDateRangeClick("today")}
+                size="small"
+              >
+                오늘
+              </Button>
+              <Button
+                variant={
+                  filter.dateRange === "7days" ? "contained" : "outlined"
+                }
+                onClick={() => handleDateRangeClick("7days")}
+                size="small"
+              >
+                7일
+              </Button>
+              <Button
+                variant={
+                  filter.dateRange === "30days" ? "contained" : "outlined"
+                }
+                onClick={() => handleDateRangeClick("30days")}
+                size="small"
+              >
+                30일
+              </Button>
               <DatePicker
                 label="시작일"
                 value={startDate}
@@ -707,26 +708,50 @@ const OrderShippingManagement: React.FC = () => {
             </Box>
           </Box>
 
-          {/* 둘째 줄: 배송상태 */}
+          {/* 둘째 줄: 배송상태 (라디오 버튼으로 변경) */}
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
               배송상태
             </Typography>
-            <FormControl size="small" sx={{ minWidth: 200 }}>
-              <Select
-                value={filter.shippingStatus}
-                onChange={handleFilterChange("shippingStatus")}
-              >
-                <MenuItem value="all">전체</MenuItem>
-                {Object.entries(SHIPPING_STATUS_LABELS).map(
-                  ([value, label]) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  )
-                )}
-              </Select>
-            </FormControl>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Radio
+                    checked={filter.shippingStatus === "all"}
+                    onChange={() =>
+                      setFilter((prev) => ({ ...prev, shippingStatus: "all" }))
+                    }
+                    value="all"
+                  />
+                }
+                label="전체"
+              />
+              {Object.entries(SHIPPING_STATUS_LABELS).map(([value, label]) => (
+                <FormControlLabel
+                  key={value}
+                  control={
+                    <Radio
+                      checked={filter.shippingStatus === value}
+                      onChange={() =>
+                        setFilter((prev) => ({
+                          ...prev,
+                          shippingStatus: value as any,
+                        }))
+                      }
+                      value={value}
+                    />
+                  }
+                  label={label}
+                />
+              ))}
+            </Box>
           </Box>
 
           {/* 셋째 줄: 검색 조건 */}
