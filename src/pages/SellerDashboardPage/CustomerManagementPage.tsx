@@ -92,7 +92,7 @@ const CustomerManagementPage: React.FC = () => {
                                         fontWeight: activeTab === 1 ? "bold" : "normal",
                                     }}
                                 >
-                                    상품 리뷰
+                                    판매자 평점
                                 </Box>
                             </Box>
                         </Box>

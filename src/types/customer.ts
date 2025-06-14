@@ -14,6 +14,7 @@ export interface CustomerInquiry {
     unreadCount: number
     isOnline: boolean
     messages: CustomerMessage[]
+    orderProduct?: string
 }
 
 export interface ProductReview {
