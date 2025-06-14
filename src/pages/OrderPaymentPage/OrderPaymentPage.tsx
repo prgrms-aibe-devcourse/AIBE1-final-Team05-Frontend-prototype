@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Container, Breadcrumbs, Link, Typography, Box, Chip, Button, FormControlLabel, Checkbox } from "@mui/material"
-import { Schedule, ShoppingCartCheckout } from "@mui/icons-material"
+import { Schedule, ShoppingCartCheckout, NavigateNext } from "@mui/icons-material"
 import { ThemeProvider } from "@mui/material/styles"
 
 // Component imports
@@ -95,21 +95,31 @@ export default function PaymentPage() {
 
                 <Container maxWidth="md" style={{ paddingTop: 40, paddingBottom: 40 }}>
                     {/* Breadcrumbs */}
-                    <Breadcrumbs style={{ marginBottom: 24 }}>
-                        <Link color="text.secondary" href="#" underline="hover">
-                            shop
+                    <Breadcrumbs separator={<NavigateNext fontSize="small" />} sx={{ mb: 2 }}>
+                        <Link
+                            href="#"
+                            color="#97784e"
+                            sx={{
+                                textDecoration: "none",
+                                fontSize: "0.875rem",
+                                "&:hover": { color: "#e89830" },
+                            }}
+                        >
+                            Shop
                         </Link>
-                        <Typography color="text.primary">주문</Typography>
+                        <Typography color="#1b150e" sx={{ fontSize: "0.875rem" }}>
+                            주문/결제
+                        </Typography>
                     </Breadcrumbs>
 
                     {/* Page Header */}
                     <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
                         <Typography variant="h3" component="h1" style={{ fontWeight: "bold" }}>
-                            Custom Order & Checkout
+                            주문/결제
                         </Typography>
                         <Chip
                             icon={<Schedule />}
-                            label="Estimated Manufacturing Time: 2-3 days"
+                            label="예상 소요시간: 2 ~ 3일"
                             color="primary"
                             variant="outlined"
                         />
