@@ -1,4 +1,4 @@
-// src/components/admin/InventoryManagement.tsx
+// src/components/ProductManagement/components/InventoryManagement.tsx
 
 import React, { useState } from "react";
 import {
@@ -164,11 +164,10 @@ const InventoryManagement: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
-  // 재고 조정 폼 상태
+  // 재고 조정 폼 상태 (reason 필드 제거)
   const [adjustForm, setAdjustForm] = useState({
     type: "입고" as StockMovementType,
     quantity: 0,
-    reason: "",
     notes: "",
   });
 
@@ -245,13 +244,13 @@ const InventoryManagement: React.FC = () => {
       )
     );
 
-    // 재고 이동 기록 추가
+    // 재고 이동 기록 추가 (reason은 자동으로 조정 타입 기반으로 생성)
     const newMovement: StockMovement = {
       id: Date.now().toString(),
       productId: selectedItem.productId,
       type: adjustForm.type,
       quantity: adjustment,
-      reason: adjustForm.reason,
+      reason: `${adjustForm.type} 처리`, // 자동 생성된 사유
       date: new Date().toISOString().split("T")[0],
       userId: "admin",
       notes: adjustForm.notes,
@@ -266,7 +265,6 @@ const InventoryManagement: React.FC = () => {
     setAdjustForm({
       type: "입고",
       quantity: 0,
-      reason: "",
       notes: "",
     });
   };
@@ -385,71 +383,39 @@ const InventoryManagement: React.FC = () => {
       </Grid>
 
       {/* 탭 네비게이션 */}
-      <Paper sx={{ borderRadius: 3, mb: 3 }}>
+      <Paper sx={{ borderRadius: 3, overflow: "hidden" }}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
-          sx={{
-            borderBottom: 1,
-            borderColor: "#F5EFEA",
-            "& .MuiTab-root": {
-              textTransform: "none",
-              fontWeight: 500,
-              "&.Mui-selected": {
-                color: "#ef9942",
-              },
-            },
-            "& .MuiTabs-indicator": {
-              backgroundColor: "#ef9942",
-            },
-          }}
+          sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}
         >
           <Tab label="재고 현황" />
           <Tab label="재고 이동 기록" />
         </Tabs>
 
+        {/* 재고 현황 탭 */}
         <TabPanel value={tabValue} index={0}>
-          {/* 재고 현황 탭 */}
           <Box sx={{ p: 3 }}>
             {/* 검색 */}
-            <Box
-              sx={{
-                mb: 3,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{ color: "#2d2a27", fontWeight: 600 }}
-              >
-                재고 현황
-              </Typography>
+            <Box sx={{ mb: 3 }}>
               <TextField
-                size="small"
+                fullWidth
                 placeholder="상품명으로 검색"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                variant="outlined"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "#5c5752" }} />
+                      <SearchIcon />
                     </InputAdornment>
                   ),
                 }}
-                sx={{
-                  width: 300,
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "#f9fafb",
-                    borderRadius: 2,
-                  },
-                }}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{ maxWidth: 400 }}
               />
             </Box>
 
-            {/* 재고 테이블 */}
-            <TableContainer sx={{ borderRadius: 2 }}>
+            <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -457,6 +423,11 @@ const InventoryManagement: React.FC = () => {
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
                     >
                       상품명
+                    </TableCell>
+                    <TableCell
+                      sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
+                    >
+                      공급업체
                     </TableCell>
                     <TableCell
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
@@ -471,7 +442,7 @@ const InventoryManagement: React.FC = () => {
                     <TableCell
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
                     >
-                      가용 재고
+                      판매가능 재고
                     </TableCell>
                     <TableCell
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
@@ -481,12 +452,12 @@ const InventoryManagement: React.FC = () => {
                     <TableCell
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
                     >
-                      마지막 업데이트
+                      최근 업데이트
                     </TableCell>
                     <TableCell
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
                     >
-                      작업
+                      관리
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -499,23 +470,33 @@ const InventoryManagement: React.FC = () => {
                           <Typography variant="body2" fontWeight={500}>
                             {item.productName}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            공급업체: {item.supplier}
-                          </Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography variant="body2" fontWeight={500}>
-                            {item.currentStock}개
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            최소: {item.minStock}개
+                          <Typography variant="body2" color="text.secondary">
+                            {item.supplier}
                           </Typography>
                         </TableCell>
-                        <TableCell>{item.reservedStock}개</TableCell>
                         <TableCell>
                           <Typography
                             variant="body2"
+                            color={
+                              item.currentStock <= item.minStock
+                                ? "warning.main"
+                                : "text.primary"
+                            }
                             fontWeight={500}
+                          >
+                            {item.currentStock}개
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" color="text.secondary">
+                            {item.reservedStock}개
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography
+                            variant="body2"
                             color={
                               item.availableStock > 0 ? "text.primary" : "error"
                             }
@@ -580,17 +561,10 @@ const InventoryManagement: React.FC = () => {
           </Box>
         </TabPanel>
 
+        {/* 재고 이동 기록 탭 */}
         <TabPanel value={tabValue} index={1}>
-          {/* 재고 이동 기록 탭 */}
           <Box sx={{ p: 3 }}>
-            <Typography
-              variant="h6"
-              sx={{ color: "#2d2a27", fontWeight: 600, mb: 3 }}
-            >
-              재고 이동 기록
-            </Typography>
-
-            <TableContainer sx={{ borderRadius: 2 }}>
+            <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -612,7 +586,7 @@ const InventoryManagement: React.FC = () => {
                     <TableCell
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
                     >
-                      수량
+                      수량 변화
                     </TableCell>
                     <TableCell
                       sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
@@ -628,16 +602,20 @@ const InventoryManagement: React.FC = () => {
                 </TableHead>
                 <TableBody>
                   {stockMovements.map((movement) => {
-                    const product = stockItems.find(
+                    const item = stockItems.find(
                       (item) => item.productId === movement.productId
                     );
                     return (
                       <TableRow key={movement.id} hover>
                         <TableCell>
-                          {new Date(movement.date).toLocaleDateString()}
+                          <Typography variant="body2" color="text.secondary">
+                            {new Date(movement.date).toLocaleDateString()}
+                          </Typography>
                         </TableCell>
                         <TableCell>
-                          {product?.productName || "알 수 없음"}
+                          <Typography variant="body2">
+                            {item?.productName || "알 수 없음"}
+                          </Typography>
                         </TableCell>
                         <TableCell>
                           <Chip
@@ -680,7 +658,7 @@ const InventoryManagement: React.FC = () => {
         </TabPanel>
       </Paper>
 
-      {/* 재고 조정 다이얼로그 */}
+      {/* 재고 조정 다이얼로그 (사유 입력 필드 제거) */}
       <Dialog
         open={adjustDialogOpen}
         onClose={() => setAdjustDialogOpen(false)}
@@ -740,23 +718,14 @@ const InventoryManagement: React.FC = () => {
 
             <TextField
               fullWidth
-              label="사유"
-              value={adjustForm.reason}
-              onChange={(e) =>
-                setAdjustForm((prev) => ({ ...prev, reason: e.target.value }))
-              }
-              required
-            />
-
-            <TextField
-              fullWidth
-              label="메모"
+              label="메모 (선택사항)"
               multiline
               rows={2}
               value={adjustForm.notes}
               onChange={(e) =>
                 setAdjustForm((prev) => ({ ...prev, notes: e.target.value }))
               }
+              placeholder="추가 메모사항이 있으면 입력하세요"
             />
           </Box>
         </DialogContent>

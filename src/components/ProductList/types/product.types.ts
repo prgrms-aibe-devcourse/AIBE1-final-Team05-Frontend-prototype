@@ -19,15 +19,15 @@ export interface Product {
   ingredients: string[];
   healthBenefits: string[];
   isFavorite?: boolean;
+  hasAllergens?: boolean; // 알러지 유발 성분 포함 여부
 }
 
 export interface ProductFilters {
   petType: PetType | null;
   productType: ProductType | null;
-  ingredients: string[];
-  healthBenefits: string[];
   priceRange: [number, number];
-  isHandmadeOnly: boolean | null; // null = 전체, true = 수제품만, false = 완제품만
+  hasAllergens: boolean | null; // null = 전체, true = 유, false = 무
+  ratingRange: [number, number]; // [최소 평점, 최대 평점]
 }
 
 export interface SortOption {
@@ -35,9 +35,9 @@ export interface SortOption {
   label: string;
 }
 
-export type PetType = "강아지" | "고양이" | "새" | "토끼";
+export type PetType = "강아지" | "고양이";
 
-export type ProductType = "간식" | "영양제" | "껌";
+export type ProductType = "전체" | "수제품" | "완제품";
 
 export type ProductCategory =
   | "훈련용 간식"
@@ -46,18 +46,19 @@ export type ProductCategory =
   | "수제 간식"
   | "무첨가 간식";
 
-export const PET_TYPES: PetType[] = ["강아지", "고양이", "새", "토끼"];
+export const PET_TYPES: PetType[] = ["강아지", "고양이"];
 
-export const PRODUCT_TYPES: ProductType[] = ["간식", "영양제", "껌"];
-
-export const INGREDIENTS = ["닭고기", "소고기", "생선", "채소"];
-
-export const HEALTH_BENEFITS = ["치아 건강", "관절 건강"];
+export const PRODUCT_TYPES: ProductType[] = ["전체", "수제품", "완제품"];
 
 export const SORT_OPTIONS: SortOption[] = [
   { value: "sales", label: "판매량순" },
-  { value: "price_low", label: "낮은 가격순" },
-  { value: "price_high", label: "높은 가격순" },
-  { value: "latest", label: "최신 등록순" },
-  { value: "rating", label: "평점 높은순" },
+  { value: "price", label: "가격순" },
+  { value: "latest", label: "등록순" },
+  { value: "rating", label: "평점순" },
 ];
+
+export const ALLERGEN_OPTIONS = [
+  { value: null, label: "전체" },
+  { value: false, label: "무" },
+  { value: true, label: "유" },
+] as const;
