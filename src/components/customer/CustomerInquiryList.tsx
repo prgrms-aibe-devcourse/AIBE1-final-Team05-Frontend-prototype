@@ -1,19 +1,7 @@
 "use client"
 
 import type React from "react"
-import {
-    Box,
-    Typography,
-    TextField,
-    InputAdornment,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Avatar,
-    Badge,
-    Chip,
-} from "@mui/material"
+import { Box, Typography, TextField, InputAdornment, List, ListItem, ListItemText, Chip } from "@mui/material"
 import { Search } from "@mui/icons-material"
 import type { CustomerInquiry } from "../../types/customer"
 
@@ -67,19 +55,19 @@ const CustomerInquiryList: React.FC<CustomerInquiryListProps> = ({
                             cursor: "pointer",
                         }}
                     >
-                        <ListItemAvatar>
-                            <Badge
-                                badgeContent=" "
-                                color="success"
-                                invisible={!customer.isOnline}
-                                variant="dot"
-                                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                            >
-                                <Avatar src={customer.avatar} />
-                            </Badge>
-                        </ListItemAvatar>
                         <ListItemText
-                            primary={customer.name}
+                            primary={
+                                <Box>
+                                    <Typography component="span" variant="body1" fontWeight="medium">
+                                        {customer.name}
+                                    </Typography>
+                                    {customer.orderProduct && (
+                                        <Typography component="span" variant="body2" sx={{ ml: 1, color: "text.secondary" }}>
+                                            ({customer.orderProduct})
+                                        </Typography>
+                                    )}
+                                </Box>
+                            }
                             secondary={customer.lastMessage}
                             secondaryTypographyProps={{
                                 noWrap: true,

@@ -8,9 +8,9 @@ export interface Order {
   productName: string;
   quantity: number;
   amount: number;
-  shippingStatus: ShippingStatus | "order_cancelled" | "delay_requested";
+  shippingStatus: string; // 단순화된 타입
   customerPhone?: string;
-  shippingAddress?: string;
+  shippingAddress: string; // 필수 필드로 변경 (모든 주문에 주소 포함)
   trackingNumber?: string;
   shippingCompany?: string;
   notes?: string;
@@ -21,9 +21,8 @@ export interface Order {
 export interface OrderSummary {
   paymentCompleted: number;
   preparing: number; // 상품준비중 + 출고지연중 합산
-  readyToShip: number;
-  shipping: number; // 운송장 등록
-  inTransit: number; // 배송중 (신규 추가)
+  readyForDelivery: number; // 배송준비 완료 (기존 readyToShip + shipping 통합)
+  inTransit: number; // 배송중
   delivered: number;
 }
 
@@ -31,14 +30,6 @@ export interface UrgentTasks {
   delayRequests: number;
   longTermUndelivered: number;
 }
-
-export type ShippingStatus =
-  | "payment_completed" // 주문확인
-  | "preparing" // 상품준비중
-  | "ready_to_ship" // 배송지시
-  | "shipping" // 운송장 등록
-  | "in_transit" // 배송중 (신규 추가)
-  | "delivered"; // 배송완료
 
 export type DateRange = "today" | "7days" | "30days" | "custom";
 
@@ -52,11 +43,7 @@ export interface OrderFilter {
   dateRange: DateRange;
   startDate?: string;
   endDate?: string;
-  shippingStatus:
-    | ShippingStatus
-    | "all"
-    | "order_cancelled"
-    | "delay_requested";
+  shippingStatus: string[]; // 단순화된 타입
   searchCondition: SearchCondition;
   searchKeyword: string;
   directShippingOnly: boolean;
@@ -65,11 +52,10 @@ export interface OrderFilter {
 export const SHIPPING_STATUS_LABELS = {
   payment_completed: "주문확인",
   preparing: "상품준비중",
-  ready_to_ship: "배송지시",
-  shipping: "운송장 등록",
-  in_transit: "배송중", // 신규 추가
+  ready_for_delivery: "배송준비 완료", // 통합된 새 상태
+  in_transit: "배송중",
   delivered: "배송완료",
-  delay_requested: "출고지연중", // 신규 추가
+  delay_requested: "출고지연중",
   order_cancelled: "주문 취소",
 } as const;
 

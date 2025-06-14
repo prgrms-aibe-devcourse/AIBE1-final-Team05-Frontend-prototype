@@ -3,6 +3,7 @@ import type {OrderItem} from "@/components/OrderPayment";
 
 interface PetInfo {
     name: string
+    category: string
     breed: string
     age: string
     gender: string
@@ -33,6 +34,7 @@ export const savedPets: SavedPet[] = [
     {
         id: "1",
         name: "Buddy",
+        category: "dogs",
         breed: "golden_retriever",
         age: "3",
         gender: "male",
@@ -44,6 +46,7 @@ export const savedPets: SavedPet[] = [
     {
         id: "2",
         name: "Luna",
+        category: "dogs",
         breed: "labrador",
         age: "2",
         gender: "female",
@@ -56,6 +59,7 @@ export const savedPets: SavedPet[] = [
         id: "3",
         name: "Max",
         breed: "poodle",
+        category: "dogs",
         age: "5",
         gender: "male",
         hasAllergies: false,

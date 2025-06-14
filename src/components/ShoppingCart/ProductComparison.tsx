@@ -1,79 +1,49 @@
 "use client"
 
 import type React from "react"
-import { Box, Card, CardContent, Collapse, IconButton, Typography } from "@mui/material"
-import { Close as CloseIcon } from "@mui/icons-material"
+import { Box, IconButton, Paper, Typography } from "@mui/material"
+import CloseIcon from "@mui/icons-material/Close"
 
 interface ProductComparisonProps {
-    open: boolean
-    comparisonResult: string
+    result: string
     onClose: () => void
 }
 
-const ProductComparison: React.FC<ProductComparisonProps> = ({ open, comparisonResult, onClose }) => {
+const ProductComparison: React.FC<ProductComparisonProps> = ({ result, onClose }) => {
     return (
-        <Collapse in={open}>
-            <Card
+        <Paper
+            sx={{
+                width: "90%",
+                maxWidth: 800,
+                maxHeight: "80vh",
+                overflow: "auto",
+                p: 3,
+                position: "relative",
+                borderRadius: 2,
+            }}
+        >
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: "bold" }}>
+                    Product Comparison Analysis
+                </Typography>
+                <IconButton onClick={onClose} size="small" sx={{ color: "#666" }}>
+                    <CloseIcon />
+                </IconButton>
+            </Box>
+
+            <Box
                 sx={{
-                    mt: 3,
-                    border: "1px solid #e7ddd0",
-                    borderRadius: "12px",
+                    p: 3,
+                    bgcolor: "#fafaf8",
+                    borderRadius: 2,
+                    whiteSpace: "pre-line",
                 }}
             >
-                <CardContent>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mb: 2,
-                        }}
-                    >
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                fontWeight: 600,
-                                color: "#1b150e",
-                                fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
-                            }}
-                        >
-                            Product Comparison Analysis
-                        </Typography>
-                        <IconButton
-                            onClick={onClose}
-                            sx={{
-                                color: "#97784e",
-                                "&:hover": {
-                                    color: "#e89830",
-                                    backgroundColor: "#fef3e2",
-                                },
-                            }}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                    <Box
-                        sx={{
-                            bgcolor: "#f9f6f2",
-                            p: 2,
-                            borderRadius: "8px",
-                            border: "1px solid #e7ddd0",
-                        }}
-                    >
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                color: "#57493a",
-                                whiteSpace: "pre-line",
-                                lineHeight: 1.6,
-                            }}
-                        >
-                            {comparisonResult}
-                        </Typography>
-                    </Box>
-                </CardContent>
-            </Card>
-        </Collapse>
+                <Typography variant="body2" component="div" sx={{ color: "#333" }}>
+                    {result}
+                </Typography>
+            </Box>
+        </Paper>
     )
 }
 

@@ -21,12 +21,12 @@ import {
 import {
   Breadcrumb,
   ProductSorting,
-  ProductFilters,
   ProductGrid,
   MobileBottomNav,
 } from "@/components/ProductList";
+import ProductFilters from "@/components/ProductList/components/ProductFilters";
 import type { ProductFilters as ProductFiltersType } from "@/components/ProductList/types/product.types";
-import { mockProducts, getTotalProductCount } from "../data/mockProducts";
+import { mockProducts } from "../data/mockProducts";
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -34,17 +34,17 @@ const ProductListPage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  // 상태 관리 - isHandmadeOnly를 null로 초기화 (전체 보기)
+  // 상태 관리 - 새로운 필터 구조로 초기화
   const [filters, setFilters] = useState<ProductFiltersType>({
-    petType: "강아지",
-    productType: "간식",
-    ingredients: [],
-    healthBenefits: [],
-    priceRange: [0, 100000],
-    isHandmadeOnly: null, // 전체 보기로 초기화
+    petType: null,
+    productType: null,
+    priceRange: [0, 500000],
+    hasAllergens: null,
+    ratingRange: [1, 5],
   });
 
   const [sortBy, setSortBy] = useState("sales");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
@@ -61,33 +61,36 @@ const ProductListPage: React.FC = () => {
     }
 
     // 상품 유형 필터
-    if (filters.productType) {
-      // 실제로는 product.productType 같은 필드가 있어야 하지만 임시로 생략
+    if (filters.productType && filters.productType !== "전체") {
+      result = result.filter((product) => {
+        // 실제로는 product.productType 같은 필드를 확인
+        // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 상품 ID 기반으로 처리
+        const isHandmade = parseInt(product.id) % 2 === 0; // ID 기반으로 수제품 여부 결정
+        if (filters.productType === "수제품") {
+          return isHandmade;
+        } else if (filters.productType === "완제품") {
+          return !isHandmade;
+        }
+        return true;
+      });
     }
 
-    // 수제품/완제품 필터 - null이면 전체 표시
-    if (filters.isHandmadeOnly !== null) {
-      // 실제로는 product.isHandmade 같은 필드를 확인
-      // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 생략
+    // 알러지 유발 성분 필터
+    if (filters.hasAllergens !== null) {
+      result = result.filter((product) => {
+        // 실제로는 product.hasAllergens 필드를 확인
+        // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 상품 ID 기반으로 처리
+        const hasAllergens = parseInt(product.id) % 3 === 0; // ID 기반으로 일관된 결과
+        return hasAllergens === filters.hasAllergens;
+      });
     }
 
-    // 원재료 필터
-    if (filters.ingredients.length > 0) {
-      result = result.filter((product) =>
-        filters.ingredients.some((ingredient) =>
-          product.ingredients.includes(ingredient)
-        )
-      );
-    }
-
-    // 건강 기능 필터
-    if (filters.healthBenefits.length > 0) {
-      result = result.filter((product) =>
-        filters.healthBenefits.some((benefit) =>
-          product.healthBenefits.includes(benefit)
-        )
-      );
-    }
+    // 평점 범위 필터
+    result = result.filter(
+      (product) =>
+        product.rating >= filters.ratingRange[0] &&
+        product.rating <= filters.ratingRange[1]
+    );
 
     // 가격 범위 필터
     result = result.filter(
@@ -98,28 +101,37 @@ const ProductListPage: React.FC = () => {
 
     // 정렬
     switch (sortBy) {
-      case "price_low":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price_high":
-        result.sort((a, b) => b.price - a.price);
+      case "price":
+        result.sort((a, b) =>
+          sortDirection === "asc" ? a.price - b.price : b.price - a.price
+        );
         break;
       case "rating":
-        result.sort((a, b) => b.rating - a.rating);
+        result.sort((a, b) =>
+          sortDirection === "asc" ? a.rating - b.rating : b.rating - a.rating
+        );
         break;
       case "latest":
         // 실제로는 등록일 기준 정렬
-        result.sort((a, b) => a.id.localeCompare(b.id));
+        result.sort((a, b) =>
+          sortDirection === "asc"
+            ? a.id.localeCompare(b.id)
+            : b.id.localeCompare(a.id)
+        );
         break;
       case "sales":
       default:
         // 실제로는 판매량 기준 정렬, 임시로 리뷰 수로 정렬
-        result.sort((a, b) => b.reviewCount - a.reviewCount);
+        result.sort((a, b) =>
+          sortDirection === "asc"
+            ? a.reviewCount - b.reviewCount
+            : b.reviewCount - a.reviewCount
+        );
         break;
     }
 
     return result;
-  }, [filters, sortBy]);
+  }, [filters, sortBy, sortDirection]);
 
   // 페이지네이션
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
@@ -131,7 +143,7 @@ const ProductListPage: React.FC = () => {
   // 페이지 변경 시 첫 페이지로 리셋
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters, sortBy]);
+  }, [filters, sortBy, sortDirection]);
 
   // 이벤트 핸들러
   const handleFiltersChange = (newFilters: ProductFiltersType) => {
@@ -140,6 +152,10 @@ const ProductListPage: React.FC = () => {
 
   const handleSortChange = (newSortBy: string) => {
     setSortBy(newSortBy);
+  };
+
+  const handleSortDirectionChange = (direction: "asc" | "desc") => {
+    setSortDirection(direction);
   };
 
   const handlePageChange = (page: number) => {
@@ -182,15 +198,13 @@ const ProductListPage: React.FC = () => {
 
         {/* 메인 컨텐츠 */}
         <Grid size={{ xs: 12, md: 9 }}>
-          {/* 상품 정렬 및 제목 */}
+          {/* 상품 정렬 (전체보기/수제품/완제품 버튼 제거됨) */}
           <ProductSorting
             sortBy={sortBy}
-            isHandmadeOnly={filters.isHandmadeOnly}
-            totalCount={getTotalProductCount()}
+            sortDirection={sortDirection}
+            totalCount={filteredProducts.length}
             onSortChange={handleSortChange}
-            onHandmadeToggle={(isHandmadeOnly) =>
-              setFilters({ ...filters, isHandmadeOnly })
-            }
+            onSortDirectionChange={handleSortDirectionChange}
           />
 
           {/* 모바일 필터 버튼 */}

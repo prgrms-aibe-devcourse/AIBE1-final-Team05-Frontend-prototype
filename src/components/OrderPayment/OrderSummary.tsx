@@ -20,7 +20,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderItems }) => {
         <Card style={{ marginBottom: 32, boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)" }}>
             <CardContent>
                 <Typography variant="h5" component="h2" style={{ marginBottom: 24, fontWeight: 600 }}>
-                    Order Summary
+                    주문 요약
                 </Typography>
                 {orderItems.map((item) => (
                     <Paper key={item.id} style={{ padding: 16, marginBottom: 16, border: "1px solid #f3eee7" }}>
