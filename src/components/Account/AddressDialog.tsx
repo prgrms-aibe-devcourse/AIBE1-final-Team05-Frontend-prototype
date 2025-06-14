@@ -31,6 +31,16 @@ interface AddressDialogProps {
     onSubmit: () => void
 }
 
+const INITIAL_ADDRESS = {
+    label: "",
+    fullName: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    phoneNumber: "",
+}
+
+
 const AddressDialog: React.FC<AddressDialogProps> = ({
                                                          open,
                                                          onClose,
@@ -100,9 +110,10 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
                         <Grid size={{ xs: 6 }}>
                             <TextField
                                 fullWidth
-                                label="도시"
+                                label="시/도"
                                 value={newAddress.city}
                                 onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 6 }}>
@@ -111,6 +122,7 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
                                 label="우편번호"
                                 value={newAddress.postalCode}
                                 onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
+                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }}>
@@ -124,7 +136,12 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose}>취소</Button>
+                    <Button
+                        onClick={() => {
+                            setNewAddress(INITIAL_ADDRESS)
+                            onClose()
+                        }}
+                    >취소</Button>
                     <Button onClick={onSubmit} variant="contained">
                         {editingAddress ? "수정" : "추가"}
                     </Button>

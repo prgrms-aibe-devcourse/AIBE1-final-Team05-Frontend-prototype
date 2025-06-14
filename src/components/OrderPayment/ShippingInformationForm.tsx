@@ -61,7 +61,7 @@ const ShippingInformationForm: React.FC<ShippingInformationFormProps> = ({
                         <Grid size={{ xs: 12 }}>
                             <TextField
                                 fullWidth
-                                label="이름"
+                                label="받는분 이름"
                                 value={shippingInfo.fullName}
                                 onChange={(e) => onShippingInfoChange("fullName", e.target.value)}
                                 placeholder="이름을 입력하세요"
@@ -81,9 +81,7 @@ const ShippingInformationForm: React.FC<ShippingInformationFormProps> = ({
                                 value={shippingInfo.city}
                                 placeholder="주소 검색 시 자동 입력됩니다"
                                 variant="outlined"
-                                InputProps={{
-                                    readOnly: true,
-                                }}
+                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
@@ -93,9 +91,7 @@ const ShippingInformationForm: React.FC<ShippingInformationFormProps> = ({
                                 value={shippingInfo.postalCode}
                                 placeholder="주소 검색 시 자동 입력됩니다"
                                 variant="outlined"
-                                InputProps={{
-                                    readOnly: true,
-                                }}
+                                disabled
                             />
                         </Grid>
                         <Grid size={{ xs: 12 }}>
