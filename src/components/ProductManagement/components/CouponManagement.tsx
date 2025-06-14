@@ -12,10 +12,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Switch,
-  FormControlLabel,
   IconButton,
-  Chip,
   Alert,
   Snackbar,
   Table,
@@ -50,7 +47,6 @@ interface Coupon {
   minOrderAmount: number;
   startDate: Date;
   endDate: Date;
-  isActive: boolean;
   usageCount: number;
   createdAt: Date;
 }
@@ -63,7 +59,13 @@ interface CouponFormData {
   minOrderAmount: number;
   startDate: Date | null;
   endDate: Date | null;
-  isActive: boolean;
+}
+
+// 쿠폰 삭제 확인 다이얼로그를 위한 상태 타입
+interface DeleteConfirmState {
+  open: boolean;
+  couponToDelete: Coupon | null;
+  inputCode: string;
 }
 
 const CouponManagement: React.FC = () => {
@@ -78,7 +80,6 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: 30000,
       startDate: new Date("2024-06-01"),
       endDate: new Date("2024-08-31"),
-      isActive: true,
       usageCount: 42,
       createdAt: new Date("2024-05-15"),
     },
@@ -91,12 +92,12 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: 20000,
       startDate: new Date("2024-01-01"),
       endDate: new Date("2024-12-31"),
-      isActive: true,
       usageCount: 18,
       createdAt: new Date("2024-01-01"),
     },
   ]);
 
+  // 쿠폰 활성화 필드 제거된 폼 데이터
   const [formData, setFormData] = useState<CouponFormData>({
     name: "",
     code: "",
@@ -105,7 +106,6 @@ const CouponManagement: React.FC = () => {
     minOrderAmount: 0,
     startDate: null,
     endDate: null,
-    isActive: true,
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -115,8 +115,17 @@ const CouponManagement: React.FC = () => {
   const [alertSeverity, setAlertSeverity] = useState<"success" | "error">(
     "success"
   );
+
+  // 페이지네이션 - 고정값으로 변경
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const rowsPerPage = 5; // 고정값으로 설정
+
+  // 쿠폰 삭제 확인 다이얼로그 상태
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmState>({
+    open: false,
+    couponToDelete: null,
+    inputCode: "",
+  });
 
   // 쿠폰 코드 자동 생성 함수
   const generateCouponCode = () => {
@@ -166,7 +175,7 @@ const CouponManagement: React.FC = () => {
       );
       setAlertMessage("쿠폰이 수정되었습니다.");
     } else {
-      // 새 쿠폰 등록
+      // 새 쿠폰 등록 (isActive 필드 제거, 기본값으로 활성 상태)
       const newCoupon: Coupon = {
         id: Date.now().toString(),
         ...formData,
@@ -196,7 +205,6 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: 0,
       startDate: null,
       endDate: null,
-      isActive: true,
     });
   };
 
@@ -211,17 +219,39 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: coupon.minOrderAmount,
       startDate: coupon.startDate,
       endDate: coupon.endDate,
-      isActive: coupon.isActive,
     });
     setIsDialogOpen(true);
   };
 
-  // 쿠폰 삭제
-  const handleDelete = (couponId: string) => {
-    setCoupons((prev) => prev.filter((coupon) => coupon.id !== couponId));
-    setAlertMessage("쿠폰이 삭제되었습니다.");
-    setAlertSeverity("success");
-    setShowAlert(true);
+  // 쿠폰 삭제 버튼 클릭 (확인 다이얼로그 열기)
+  const handleDeleteClick = (coupon: Coupon) => {
+    setDeleteConfirm({
+      open: true,
+      couponToDelete: coupon,
+      inputCode: "",
+    });
+  };
+
+  // 쿠폰 삭제 확인 다이얼로그 닫기
+  const handleDeleteConfirmClose = () => {
+    setDeleteConfirm({
+      open: false,
+      couponToDelete: null,
+      inputCode: "",
+    });
+  };
+
+  // 쿠폰 삭제 실행
+  const handleDeleteConfirm = () => {
+    if (deleteConfirm.couponToDelete) {
+      setCoupons((prev) =>
+        prev.filter((coupon) => coupon.id !== deleteConfirm.couponToDelete!.id)
+      );
+      setAlertMessage("쿠폰이 삭제되었습니다.");
+      setAlertSeverity("success");
+      setShowAlert(true);
+      handleDeleteConfirmClose();
+    }
   };
 
   // 쿠폰 코드 복사
@@ -232,17 +262,14 @@ const CouponManagement: React.FC = () => {
     setShowAlert(true);
   };
 
-  // 페이지네이션
+  // 페이지네이션 (행 수 변경 제거)
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // 삭제 버튼 활성화 체크
+  const isDeleteButtonEnabled =
+    deleteConfirm.inputCode === deleteConfirm.couponToDelete?.code;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ko}>
@@ -274,7 +301,7 @@ const CouponManagement: React.FC = () => {
           </Button>
         </Box>
 
-        {/* 쿠폰 목록 */}
+        {/* 쿠폰 목록 (상태, 사용 횟수 컬럼 제거) */}
         <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: 3 }}>
           <TableContainer>
             <Table>
@@ -304,16 +331,6 @@ const CouponManagement: React.FC = () => {
                     sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
                   >
                     사용 기간
-                  </TableCell>
-                  <TableCell
-                    sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
-                  >
-                    상태
-                  </TableCell>
-                  <TableCell
-                    sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
-                  >
-                    사용 횟수
                   </TableCell>
                   <TableCell
                     sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
@@ -364,28 +381,9 @@ const CouponManagement: React.FC = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontSize: "0.75rem" }}
-                        >
-                          {coupon.startDate.toLocaleDateString()} ~<br />
+                        <Typography variant="body2" color="text.secondary">
+                          {coupon.startDate.toLocaleDateString()} ~{" "}
                           {coupon.endDate.toLocaleDateString()}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={coupon.isActive ? "활성" : "비활성"}
-                          size="small"
-                          color={coupon.isActive ? "success" : "default"}
-                          variant={coupon.isActive ? "filled" : "outlined"}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "#ef9942", fontWeight: 500 }}
-                        >
-                          {coupon.usageCount}회
                         </Typography>
                       </TableCell>
                       <TableCell>
@@ -399,7 +397,7 @@ const CouponManagement: React.FC = () => {
                           </IconButton>
                           <IconButton
                             size="small"
-                            onClick={() => handleDelete(coupon.id)}
+                            onClick={() => handleDeleteClick(coupon)}
                             sx={{ color: "#f44336" }}
                           >
                             <DeleteIcon fontSize="small" />
@@ -411,22 +409,33 @@ const CouponManagement: React.FC = () => {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* 페이지네이션 (행 수 선택 옵션 제거, 5개 고정) */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={coupons.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            labelRowsPerPage="페이지당 행 수:"
             labelDisplayedRows={({ from, to, count }) =>
               `${count}개 중 ${from}-${to}`
             }
+            // rowsPerPageOptions 및 onRowsPerPageChange 제거
+            sx={{
+              ".MuiTablePagination-selectLabel": {
+                display: "none", // "페이지당 행 수" 레이블 숨김
+              },
+              ".MuiTablePagination-select": {
+                display: "none", // 행 수 선택 드롭다운 숨김
+              },
+              ".MuiTablePagination-selectIcon": {
+                display: "none", // 선택 아이콘 숨김
+              },
+            }}
           />
         </Paper>
 
-        {/* 쿠폰 등록/수정 다이얼로그 */}
+        {/* 쿠폰 등록/수정 다이얼로그 (쿠폰 활성화 체크박스 제거) */}
         <Dialog
           open={isDialogOpen}
           onClose={handleDialogClose}
@@ -437,46 +446,38 @@ const CouponManagement: React.FC = () => {
             {editingCoupon ? "쿠폰 수정" : "새 쿠폰 등록"}
           </DialogTitle>
           <DialogContent>
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-              {/* 쿠폰 이름 */}
-              <Grid size={{ xs: 12 }}>
+            <Grid container spacing={3} sx={{ mt: 1 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   fullWidth
-                  label="쿠폰 이름"
+                  label="쿠폰명"
                   value={formData.name}
                   onChange={(e) => handleFormChange("name", e.target.value)}
-                  placeholder="예: 여름맞이 15% 할인"
                   required
                 />
               </Grid>
-
-              {/* 쿠폰 코드 */}
-              <Grid size={{ xs: 8 }}>
-                <TextField
-                  fullWidth
-                  label="쿠폰 코드"
-                  value={formData.code}
-                  onChange={(e) =>
-                    handleFormChange("code", e.target.value.toUpperCase())
-                  }
-                  placeholder="예: SUMMER15"
-                  required
-                  inputProps={{ style: { fontFamily: "monospace" } }}
-                />
-              </Grid>
-              <Grid size={{ xs: 4 }}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={() => handleFormChange("code", generateCouponCode())}
-                  sx={{ height: "56px", textTransform: "none" }}
-                >
-                  자동 생성
-                </Button>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <TextField
+                    fullWidth
+                    label="쿠폰 코드"
+                    value={formData.code}
+                    onChange={(e) => handleFormChange("code", e.target.value)}
+                    required
+                  />
+                  <Button
+                    variant="outlined"
+                    onClick={() =>
+                      handleFormChange("code", generateCouponCode())
+                    }
+                    sx={{ minWidth: "auto", px: 2 }}
+                  >
+                    생성
+                  </Button>
+                </Box>
               </Grid>
 
-              {/* 할인 유형 */}
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <FormControl fullWidth>
                   <InputLabel>할인 유형</InputLabel>
                   <Select
@@ -486,89 +487,56 @@ const CouponManagement: React.FC = () => {
                     }
                     label="할인 유형"
                   >
-                    <MenuItem value="percentage">정률 할인 (%)</MenuItem>
-                    <MenuItem value="fixed">정액 할인 (원)</MenuItem>
+                    <MenuItem value="percentage">비율 할인 (%)</MenuItem>
+                    <MenuItem value="fixed">금액 할인 (원)</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
-
-              {/* 할인 값 */}
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <TextField
                   fullWidth
-                  label={`할인 ${formData.discountType === "percentage" ? "율" : "금액"}`}
+                  label={
+                    formData.discountType === "percentage"
+                      ? "할인 비율 (%)"
+                      : "할인 금액 (원)"
+                  }
                   type="number"
                   value={formData.discountValue}
                   onChange={(e) =>
                     handleFormChange("discountValue", Number(e.target.value))
                   }
-                  InputProps={{
-                    endAdornment:
-                      formData.discountType === "percentage" ? "%" : "원",
-                  }}
                 />
               </Grid>
-
-              {/* 최소 주문 금액 */}
-              <Grid size={{ xs: 12 }}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <TextField
                   fullWidth
-                  label="최소 주문 금액"
+                  label="최소 주문금액 (원)"
                   type="number"
                   value={formData.minOrderAmount}
                   onChange={(e) =>
                     handleFormChange("minOrderAmount", Number(e.target.value))
                   }
-                  InputProps={{ endAdornment: "원" }}
                 />
               </Grid>
 
-              {/* 사용 기간 - DatePicker 사용 */}
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <DatePicker
                   label="시작일"
                   value={formData.startDate}
-                  onChange={(date: Date | null) =>
-                    handleFormChange("startDate", date)
-                  }
+                  onChange={(date) => handleFormChange("startDate", date)}
                   slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      error: false,
-                      helperText: "",
-                    },
+                    textField: { fullWidth: true, required: true },
                   }}
                 />
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <DatePicker
                   label="종료일"
                   value={formData.endDate}
-                  onChange={(date: Date | null) =>
-                    handleFormChange("endDate", date)
-                  }
+                  onChange={(date) => handleFormChange("endDate", date)}
                   slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      error: false,
-                      helperText: "",
-                    },
+                    textField: { fullWidth: true, required: true },
                   }}
-                />
-              </Grid>
-
-              {/* 활성화 상태 */}
-              <Grid size={{ xs: 12 }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.isActive}
-                      onChange={(e) =>
-                        handleFormChange("isActive", e.target.checked)
-                      }
-                    />
-                  }
-                  label="쿠폰 활성화"
                 />
               </Grid>
             </Grid>
@@ -580,7 +548,7 @@ const CouponManagement: React.FC = () => {
               variant="contained"
               sx={{
                 backgroundColor: "#ef9942",
-                "&:hover": { backgroundColor: "#d6853c" },
+                "&:hover": { backgroundColor: "#e08830" },
               }}
             >
               {editingCoupon ? "수정" : "등록"}
@@ -588,11 +556,68 @@ const CouponManagement: React.FC = () => {
           </DialogActions>
         </Dialog>
 
+        {/* 쿠폰 삭제 확인 다이얼로그 */}
+        <Dialog
+          open={deleteConfirm.open}
+          onClose={handleDeleteConfirmClose}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle sx={{ color: "#d32f2f", fontWeight: 600 }}>
+            쿠폰 삭제 확인
+          </DialogTitle>
+          <DialogContent>
+            <Box sx={{ pt: 2 }}>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong>{deleteConfirm.couponToDelete?.name}</strong> 쿠폰을
+                삭제하시겠습니까?
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                삭제하시려면 아래에 쿠폰 코드를 정확히 입력해주세요.
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                쿠폰 코드: <strong>{deleteConfirm.couponToDelete?.code}</strong>
+              </Typography>
+              <TextField
+                fullWidth
+                label="쿠폰 코드를 입력하세요"
+                value={deleteConfirm.inputCode}
+                onChange={(e) =>
+                  setDeleteConfirm((prev) => ({
+                    ...prev,
+                    inputCode: e.target.value,
+                  }))
+                }
+                placeholder={deleteConfirm.couponToDelete?.code}
+                sx={{ mt: 2 }}
+              />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteConfirmClose}>취소</Button>
+            <Button
+              onClick={handleDeleteConfirm}
+              variant="contained"
+              color="error"
+              disabled={!isDeleteButtonEnabled}
+              sx={{
+                "&:disabled": {
+                  backgroundColor: "#e0e0e0",
+                  color: "#9e9e9e",
+                },
+              }}
+            >
+              삭제
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         {/* 알림 스낵바 */}
         <Snackbar
           open={showAlert}
-          autoHideDuration={3000}
+          autoHideDuration={4000}
           onClose={() => setShowAlert(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <Alert
             onClose={() => setShowAlert(false)}
