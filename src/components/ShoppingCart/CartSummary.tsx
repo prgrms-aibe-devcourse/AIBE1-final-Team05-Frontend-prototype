@@ -10,6 +10,7 @@ interface CartSummaryProps {
     selectedCouponName?: string
     onCheckout: () => void
     onContinueShopping: () => void
+    formatPrice: (price: number) => string
 }
 
 const CartSummary: React.FC<CartSummaryProps> = ({
@@ -19,6 +20,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                                                      selectedCouponName,
                                                      onCheckout,
                                                      onContinueShopping,
+                                                     formatPrice,
                                                  }) => {
     return (
         <Card
@@ -35,38 +37,38 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                         mb: 2,
                         fontWeight: 600,
                         color: "#1b150e",
-                        fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
+                        fontFamily: '"Plus Jakarta Sans", "Noto Sans KR", sans-serif',
                     }}
                 >
-                    Order Summary
+                    주문 요약
                 </Typography>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Typography variant="body2" sx={{ color: "#57493a" }}>
-                            Subtotal
+                            상품 금액
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 500, color: "#1b150e" }}>
-                            ${subtotal.toFixed(2)}
+                            {formatPrice(subtotal)}
                         </Typography>
                     </Box>
 
                     {discount > 0 && selectedCouponName && (
                         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                             <Typography variant="body2" sx={{ color: "#57493a" }}>
-                                Discount ({selectedCouponName})
+                                할인 ({selectedCouponName})
                             </Typography>
                             <Typography variant="body2" sx={{ fontWeight: 500, color: "#e89830" }}>
-                                -${discount.toFixed(2)}
+                                -{formatPrice(discount)}
                             </Typography>
                         </Box>
                     )}
 
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Typography variant="body2" sx={{ color: "#57493a" }}>
-                            Shipping
+                            배송비
                         </Typography>
                         <Typography variant="body2" sx={{ color: "#1b150e" }}>
-                            Calculated at next step
+                            다음 단계에서 계산
                         </Typography>
                     </Box>
 
@@ -74,10 +76,10 @@ const CartSummary: React.FC<CartSummaryProps> = ({
 
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Typography variant="body1" sx={{ fontWeight: 600, color: "#1b150e" }}>
-                            Total
+                            총 결제 금액
                         </Typography>
                         <Typography variant="body1" sx={{ fontWeight: 600, color: "#1b150e" }}>
-                            ${total.toFixed(2)}
+                            {formatPrice(total)}
                         </Typography>
                     </Box>
                 </Box>
@@ -96,7 +98,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                             borderRadius: "8px",
                             textTransform: "none",
                             fontSize: "1rem",
-                            fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
+                            fontFamily: '"Plus Jakarta Sans", "Noto Sans KR", sans-serif',
                             "&:hover": { bgcolor: "#d18727" },
                         }}
                     >
@@ -115,7 +117,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                             borderRadius: "8px",
                             textTransform: "none",
                             fontSize: "1rem",
-                            fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
+                            fontFamily: '"Plus Jakarta Sans", "Noto Sans KR", sans-serif',
                             "&:hover": {
                                 borderColor: "#e89830",
                                 bgcolor: "#f9f6f2",

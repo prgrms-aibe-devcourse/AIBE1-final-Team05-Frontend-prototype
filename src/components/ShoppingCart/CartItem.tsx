@@ -10,9 +10,10 @@ interface CartItemProps {
     onSelect: (id: string) => void
     onQuantityChange: (id: string, quantity: number) => void
     onRemove: (id: string) => void
+    formatPrice: (price: number) => string
 }
 
-const CartItem: React.FC<CartItemProps> = ({ item, onSelect, onQuantityChange, onRemove }) => {
+const CartItem: React.FC<CartItemProps> = ({ item, onSelect, onQuantityChange, onRemove, formatPrice }) => {
     return (
         <TableRow
             sx={{
@@ -55,12 +56,12 @@ const CartItem: React.FC<CartItemProps> = ({ item, onSelect, onQuantityChange, o
                             {item.name}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#97784e" }}>
-                            Option: {item.option}
+                            옵션: {item.option}
                         </Typography>
                     </Box>
                 </Box>
             </TableCell>
-            <TableCell sx={{ color: "#57493a" }}>${item.price.toFixed(2)}</TableCell>
+            <TableCell sx={{ color: "#57493a" }}>{formatPrice(item.price)}</TableCell>
             <TableCell>
                 <Box
                     sx={{
@@ -121,7 +122,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onSelect, onQuantityChange, o
                     </IconButton>
                 </Box>
             </TableCell>
-            <TableCell sx={{ fontWeight: 600, color: "#1b150e" }}>${(item.price * item.quantity).toFixed(2)}</TableCell>
+            <TableCell sx={{ fontWeight: 600, color: "#1b150e" }}>{formatPrice(item.price * item.quantity)}</TableCell>
             <TableCell>
                 <IconButton
                     onClick={() => onRemove(item.id)}
