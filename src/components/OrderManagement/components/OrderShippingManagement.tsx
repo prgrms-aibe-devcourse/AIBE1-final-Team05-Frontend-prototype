@@ -176,6 +176,17 @@ const OrderShippingManagement: React.FC = () => {
     directShippingOnly: false,
   });
 
+  // 실제 적용된 필터 (검색 버튼 클릭 시에만 업데이트)
+  const [appliedFilter, setAppliedFilter] = useState<OrderFilter>({
+    dateRange: "30days",
+    startDate: "",
+    endDate: "",
+    shippingStatus: ["all"],
+    searchCondition: "customer_name",
+    searchKeyword: "",
+    directShippingOnly: false,
+  });
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -320,12 +331,15 @@ const OrderShippingManagement: React.FC = () => {
     setPage(0);
   };
 
-  // 상태 편집 버튼 클릭 (출고지연중 처리 개선)
+  // 상태 편집 버튼 클릭 (출고지연중 처리 개선 + 배송완료 삭제 기능 추가)
   const handleStatusEdit = (order: Order) => {
     setSelectedOrder(order);
 
-    // 주문 취소 상태인 경우 삭제 확인 다이얼로그 표시
-    if (order.shippingStatus === "order_cancelled") {
+    // 주문 취소 또는 배송 완료 상태인 경우 삭제 확인 다이얼로그 표시
+    if (
+      order.shippingStatus === "order_cancelled" ||
+      order.shippingStatus === "delivered"
+    ) {
       setCancelConfirmDialog(true);
     } else {
       // 출고지연중 상태인 경우 기본값 설정
@@ -398,30 +412,42 @@ const OrderShippingManagement: React.FC = () => {
     setDelayReason("");
   };
 
-  // 취소된 주문 삭제 확인
+  // 주문 삭제 확인 (취소된 주문 + 배송완료된 주문)
   const handleCancelledOrderDelete = () => {
     if (!selectedOrder) return;
 
     setOrders((prev) => prev.filter((order) => order.id !== selectedOrder.id));
 
-    setAlertMessage("취소된 주문이 목록에서 삭제되었습니다.");
+    const deleteMessage =
+      selectedOrder.shippingStatus === "order_cancelled"
+        ? "취소된 주문이 목록에서 삭제되었습니다."
+        : "배송완료된 주문이 목록에서 삭제되었습니다.";
+
+    setAlertMessage(deleteMessage);
     setAlertSeverity("success");
     setShowAlert(true);
     setCancelConfirmDialog(false);
     setSelectedOrder(null);
   };
 
+  // 검색 실행
+  const handleSearch = () => {
+    setAppliedFilter({ ...filter });
+  };
+
   // 검색 초기화
   const handleResetFilters = () => {
-    setFilter({
-      dateRange: "30days",
+    const initialFilter = {
+      dateRange: "30days" as const,
       startDate: "",
       endDate: "",
-      shippingStatus: ["all"], // 배열로 변경
-      searchCondition: "customer_name",
+      shippingStatus: ["all"],
+      searchCondition: "customer_name" as const,
       searchKeyword: "",
       directShippingOnly: false,
-    });
+    };
+    setFilter(initialFilter);
+    setAppliedFilter(initialFilter);
     setStartDate(null);
     setEndDate(null);
   };
@@ -441,29 +467,31 @@ const OrderShippingManagement: React.FC = () => {
     );
   };
 
-  // 필터링된 주문 목록
+  // 필터링된 주문 목록 (appliedFilter 사용)
   const filteredOrders = orders.filter((order) => {
     // 배송 상태 필터 (다중 선택 지원)
     if (
-      !filter.shippingStatus.includes("all") &&
-      !filter.shippingStatus.includes(order.shippingStatus)
+      !appliedFilter.shippingStatus.includes("all") &&
+      !appliedFilter.shippingStatus.includes(order.shippingStatus)
     ) {
       return false;
     }
 
     // 검색 키워드 필터
-    if (filter.searchKeyword) {
+    if (appliedFilter.searchKeyword) {
       const searchField =
-        filter.searchCondition === "customer_name"
+        appliedFilter.searchCondition === "customer_name"
           ? order.customerName
-          : filter.searchCondition === "order_number"
+          : appliedFilter.searchCondition === "order_number"
             ? order.orderNumber
-            : filter.searchCondition === "product_name"
+            : appliedFilter.searchCondition === "product_name"
               ? order.productName
               : order.customerName;
 
       if (
-        !searchField.toLowerCase().includes(filter.searchKeyword.toLowerCase())
+        !searchField
+          .toLowerCase()
+          .includes(appliedFilter.searchKeyword.toLowerCase())
       ) {
         return false;
       }
@@ -732,20 +760,30 @@ const OrderShippingManagement: React.FC = () => {
                 }
                 sx={{ minWidth: 250 }}
               />
+              {/* 검색 버튼과 초기화 버튼을 검색어 필드 옆으로 이동 */}
+              <Button
+                variant="contained"
+                onClick={handleSearch}
+                sx={{
+                  backgroundColor: "#ef9942",
+                  "&:hover": { backgroundColor: "#d6853c" },
+                  textTransform: "none",
+                  height: "40px",
+                }}
+              >
+                검색
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleResetFilters}
+                sx={{
+                  textTransform: "none",
+                  height: "40px",
+                }}
+              >
+                초기화
+              </Button>
             </Box>
-          </Box>
-
-          {/* 하단 버튼 (검색 버튼 제거, 초기화만 유지) */}
-          <Box
-            sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
-          >
-            <Button
-              variant="outlined"
-              onClick={handleResetFilters}
-              sx={{ textTransform: "none" }}
-            >
-              초기화
-            </Button>
           </Box>
         </Paper>
 
@@ -842,16 +880,21 @@ const OrderShippingManagement: React.FC = () => {
                           onClick={() => handleStatusEdit(order)}
                           sx={{
                             color:
-                              order.shippingStatus === "order_cancelled"
+                              order.shippingStatus === "order_cancelled" ||
+                              order.shippingStatus === "delivered"
                                 ? "#f44336"
                                 : "#ef9942",
                             borderColor:
-                              order.shippingStatus === "order_cancelled"
+                              order.shippingStatus === "order_cancelled" ||
+                              order.shippingStatus === "delivered"
                                 ? "#f44336"
                                 : "#ef9942",
                           }}
                         >
-                          상태 편집
+                          {order.shippingStatus === "order_cancelled" ||
+                          order.shippingStatus === "delivered"
+                            ? "삭제"
+                            : "상태 편집"}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -1008,20 +1051,29 @@ const OrderShippingManagement: React.FC = () => {
           </DialogActions>
         </Dialog>
 
-        {/* 주문 취소 확인 다이얼로그 */}
+        {/* 주문 삭제 확인 다이얼로그 (취소 + 배송완료) */}
         <Dialog
           open={cancelConfirmDialog}
           onClose={() => setCancelConfirmDialog(false)}
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>취소된 주문 삭제</DialogTitle>
+          <DialogTitle>
+            {selectedOrder?.shippingStatus === "order_cancelled"
+              ? "취소된 주문 삭제"
+              : "배송완료된 주문 삭제"}
+          </DialogTitle>
           <DialogContent>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              취소된 주문을 목록에서 삭제하시겠습니까?
+              {selectedOrder?.shippingStatus === "order_cancelled"
+                ? "취소된 주문을 목록에서 삭제하시겠습니까?"
+                : "배송완료된 주문을 목록에서 삭제하시겠습니까?"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               주문번호: {selectedOrder?.orderNumber}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              고객명: {selectedOrder?.customerName}
             </Typography>
           </DialogContent>
           <DialogActions>
