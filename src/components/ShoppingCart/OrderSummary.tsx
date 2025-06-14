@@ -2,27 +2,15 @@
 
 import type React from "react"
 import { Box, Button, Divider, Paper, Typography } from "@mui/material"
-import type { Coupon } from "./types/cart.types"
 
 interface OrderSummaryProps {
-    subtotal: number
-    discount: number
     total: number
-    appliedCoupon: Coupon | null
     formatPrice: (price: number) => string
     onCheckout: () => void
     onContinueShopping: () => void
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({
-                                                       subtotal,
-                                                       discount,
-                                                       total,
-                                                       appliedCoupon,
-                                                       formatPrice,
-                                                       onCheckout,
-                                                       onContinueShopping,
-                                                   }) => {
+const OrderSummary: React.FC<OrderSummaryProps> = ({ total, formatPrice, onCheckout, onContinueShopping }) => {
     return (
         <Paper
             elevation={0}
@@ -41,7 +29,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                     <Typography variant="body2" sx={{ color: "#666" }}>
                         상품 금액
                     </Typography>
-                    <Typography variant="body2">{formatPrice(subtotal)}</Typography>
+                    <Typography variant="body2">{formatPrice(total)}</Typography>
                 </Box>
 
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
@@ -50,17 +38,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                     </Typography>
                     <Typography variant="body2">다음 단계에서 계산</Typography>
                 </Box>
-
-                {discount > 0 && appliedCoupon && (
-                    <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                        <Typography variant="body2" sx={{ color: "#666" }}>
-                            할인 ({appliedCoupon.name})
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: "#e89830" }}>
-                            -{formatPrice(discount)}
-                        </Typography>
-                    </Box>
-                )}
             </Box>
 
             <Divider sx={{ my: 2 }} />

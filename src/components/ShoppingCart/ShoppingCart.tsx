@@ -4,11 +4,10 @@ import type React from "react"
 import { useState } from "react"
 import { Box, Breadcrumbs, Container, Typography, Link, Button, Modal } from "@mui/material"
 import { NavigateNext as NavigateNextIcon } from "@mui/icons-material"
-import type { CartItem, Coupon, RecommendedProduct } from "./types/cart.types"
+import type { CartItem, RecommendedProduct } from "./types/cart.types"
 import CartItemList from "./CartItemList"
 import EmptyCart from "./EmptyCart"
 import OrderSummary from "./OrderSummary"
-import CouponInput from "./CouponInput"
 import RecommendedProducts from "./RecommendedProducts"
 import ProductComparison from "./ProductComparison"
 
@@ -37,36 +36,6 @@ const ShoppingCart: React.FC = () => {
         },
     ])
 
-    // 사용 가능한 쿠폰 목록
-    const [availableCoupons] = useState<Coupon[]>([
-        {
-            id: "WELCOME15",
-            name: "신규 회원 15% 할인",
-            type: "percentage",
-            value: 15,
-            minAmount: 20000,
-            description: "20,000원 이상 구매 시 15% 할인",
-        },
-        {
-            id: "SAVE5",
-            name: "5,000원 즉시 할인",
-            type: "fixed",
-            value: 5000,
-            minAmount: 30000,
-            description: "30,000원 이상 구매 시 5,000원 할인",
-        },
-        {
-            id: "FIRSTTIME20",
-            name: "첫 구매 20% 할인",
-            type: "percentage",
-            value: 20,
-            minAmount: 25000,
-            description: "25,000원 이상 첫 구매 시 20% 할인",
-        },
-    ])
-
-    const [couponCode, setCouponCode] = useState<string>("")
-    const [appliedCoupon, setAppliedCoupon] = useState<string>("")
     const [comparisonOpen, setComparisonOpen] = useState<boolean>(false)
     const [comparisonResult, setComparisonResult] = useState<string>("")
     const [selectAll, setSelectAll] = useState<boolean>(false)
@@ -170,46 +139,9 @@ ${selectedItems.map((item) => `• ${item.name} (${item.option}) - ${item.price.
         setComparisonOpen(true)
     }
 
-    // 가격 계산
-    const calculateSubtotal = () => {
-        return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    }
-
-    const calculateDiscount = () => {
-        if (!appliedCoupon) return 0
-
-        const coupon = availableCoupons.find((c) => c.id === appliedCoupon)
-        const subtotal = calculateSubtotal()
-
-        if (!coupon || subtotal < coupon.minAmount) return 0
-
-        if (coupon.type === "percentage") {
-            return subtotal * (coupon.value / 100)
-        } else {
-            return coupon.value
-        }
-    }
-
+    // 가격 계산 (할인 기능 제거)
     const calculateTotal = () => {
-        return calculateSubtotal() - calculateDiscount()
-    }
-
-    // 쿠폰 적용
-    const handleApplyCoupon = () => {
-        const coupon = availableCoupons.find((c) => c.id === couponCode)
-        if (!coupon) {
-            alert("유효하지 않은 쿠폰 코드입니다.")
-            return
-        }
-
-        const subtotal = calculateSubtotal()
-        if (subtotal < coupon.minAmount) {
-            alert(`이 쿠폰은 ${coupon.minAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다.`)
-            return
-        }
-
-        setAppliedCoupon(couponCode)
-        setCouponCode("")
+        return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
     }
 
     // 결제 처리
@@ -227,14 +159,8 @@ ${selectedItems.map((item) => `• ${item.name} (${item.option}) - ${item.price.
         return `${price.toLocaleString()}원`
     }
 
-    // 적용된 쿠폰 정보
-    const getAppliedCouponInfo = () => {
-        if (!appliedCoupon) return null
-        return availableCoupons.find((c) => c.id === appliedCoupon)
-    }
-
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Container maxWidth="lg" sx={{ py: 3, mt: 2 }}>
             {/* 브레드크럼 */}
             <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mb: 2 }}>
                 <Link
@@ -319,15 +245,10 @@ ${selectedItems.map((item) => `• ${item.name} (${item.option}) - ${item.price.
                     )}
                 </Box>
 
-                {/* 주문 요약 및 쿠폰 */}
+                {/* 주문 요약 (상단으로 이동) */}
                 <Box sx={{ flex: "1 1 35%" }}>
-                    <CouponInput couponCode={couponCode} onCouponChange={setCouponCode} onApplyCoupon={handleApplyCoupon} />
-
                     <OrderSummary
-                        subtotal={calculateSubtotal()}
-                        discount={calculateDiscount()}
                         total={calculateTotal()}
-                        appliedCoupon={getAppliedCouponInfo()}
                         formatPrice={formatPrice}
                         onCheckout={handleCheckout}
                         onContinueShopping={handleContinueShopping}

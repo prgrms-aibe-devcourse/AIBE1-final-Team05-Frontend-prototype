@@ -8,15 +8,6 @@ export interface CartItem {
     selected: boolean
 }
 
-export interface Coupon {
-    id: string
-    name: string
-    type: "percentage" | "fixed"
-    value: number
-    minAmount: number
-    description: string
-}
-
 export interface RecommendedProduct {
     id: string
     name: string
