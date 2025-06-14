@@ -1,94 +1,134 @@
 "use client"
 
 import type React from "react"
-import { Card, CardContent, Typography, Box, RadioGroup, FormControlLabel, Radio, Paper } from "@mui/material"
-import { CreditCard } from "@mui/icons-material"
+import {
+    Card,
+    CardContent,
+    Typography,
+    Box,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Chip,
+    Alert
+} from "@mui/material"
+import type { Coupon } from "@/components/ShoppingCart"
 
-interface PaymentMethodSelectionProps {
-    paymentMethod: string
-    onPaymentMethodChange: (method: string) => void
+interface CouponSelectorProps {
+    availableCoupons: Coupon[]
+    selectedCoupon: string
+    onCouponSelect: (couponId: string) => void
+    isCouponApplicable: (coupon: Coupon) => boolean
+    discountAmount: number
 }
 
-const PaymentMethodSelection: React.FC<PaymentMethodSelectionProps> = ({ paymentMethod, onPaymentMethodChange }) => {
+const CouponSelector: React.FC<CouponSelectorProps> = ({
+                                                           availableCoupons,
+                                                           selectedCoupon,
+                                                           onCouponSelect,
+                                                           isCouponApplicable,
+                                                           discountAmount
+                                                       }) => {
     return (
         <Card style={{ marginBottom: 32, boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)" }}>
             <CardContent style={{ padding: 32 }}>
-                <Typography variant="h5" component="h2" style={{ marginBottom: 32, fontWeight: 600, color: "#1b150e" }}>
-                    Payment Method
+                <Typography
+                    variant="h5"
+                    component="h2"
+                    style={{ marginBottom: 32, fontWeight: 600, color: "#1b150e" }}
+                >
+                    쿠폰
                 </Typography>
+
                 <Box style={{ marginBottom: 32 }}>
-                    <RadioGroup
-                        row
-                        value={paymentMethod}
-                        onChange={(e) => onPaymentMethodChange(e.target.value)}
-                        style={{ gap: 16 }}
-                    >
-                        <Paper
-                            elevation={0}
-                            style={{
-                                border: "1px solid #e7ddd0",
-                                borderRadius: 8,
-                                paddingLeft: 24,
-                                paddingRight: 24,
-                                paddingTop: 16,
-                                paddingBottom: 16,
-                                backgroundColor: paymentMethod === "toss" ? "#fff8f0" : "transparent",
-                                borderColor: paymentMethod === "toss" ? "#e89830" : "#e7ddd0",
-                                borderWidth: paymentMethod === "toss" ? 2 : 1,
-                                transition: "all 0.2s ease-in-out",
-                                flex: 1,
+                    <FormControl fullWidth size="small">
+                        <InputLabel id="coupon-label" shrink sx={{ color: "#97784e" }}>
+                            쿠폰을 선택하세요
+                        </InputLabel>
+                        <Select
+                            labelId="coupon-label"
+                            label="쿠폰을 선택하세요"
+                            value={selectedCoupon}
+                            onChange={(e) => onCouponSelect(e.target.value)}
+                            displayEmpty
+                            renderValue={(selected) => {
+                                if (!selected) {
+                                    return <em style={{ color: "#97784e" }}>쿠폰을 선택하세요</em>
+                                }
+                                const coupon = availableCoupons.find((c) => c.id === selected)
+                                return coupon ? coupon.name : selected
+                            }}
+                            sx={{
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#e7ddd0",
+                                    borderRadius: "8px",
+                                },
+                                "&:hover .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#e89830",
+                                },
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#e89830",
+                                },
                             }}
                         >
-                            <FormControlLabel
-                                value="toss"
-                                control={<Radio style={{ display: "none" }} />}
-                                label={
-                                    <Box style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <MenuItem value="">
+                                <em>쿠폰을 선택하지 않음</em>
+                            </MenuItem>
+                            {availableCoupons.map((coupon) => (
+                                <MenuItem
+                                    key={coupon.id}
+                                    value={coupon.id}
+                                    disabled={!isCouponApplicable(coupon)}
+                                >
+                                    <Box>
                                         <Box
-                                            component="img"
-                                            src="/placeholder.svg?height=20&width=60"
-                                            alt="Toss Payments"
-                                            style={{ height: 20 }}
-                                        />
-                                        <Typography style={{ fontWeight: 500 }}>Toss Pay</Typography>
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 1,
+                                                mb: 0.5,
+                                            }}
+                                        >
+                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                                {coupon.name}
+                                            </Typography>
+                                            {!isCouponApplicable(coupon) && (
+                                                <Chip
+                                                    label={`최소 $${coupon.minAmount}`}
+                                                    size="small"
+                                                    color="error"
+                                                    variant="outlined"
+                                                />
+                                            )}
+                                        </Box>
+                                        <Typography variant="caption" sx={{ color: "#97784e" }}>
+                                            {coupon.description}
+                                        </Typography>
                                     </Box>
-                                }
-                                style={{ margin: 0, width: "100%", justifyContent: "center" }}
-                            />
-                        </Paper>
-                        <Paper
-                            elevation={0}
-                            style={{
-                                border: "1px solid #e7ddd0",
-                                borderRadius: 8,
-                                paddingLeft: 24,
-                                paddingRight: 24,
-                                paddingTop: 16,
-                                paddingBottom: 16,
-                                backgroundColor: paymentMethod === "card" ? "#fff8f0" : "transparent",
-                                borderColor: paymentMethod === "card" ? "#e89830" : "#e7ddd0",
-                                borderWidth: paymentMethod === "card" ? 2 : 1,
-                                transition: "all 0.2s ease-in-out",
-                                flex: 1,
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    {selectedCoupon && (
+                        <Alert
+                            severity="success"
+                            sx={{
+                                mt: 2,
+                                borderRadius: "8px",
+                                "& .MuiAlert-message": {
+                                    fontSize: "0.875rem",
+                                },
                             }}
                         >
-                            <FormControlLabel
-                                value="card"
-                                control={<Radio style={{ display: "none" }} />}
-                                label={
-                                    <Box style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                        <CreditCard fontSize="small" />
-                                        <Typography style={{ fontWeight: 500 }}>Credit Card</Typography>
-                                    </Box>
-                                }
-                                style={{ margin: 0, width: "100%", justifyContent: "center" }}
-                            />
-                        </Paper>
-                    </RadioGroup>
+                            쿠폰이 적용되었습니다! ${discountAmount.toFixed(2)} 할인
+                        </Alert>
+                    )}
                 </Box>
             </CardContent>
         </Card>
     )
 }
 
-export default PaymentMethodSelection
+export default CouponSelector

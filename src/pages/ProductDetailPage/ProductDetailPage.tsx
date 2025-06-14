@@ -150,7 +150,7 @@ const mockRelatedProducts = [
 
 const ProductDetailPage: React.FC = () => {
   return (
-      <Box sx={{ minHeight: "100vh", backgroundColor: "#fcfaf8" }}>
+      <Box sx={{ minHeight: "100vh", backgroundColor: "background.default" }}>
         <ProductDetail
             product={mockProduct}
             reviews={mockReviews}

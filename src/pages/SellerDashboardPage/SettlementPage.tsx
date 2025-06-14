@@ -1,3 +1,4 @@
+// src/pages/SellerDashboardPage/SettlementPage.tsx
 import { useState } from 'react';
 import {
     Box,
@@ -6,16 +7,22 @@ import {
     Grid,
     useTheme
 } from '@mui/material';
-import SettlementTable from '@/components/SellerDashboard/settlement/SettlementTable.tsx';
-import SalesChart from '@/components/SellerDashboard/settlement/SalesChart.tsx';
-import SalesRanking from '@/components/SellerDashboard/settlement/SalesRanking.tsx';
+
+// 컴포넌트 임포트
+import SettlementTable from '@/components/SellerDashboard/settlement/SettlementTable';
+import SalesChart from '@/components/SellerDashboard/settlement/SalesChart';
+import SalesRanking from '@/components/SellerDashboard/settlement/SalesRanking';
+import ProductSalesDetail from '@/components/SellerDashboard/settlement/ProductSalesDetail';
+import SalesInsight from '@/components/SellerDashboard/settlement/SalesInsight';
+
+// 타입 임포트
 import {
     SettlementFilters,
     SettlementItem,
     YearlyMonthData,
     ProductSalesData,
     SalesRecommendation
-} from '@/components/SellerDashboard/settlement/types/settlement.types.ts';
+} from '@/components/SellerDashboard/settlement/types/settlement.types';
 
 // 🚀 더미 데이터 생성 함수들
 const generateSettlementData = (): SettlementItem[] => {
@@ -115,6 +122,7 @@ const generateProductSalesData = (): ProductSalesData[] => {
     })).sort((a, b) => b.amount - a.amount);
 };
 
+// 데이터 생성
 const settlementData = generateSettlementData();
 const yearlyData = generateYearlyData();
 const productData = generateProductSalesData();
@@ -181,7 +189,7 @@ const SettlementPage = () => {
                 />
             </Box>
 
-            {/* 매출 내역 섹션 - 기간 선택 제거 */}
+            {/* 매출 내역 섹션 */}
             <Box sx={{ mb: 4 }}>
                 <Typography
                     variant="h5"
@@ -217,324 +225,13 @@ const SettlementPage = () => {
             </Box>
 
             {/* 상품 매출 상세 정보 섹션 */}
-            <Box sx={{ mb: 4 }}>
-                <Typography
-                    variant="h6"
-                    sx={{
-                        mb: 3,
-                        fontWeight: 600,
-                        color: theme.palette.text.primary,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
-                    }}
-                >
-                    <span className="material-icons" style={{ fontSize: '20px', color: theme.palette.primary.main }}>
-                        inventory_2
-                    </span>
-                    상품별 매출 상세
-                </Typography>
-
-                <Grid container spacing={3}>
-                    {productData.slice(0, 4).map((product, index) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-                            <Box sx={{
-                                p: 2,
-                                backgroundColor: theme.palette.background.paper,
-                                borderRadius: 2,
-                                border: `1px solid ${theme.palette.grey[200]}`,
-                                textAlign: 'center',
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                                }
-                            }}>
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: product.color,
-                                        mb: 1,
-                                        fontSize: '1.1rem'
-                                    }}
-                                >
-                                    ₩{product.amount.toLocaleString()}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: theme.palette.text.primary,
-                                        fontWeight: 500,
-                                        mb: 0.5
-                                    }}
-                                >
-                                    {product.productName}
-                                </Typography>
-                                <Typography
-                                    variant="caption"
-                                    sx={{
-                                        color: theme.palette.text.secondary,
-                                        fontSize: '0.75rem'
-                                    }}
-                                >
-                                    전체의 {product.percentage.toFixed(1)}% • {product.salesCount}회 판매
-                                </Typography>
-                            </Box>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-
-            {/* 분석 요약 섹션 */}
-            <Box sx={{
-                mt: 4,
-                p: 3,
-                backgroundColor: theme.palette.background.paper,
-                borderRadius: 3,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                border: `1px solid ${theme.palette.grey[200]}`
-            }}>
-                <Typography
-                    variant="h6"
-                    sx={{
-                        mb: 2,
-                        fontWeight: 600,
-                        color: theme.palette.text.primary,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
-                    }}
-                >
-                    <span className="material-icons" style={{ fontSize: '20px', color: theme.palette.primary.main }}>
-                        analytics
-                    </span>
-                    정산 분석 요약
-                </Typography>
-
-                <Grid container spacing={3}>
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    color: theme.palette.primary.main,
-                                    fontWeight: 700,
-                                    mb: 0.5
-                                }}
-                            >
-                                {settlementData.length}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.secondary
-                                }}
-                            >
-                                총 주문 건수
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    color: '#ed8936',
-                                    fontWeight: 700,
-                                    mb: 0.5
-                                }}
-                            >
-                                {settlementData.filter(item => item.status === '대기중').length}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.secondary
-                                }}
-                            >
-                                대기중
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    color: '#3182ce',
-                                    fontWeight: 700,
-                                    mb: 0.5
-                                }}
-                            >
-                                {settlementData.filter(item => item.status === '처리중').length}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.secondary
-                                }}
-                            >
-                                처리중
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    color: '#48bb78',
-                                    fontWeight: 700,
-                                    mb: 0.5
-                                }}
-                            >
-                                {settlementData.filter(item => item.status === '정산완료').length}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.secondary
-                                }}
-                            >
-                                정산완료
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    color: theme.palette.primary.main,
-                                    fontWeight: 700,
-                                    mb: 0.5
-                                }}
-                            >
-                                ₩{settlementData.reduce((sum, item) => sum + item.settlementAmount, 0).toLocaleString()}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.secondary
-                                }}
-                            >
-                                총 정산 예정 금액
-                            </Typography>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Box>
+            <ProductSalesDetail productData={productData} />
 
             {/* 매출 성장 인사이트 섹션 */}
-            <Box sx={{
-                mt: 4,
-                p: 3,
-                backgroundColor: 'rgba(232, 152, 48, 0.05)',
-                borderRadius: 3,
-                border: `1px solid rgba(232, 152, 48, 0.2)`
-            }}>
-                <Typography
-                    variant="h6"
-                    sx={{
-                        mb: 2,
-                        fontWeight: 600,
-                        color: theme.palette.text.primary,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
-                    }}
-                >
-                    <span className="material-icons" style={{ fontSize: '20px', color: theme.palette.primary.main }}>
-                        lightbulb
-                    </span>
-                    매출 인사이트
-                </Typography>
-
-                <Grid container spacing={3}>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Box sx={{
-                            p: 2,
-                            backgroundColor: 'white',
-                            borderRadius: 2,
-                            border: `1px solid ${theme.palette.grey[200]}`
-                        }}>
-                            <Typography
-                                variant="subtitle1"
-                                sx={{
-                                    fontWeight: 600,
-                                    color: theme.palette.text.primary,
-                                    mb: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1
-                                }}
-                            >
-                                <span className="material-icons" style={{ fontSize: '16px', color: '#48bb78' }}>
-                                    trending_up
-                                </span>
-                                베스트 상품
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: theme.palette.text.secondary, mb: 1 }}
-                            >
-                                {productData[0]?.productName}이(가) 가장 높은 매출을 기록했습니다.
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: theme.palette.primary.main, fontWeight: 500 }}
-                            >
-                                월 평균 ₩{Math.floor((productData[0]?.amount || 0) / 4).toLocaleString()} 매출
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Box sx={{
-                            p: 2,
-                            backgroundColor: 'white',
-                            borderRadius: 2,
-                            border: `1px solid ${theme.palette.grey[200]}`
-                        }}>
-                            <Typography
-                                variant="subtitle1"
-                                sx={{
-                                    fontWeight: 600,
-                                    color: theme.palette.text.primary,
-                                    mb: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1
-                                }}
-                            >
-                                <span className="material-icons" style={{ fontSize: '16px', color: '#3182ce' }}>
-                                    insights
-                                </span>
-                                성장률 분석
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: theme.palette.text.secondary, mb: 1 }}
-                            >
-                                {selectedYear}년 대비 매출이 꾸준히 증가하고 있습니다.
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: '#48bb78', fontWeight: 500 }}
-                            >
-                                평균 월 성장률: +12.5%
-                            </Typography>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Box>
-
-
+            <SalesInsight
+                productData={productData}
+                selectedYear={selectedYear}
+            />
         </Container>
     );
 };

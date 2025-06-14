@@ -14,9 +14,7 @@ const ProductSuggestions: React.FC = () => {
                 variant="h3"
                 sx={{
                     mb: 2,
-                    fontSize: "1.125rem",
-                    fontWeight: 600,
-                    color: "#1b150e",
+                    color: "text.primary",
                 }}
             >
                 이런 아이에게 좋아요!
@@ -25,7 +23,7 @@ const ProductSuggestions: React.FC = () => {
                 <Typography
                     variant="body2"
                     sx={{
-                        color: "#1b150e",
+                        color: "text.primary",
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
@@ -36,7 +34,7 @@ const ProductSuggestions: React.FC = () => {
                 <Typography
                     variant="body2"
                     sx={{
-                        color: "#1b150e",
+                        color: "text.primary",
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
@@ -47,7 +45,7 @@ const ProductSuggestions: React.FC = () => {
                 <Typography
                     variant="body2"
                     sx={{
-                        color: "#1b150e",
+                        color: "text.primary",
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
@@ -63,13 +61,13 @@ const ProductSuggestions: React.FC = () => {
                 onClick={handlePetInfoInput}
                 sx={{
                     mt: 2,
-                    color: "#e89830",
-                    textTransform: "none",
+                    color: "primary.main",
                     fontSize: "0.875rem",
                     p: "4px 8px",
                     borderRadius: 1,
                     "&:hover": {
-                        backgroundColor: "rgba(232, 152, 48, 0.08)",
+                        backgroundColor: "primary.light",
+                        color: "primary.contrastText",
                     },
                 }}
             >

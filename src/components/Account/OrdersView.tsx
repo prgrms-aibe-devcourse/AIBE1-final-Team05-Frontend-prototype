@@ -1,7 +1,7 @@
 "use client"
 
 import React, {useMemo, useState} from "react"
-import { Box, Typography, Paper, TextField, Chip, Button, Alert, Stepper, Step, StepLabel } from "@mui/material"
+import { Box, Typography, Paper, TextField, Chip, Alert, Stepper, Step, StepLabel } from "@mui/material"
 import { Search } from "@mui/icons-material"
 import type { OrdersViewProps } from "./index"
 import OrderItem from "./OrderItem"
@@ -25,7 +25,7 @@ const OrdersView: React.FC<OrdersViewProps> = ({
     const descriptions = [
         "주문 결제가\n완료되었습니다.",
         "판매자가 발송할\n상품을 준비중입니다.",
-        "상품 준비가 완료되어\n택배를 예정입니다.",
+        "상품 준비가 완료되어\n택배를 배송 예정입니다.",
         "상품이 고객님께\n배송중입니다.",
         "상품이 주문자에게\n전달 완료되었습니다.",
     ]
@@ -118,9 +118,6 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                     <Typography variant="h6" style={{ fontWeight: 600 }}>
                         배송상품 주문상태 안내
                     </Typography>
-                    <Button variant="text" color="primary" size="small">
-                        {"자세한 내용 더보기 >"}
-                    </Button>
                 </Box>
 
                 <Stepper activeStep={-1} alternativeLabel connector={<ArrowConnector />} style={{ marginBottom: 32 }}>
@@ -168,37 +165,22 @@ const OrdersView: React.FC<OrdersViewProps> = ({
                         4시)
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        • 주문 상품은 사용 전날 오후 6시까지 취소 신청 시 취소수수료가 발생되지 않습니다.
+                        • 취소 상품은 구매일 당일 취소 신청 시 취소수수료가 발생되지 않습니다.
                     </Typography>
                 </Box>
 
                 <Box style={{ marginBottom: 24 }}>
                     <Typography variant="subtitle2" style={{ fontWeight: 600, marginBottom: 8 }}>
-                        반품
+                        환불
                     </Typography>
                     <Typography variant="body2" color="text.secondary" style={{ marginBottom: 8 }}>
                         • 상품 수령 후 7일 이내 신청하여 주세요.
                     </Typography>
                     <Typography variant="body2" color="text.secondary" style={{ marginBottom: 8 }}>
-                        • 상품의 불량된 이유에는 택배 완료 후, 반품 상품을 회수합니다.
+                        • 상품의 불량된 이유에는 택배 완료 후, 환불 상품을 폐기합니다.
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        • 절차상품/주문제작/해외배송/신선식품 상품 등은 고객변심에서만 반품 신청이 가능합니다.{" "}
-                        <Button variant="text" size="small" color="primary">
-                            1:1문의하기 &gt;
-                        </Button>
-                    </Typography>
-                </Box>
-
-                <Box>
-                    <Typography variant="subtitle2" style={{ fontWeight: 600, marginBottom: 8 }}>
-                        교환
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        • 상품의 교환 신청은 고객센터로 문의하여 주세요.{" "}
-                        <Button variant="text" size="small" color="primary">
-                            1:1문의하기 &gt;
-                        </Button>
+                        • 절차상품/주문제작 상품 등은 고객변심에서는 환불 신청이 불가능합니다.
                     </Typography>
                 </Box>
             </Paper>

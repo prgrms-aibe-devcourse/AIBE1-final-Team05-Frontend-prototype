@@ -18,7 +18,7 @@ const menuItems = [
     { id: "return-inquiry", label: "취소/환불 조회", icon: Description },
     { id: "reviews", label: "리뷰 관리", icon: RateReview },
     { id: "addresses", label: "주소 관리", icon: Home },
-    { id: "pets", label: "나의 애완동물", icon: Pets },
+    { id: "pets", label: "나의 반려동물", icon: Pets },
     { id: "coupons", label: "나의 쿠폰함", icon: LocalOffer}
 ]
 

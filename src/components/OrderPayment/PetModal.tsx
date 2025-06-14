@@ -36,8 +36,8 @@ export default function PetModal({ open, onClose, onSelectPet, savedPets }: PetM
         onClose()
     }
 
-    const formatBreed = (breed: string) => {
-        return breed.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())
+    const formatBreed = (category: string) => {
+        return category.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
     return (
@@ -53,7 +53,7 @@ export default function PetModal({ open, onClose, onSelectPet, savedPets }: PetM
                     }}
                 >
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        Select Saved Pet
+                        저장된 애완동물 선택하기
                     </Typography>
                     <IconButton onClick={onClose} size="small">
                         <Close />
@@ -87,7 +87,7 @@ export default function PetModal({ open, onClose, onSelectPet, savedPets }: PetM
                                         secondary={
                                             <Box>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    {formatBreed(pet.breed)} • {pet.age} years • {pet.gender}
+                                                    {formatBreed(pet.category)} {pet.breed} • {pet.age} years • {pet.gender}
                                                 </Typography>
                                                 {pet.hasAllergies && (
                                                     <Chip
