@@ -1,4 +1,5 @@
 // src/components/SellerDashboard/settlement/SalesChart.tsx
+import React, { useState } from 'react';
 import {
     Box,
     Typography,
@@ -9,21 +10,22 @@ import {
     Tab,
     Button
 } from '@mui/material';
-import { ReactNode, useState } from 'react';
-import { SalesChartProps } from './types/settlement.types.ts';
 
 // 컴포넌트 임포트
 import MonthlyChart from './MonthlyChart';
 import ProductChart from './ProductChart';
-import YearSelector from './YearSelector';
-import DateRangePicker from './DateRangePicker';
+import { SalesChartProps } from './types/settlement.types';
 
 // 확장된 Props 타입
 interface EnhancedSalesChartProps extends SalesChartProps {
     yearlyData?: YearlyMonthData[];
     productData?: ProductSalesData[];
     selectedYear?: number;
+    selectedMonth?: number;
+    viewMode?: 'monthly' | 'yearly';
     onYearChange?: (year: number) => void;
+    onMonthChange?: (month: number) => void;
+    onViewModeChange?: (mode: 'monthly' | 'yearly') => void; // 🔧 추가
 }
 
 interface YearlyMonthData {
@@ -32,103 +34,80 @@ interface YearlyMonthData {
 }
 
 interface ProductSalesData {
-    salesCount: ReactNode;
     productName: string;
     amount: number;
     percentage: number;
     color: string;
+    salesCount: number;
 }
 
-const SalesChart = ({
-                        data,
-                        title = "매출 분석",
-                        yearlyData = [],
-                        productData = [],
-                        selectedYear = new Date().getFullYear(),
-                        onYearChange
-                    }: EnhancedSalesChartProps) => {
+const SalesChart: React.FC<EnhancedSalesChartProps> = ({
+                                                           data,
+                                                           title = "매출 분석",
+                                                           yearlyData = [],
+                                                           productData = [],
+                                                           selectedYear = new Date().getFullYear(),
+                                                           selectedMonth = new Date().getMonth() + 1,
+                                                           viewMode = 'monthly',
+                                                           onYearChange,
+                                                           onMonthChange,
+                                                           onViewModeChange // 🔧 추가
+                                                       }) => {
     const theme = useTheme();
     const [tabValue, setTabValue] = useState(0);
-    const [currentYear, setCurrentYear] = useState(selectedYear);
-
-    // 상품별 매출 탭용 독립적인 날짜 상태
-    const [productDatePickerAnchor, setProductDatePickerAnchor] = useState<HTMLElement | null>(null);
-    const [productStartDate, setProductStartDate] = useState('');
-    const [productEndDate, setProductEndDate] = useState('');
 
     // 사용 가능한 년도 목록 생성
     const availableYears = yearlyData.length > 0
         ? yearlyData.map(item => item.year)
         : [2022, 2023, 2024, 2025];
 
+    // 사용 가능한 월 목록
+    const availableMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
     // 현재 선택된 년도의 월별 데이터
-    const currentYearData = yearlyData.find(item => item.year === currentYear)?.monthlyData || data;
+    const currentYearData = yearlyData.find(item => item.year === selectedYear)?.monthlyData || data;
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
 
-    const handleYearChange = (year: number) => {
-        setCurrentYear(year);
-        onYearChange?.(year);
-    };
-
-    const handleProductDatePickerOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setProductDatePickerAnchor(event.currentTarget);
-    };
-
-    const handleProductDatePickerClose = () => {
-        setProductDatePickerAnchor(null);
-    };
-
-    const handleProductDateRangeChange = (newStartDate: string, newEndDate: string) => {
-        setProductStartDate(newStartDate);
-        setProductEndDate(newEndDate);
-        console.log('상품별 매출 기간 설정:', { startDate: newStartDate, endDate: newEndDate });
-    };
-
-    // 총 매출액 계산
+    // 총 매출액 및 성장률 계산
     const totalSales = currentYearData.reduce((sum, item) => sum + item.amount, 0);
-
-    // 성장률 계산 (마지막 달과 그 전 달 비교)
     const growthRate = currentYearData.length >= 2
         ? ((currentYearData[currentYearData.length - 1].amount - currentYearData[currentYearData.length - 2].amount) / currentYearData[currentYearData.length - 2].amount * 100)
         : 0;
 
+    // 상품별 매출 총합 계산
+    const totalProductSales = productData.reduce((sum, item) => sum + item.amount, 0);
+
+    const getPeriodLabel = () => {
+        if (viewMode === 'yearly') {
+            return `${selectedYear}년 전체`;
+        } else {
+            return `${selectedYear}년 ${selectedMonth}월`;
+        }
+    };
+
     return (
         <Card sx={{
-            height: '100%',
-            minHeight: 500,
-            maxHeight: 600,
             borderRadius: 3,
             boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             border: `1px solid ${theme.palette.grey[200]}`,
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            '&:hover': {
-                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                transform: 'translateY(-4px)'
-            }
+            overflow: 'hidden'
         }}>
-            <CardContent sx={{
-                p: 3,
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden'
-            }}>
+            <CardContent sx={{ p: 0 }}>
                 {/* 헤더 */}
                 <Box sx={{
+                    p: 3,
+                    borderBottom: `1px solid ${theme.palette.grey[200]}`,
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    mb: 3,
                     flexWrap: 'wrap',
                     gap: 2
                 }}>
                     <Typography
-                        variant="h6"
+                        variant="h5"
                         sx={{
                             fontWeight: 700,
                             color: theme.palette.text.primary
@@ -136,194 +115,224 @@ const SalesChart = ({
                     >
                         {title}
                     </Typography>
-
-                    {/* 년도 선택 (월별 차트에서만 표시) */}
-                    {tabValue === 0 && (
-                        <YearSelector
-                            currentYear={currentYear}
-                            availableYears={availableYears}
-                            onYearChange={handleYearChange}
-                        />
-                    )}
                 </Box>
 
                 {/* 탭 */}
-                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                <Box sx={{
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    px: 3
+                }}>
                     <Tabs
                         value={tabValue}
                         onChange={handleTabChange}
                         sx={{
-                            minHeight: 40,
                             '& .MuiTab-root': {
-                                minHeight: 40,
                                 textTransform: 'none',
-                                fontWeight: 500,
-                                fontSize: '0.875rem'
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                px: 3,
+                                py: 2
                             }
                         }}
                     >
                         <Tab
                             label="기간별 매출"
-                            icon={<span className="material-icons" style={{ fontSize: '16px' }}>trending_up</span>}
+                            icon={
+                                <span
+                                    className="material-icons"
+                                    style={{ fontSize: '20px' }}
+                                >
+                                    trending_up
+                                </span>
+                            }
                             iconPosition="start"
                         />
                         <Tab
                             label="상품별 매출"
-                            icon={<span className="material-icons" style={{ fontSize: '16px' }}>inventory</span>}
+                            icon={
+                                <span
+                                    className="material-icons"
+                                    style={{ fontSize: '20px' }}
+                                >
+                                    inventory
+                                </span>
+                            }
                             iconPosition="start"
                         />
                     </Tabs>
                 </Box>
 
                 {/* 차트 영역 */}
-                <Box sx={{
-                    height: tabValue === 0 ? 280 : 320,
-                    mb: 3,
-                    border: `1px solid ${theme.palette.grey[100]}`,
-                    borderRadius: 2,
-                    overflow: 'hidden'
-                }}>
+                <Box sx={{ minHeight: 500 }}>
                     {tabValue === 0 ? (
-                        <MonthlyChart data={currentYearData} />
+                        <MonthlyChart
+                            data={currentYearData}
+                            selectedYear={selectedYear}
+                            onYearChange={onYearChange}
+                            availableYears={availableYears}
+                        />
                     ) : (
+                        // 🔧 수정: ProductChart에 모든 필요한 props 전달
                         <ProductChart
                             data={productData}
-                            startDate={productStartDate}
-                            endDate={productEndDate}
-                            onDatePickerOpen={handleProductDatePickerOpen}
-                            onDateRangeChange={handleProductDateRangeChange}
+                            selectedYear={selectedYear}
+                            selectedMonth={selectedMonth}
+                            viewMode={viewMode} // 🔧 viewMode 전달
+                            onYearChange={onYearChange}
+                            onMonthChange={onMonthChange}
+                            onViewModeChange={onViewModeChange} // 🔧 viewMode 변경 핸들러 전달
+                            availableYears={availableYears}
+                            availableMonths={availableMonths}
                         />
                     )}
                 </Box>
 
-                {/* 매출 요약 */}
-                {tabValue === 0 && (
-                    <Box sx={{
-                        textAlign: 'center',
-                        p: 2,
-                        backgroundColor: theme.palette.background.default,
-                        borderRadius: 2,
-                        border: `1px solid ${theme.palette.grey[200]}`
-                    }}>
-                        <Typography
-                            variant="h4"
-                            sx={{
-                                color: theme.palette.primary.main,
-                                fontWeight: 700,
-                                mb: 0.5
-                            }}
-                        >
-                            ₩{totalSales.toLocaleString()}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                {/* 요약 정보 */}
+                <Box sx={{
+                    p: 3,
+                    backgroundColor: theme.palette.background.default,
+                    borderTop: `1px solid ${theme.palette.grey[200]}`
+                }}>
+                    {tabValue === 0 ? (
+                        // 기간별 매출 요약
+                        <Box sx={{ textAlign: 'center' }}>
                             <Typography
-                                variant="body2"
+                                variant="h3"
                                 sx={{
-                                    color: theme.palette.text.secondary
+                                    color: theme.palette.primary.main,
+                                    fontWeight: 700,
+                                    mb: 1
                                 }}
                             >
-                                {currentYear}년 총 매출
+                                ₩{totalSales.toLocaleString()}
                             </Typography>
                             <Box sx={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                color: growthRate >= 0 ? '#48bb78' : '#f56565'
+                                justifyContent: 'center',
+                                gap: 2,
+                                flexWrap: 'wrap'
                             }}>
-                                <span
-                                    className="material-icons"
-                                    style={{
-                                        fontSize: '16px',
-                                        marginRight: '2px'
-                                    }}
-                                >
-                                    {growthRate >= 0 ? 'trending_up' : 'trending_down'}
-                                </span>
                                 <Typography
-                                    variant="body2"
-                                    sx={{
-                                        fontWeight: 600
-                                    }}
+                                    variant="h6"
+                                    sx={{ color: theme.palette.text.secondary }}
                                 >
-                                    {Math.abs(growthRate).toFixed(1)}%
+                                    {selectedYear}년 총 매출
                                 </Typography>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    color: growthRate >= 0 ? '#48bb78' : '#f56565',
+                                    gap: 0.5
+                                }}>
+                                    <span className="material-icons">
+                                        {growthRate >= 0 ? 'trending_up' : 'trending_down'}
+                                    </span>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{ fontWeight: 700 }}
+                                    >
+                                        {Math.abs(growthRate).toFixed(1)}%
+                                    </Typography>
+                                </Box>
                             </Box>
                         </Box>
-                    </Box>
-                )}
+                    ) : (
+                        // 상품별 매출 요약
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Typography
+                                variant="h3"
+                                sx={{
+                                    color: theme.palette.primary.main,
+                                    fontWeight: 700,
+                                    mb: 1
+                                }}
+                            >
+                                ₩{totalProductSales.toLocaleString()}
+                            </Typography>
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 2,
+                                flexWrap: 'wrap'
+                            }}>
+                                <Typography
+                                    variant="h6"
+                                    sx={{ color: theme.palette.text.secondary }}
+                                >
+                                    {getPeriodLabel()} 상품별 총 매출
+                                </Typography>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    color: theme.palette.text.secondary,
+                                    gap: 0.5
+                                }}>
+                                    <span className="material-icons">
+                                        inventory_2
+                                    </span>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{ fontWeight: 700 }}
+                                    >
+                                        {productData.length}개 상품
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Box>
+                    )}
 
-                {/* 상품별 매출용 날짜 범위 선택 팝오버 */}
-                <DateRangePicker
-                    startDate={productStartDate}
-                    endDate={productEndDate}
-                    onDateChange={handleProductDateRangeChange}
-                    open={Boolean(productDatePickerAnchor)}
-                    anchorEl={productDatePickerAnchor}
-                    onClose={handleProductDatePickerClose}
-                />
-
-                {/* 상품별 매출 요약 */}
-                {tabValue === 1 && productData.length > 0 && (
-                    <Box sx={{
-                        textAlign: 'center',
-                        p: 2,
-                        backgroundColor: theme.palette.background.default,
-                        borderRadius: 2,
-                        border: `1px solid ${theme.palette.grey[200]}`
-                    }}>
-                        <Typography
-                            variant="h4"
+                    {/* 데이터 내보내기 버튼 */}
+                    <Box sx={{ textAlign: 'center', mt: 3 }}>
+                        <Button
+                            variant="outlined"
+                            size="large"
+                            startIcon={
+                                <span
+                                    className="material-icons"
+                                    style={{ fontSize: '20px' }}
+                                >
+                                    file_download
+                                </span>
+                            }
+                            onClick={() => {
+                                if (tabValue === 0) {
+                                    console.log('기간별 매출 데이터 내보내기:', {
+                                        year: selectedYear,
+                                        type: 'monthly',
+                                        data: currentYearData
+                                    });
+                                } else {
+                                    console.log('상품별 매출 데이터 내보내기:', {
+                                        year: selectedYear,
+                                        month: selectedMonth,
+                                        viewMode: viewMode,
+                                        type: 'product',
+                                        data: productData
+                                    });
+                                }
+                            }}
                             sx={{
+                                borderColor: theme.palette.primary.main,
                                 color: theme.palette.primary.main,
-                                fontWeight: 700,
-                                mb: 0.5
+                                fontWeight: 600,
+                                textTransform: 'none',
+                                px: 4,
+                                py: 1.5,
+                                fontSize: '1rem',
+                                borderRadius: 3,
+                                '&:hover': {
+                                    borderColor: theme.palette.primary.dark,
+                                    backgroundColor: 'rgba(232, 152, 48, 0.04)',
+                                    transform: 'translateY(-1px)'
+                                }
                             }}
                         >
-                            {productData.length}개
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                color: theme.palette.text.secondary
-                            }}
-                        >
-                            {(productStartDate || productEndDate)
-                                ? `선택 기간 판매 상품 수`
-                                : '전체 판매 상품 수'
-                            }
-                        </Typography>
+                            {tabValue === 0 ? '년도별 데이터 내보내기' : `${viewMode === 'yearly' ? '년도별' : '월별'} 상품 데이터 내보내기`}
+                        </Button>
                     </Box>
-                )}
-
-                {/* 데이터 내보내기 버튼 */}
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => {
-                            console.log('매출 데이터 내보내기:', {
-                                year: currentYear,
-                                type: tabValue === 0 ? 'monthly' : 'product',
-                                data: tabValue === 0 ? currentYearData : productData
-                            });
-                        }}
-                        sx={{
-                            borderColor: theme.palette.primary.main,
-                            color: theme.palette.primary.main,
-                            fontWeight: 500,
-                            textTransform: 'none',
-                            '&:hover': {
-                                borderColor: theme.palette.primary.dark,
-                                backgroundColor: 'rgba(232, 152, 48, 0.04)'
-                            }
-                        }}
-                        startIcon={
-                            <span className="material-icons" style={{ fontSize: '16px' }}>
-                                file_download
-                            </span>
-                        }
-                    >
-                        데이터 내보내기
-                    </Button>
                 </Box>
             </CardContent>
         </Card>
