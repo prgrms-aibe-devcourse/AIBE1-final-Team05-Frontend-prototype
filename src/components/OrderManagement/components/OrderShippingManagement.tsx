@@ -3,11 +3,15 @@
 import React, { useState, useMemo } from "react";
 import {
   Box,
-  Typography,
   Paper,
+  Typography,
   Grid,
-  Card,
-  CardContent,
+  Button,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -16,98 +20,89 @@ import {
   TableRow,
   TablePagination,
   Chip,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Alert,
   Snackbar,
-  SelectChangeEvent,
   FormControlLabel,
   Checkbox,
-  Radio,
 } from "@mui/material";
-import {
-  Info as InfoIcon,
-  Error as ErrorIcon,
-  Edit as EditIcon,
-} from "@mui/icons-material";
+import { Warning as WarningIcon } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { ko } from "date-fns/locale";
 import {
   Order,
-  OrderSummary,
-  UrgentTasks,
   OrderFilter,
-  ShippingStatus,
-  SHIPPING_STATUS_LABELS,
-  SEARCH_CONDITIONS,
-} from "@/components/OrderManagement/types/order.types";
+  OrderSummary,
+  SearchCondition,
+} from "../types/order.types";
 
-// Mock 데이터 - 개선된 샘플 데이터
+// 개편된 목업 데이터 (구매자 주소 추가, 상태 변경)
 const mockOrders: Order[] = [
   {
     id: "1",
     orderNumber: "#1001",
     orderDate: "2024-07-25",
-    customerName: "김민수",
-    productName: "수제 닭가슴살 간식",
-    quantity: 3,
-    amount: 45000,
+    customerName: "김민지",
+    productName: "유기농 치킨 간식",
+    quantity: 2,
+    amount: 15000,
     shippingStatus: "payment_completed",
     customerPhone: "010-1234-5678",
-    shippingAddress: "서울시 강남구 테헤란로 123",
+    shippingAddress: "서울특별시 강남구 테헤란로 123, 101동 501호", // 추가
   },
   {
     id: "2",
     orderNumber: "#1002",
     orderDate: "2024-07-24",
-    customerName: "이영희",
-    productName: "고양이 참치 간식",
-    quantity: 2,
-    amount: 28000,
+    customerName: "이준호",
+    productName: "수제 소고기 간식",
+    quantity: 1,
+    amount: 22000,
     shippingStatus: "preparing",
+    customerPhone: "010-2345-6789",
+    shippingAddress: "경기도 성남시 분당구 판교로 456, 202동 301호", // 추가
   },
   {
     id: "3",
     orderNumber: "#1003",
     orderDate: "2024-07-23",
-    customerName: "박철수",
-    productName: "강아지 소고기 육포",
-    quantity: 1,
-    amount: 15000,
+    customerName: "박수현",
+    productName: "고양이 참치 간식",
+    quantity: 3,
+    amount: 18000,
     shippingStatus: "delay_requested",
-    delayReason: "원재료 공급 지연으로 인한 제작 지연",
+    customerPhone: "010-3456-7890",
+    shippingAddress: "부산광역시 해운대구 센텀로 789, 303동 201호", // 추가
+    delayReason: "원재료 수급 지연",
   },
   {
     id: "4",
     orderNumber: "#1004",
     orderDate: "2024-07-22",
-    customerName: "최지영",
-    productName: "수제 연어 간식",
-    quantity: 4,
-    amount: 52000,
-    shippingStatus: "ready_to_ship",
+    customerName: "최영수",
+    productName: "강아지 덴탈껌",
+    quantity: 1,
+    amount: 12000,
+    shippingStatus: "ready_for_delivery", // 통합된 상태로 변경
+    customerPhone: "010-4567-8901",
+    shippingAddress: "대구광역시 수성구 동대구로 321, 104동 801호", // 추가
   },
   {
     id: "5",
     orderNumber: "#1005",
     orderDate: "2024-07-21",
-    customerName: "정민호",
-    productName: "고양이 치킨 간식",
+    customerName: "정하영",
+    productName: "고양이 연어 간식",
     quantity: 1,
     amount: 18000,
-    shippingStatus: "shipping",
-    trackingNumber: "123456789",
-    shippingCompany: "CJ대한통운",
+    shippingStatus: "ready_for_delivery", // 통합된 상태로 변경
+    customerPhone: "010-5678-9012",
+    shippingAddress: "인천광역시 연수구 송도대로 654, 205동 501호", // 추가
   },
   {
     id: "6",
@@ -120,6 +115,8 @@ const mockOrders: Order[] = [
     shippingStatus: "in_transit",
     trackingNumber: "987654321",
     shippingCompany: "우체국택배",
+    customerPhone: "010-6789-0123",
+    shippingAddress: "광주광역시 서구 상무대로 987, 106동 301호", // 추가
   },
   {
     id: "7",
@@ -132,6 +129,8 @@ const mockOrders: Order[] = [
     shippingStatus: "delivered",
     trackingNumber: "456789123",
     shippingCompany: "롯데택배",
+    customerPhone: "010-7890-1234",
+    shippingAddress: "대전광역시 유성구 대학로 147, 207동 702호", // 추가
   },
   {
     id: "8",
@@ -142,17 +141,14 @@ const mockOrders: Order[] = [
     quantity: 3,
     amount: 32000,
     shippingStatus: "order_cancelled",
+    customerPhone: "010-8901-2345",
+    shippingAddress: "울산광역시 남구 삼산로 258, 108동 401호", // 추가
   },
 ];
 
-const mockUrgentTasks: UrgentTasks = {
-  delayRequests: 1, // 실제 데이터와 연동
-  longTermUndelivered: 0,
-};
-
-// 배송 상태별 색상 정의 (신규 상태 포함)
+// 개편된 배송 상태별 색상 정의
 const statusColorMap: Record<
-  ShippingStatus | "order_cancelled" | "delay_requested",
+  string,
   {
     label: string;
     color: "primary" | "warning" | "info" | "secondary" | "success" | "error";
@@ -161,9 +157,8 @@ const statusColorMap: Record<
   payment_completed: { label: "주문확인", color: "primary" },
   preparing: { label: "상품준비중", color: "warning" },
   delay_requested: { label: "출고지연중", color: "error" },
-  ready_to_ship: { label: "배송지시", color: "info" },
-  shipping: { label: "운송장등록", color: "secondary" },
-  in_transit: { label: "배송중", color: "info" },
+  ready_for_delivery: { label: "배송준비 완료", color: "info" }, // 통합된 새 상태
+  in_transit: { label: "배송중", color: "secondary" },
   delivered: { label: "배송완료", color: "success" },
   order_cancelled: { label: "주문 취소", color: "error" },
 };
@@ -175,7 +170,18 @@ const OrderShippingManagement: React.FC = () => {
     dateRange: "30days",
     startDate: "",
     endDate: "",
-    shippingStatus: "all",
+    shippingStatus: ["all"], // 배열로 변경
+    searchCondition: "customer_name",
+    searchKeyword: "",
+    directShippingOnly: false,
+  });
+
+  // 실제 적용된 필터 (검색 버튼 클릭 시에만 업데이트)
+  const [appliedFilter, setAppliedFilter] = useState<OrderFilter>({
+    dateRange: "30days",
+    startDate: "",
+    endDate: "",
+    shippingStatus: ["all"],
     searchCondition: "customer_name",
     searchKeyword: "",
     directShippingOnly: false,
@@ -187,8 +193,7 @@ const OrderShippingManagement: React.FC = () => {
   // 상태 편집 관련 상태
   const [statusEditDialog, setStatusEditDialog] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [newStatus, setNewStatus] =
-    useState<ShippingStatus>("payment_completed");
+  const [newStatus, setNewStatus] = useState<string>("payment_completed");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [shippingCompany, setShippingCompany] = useState("");
   const [isDelayRequested, setIsDelayRequested] = useState(false);
@@ -217,7 +222,7 @@ const OrderShippingManagement: React.FC = () => {
     "로젠택배",
   ];
 
-  // 주문 현황 계산 (실제 데이터와 연동)
+  // 개편된 주문 현황 계산 (ready_for_delivery로 통합)
   const orderSummary: OrderSummary = useMemo(() => {
     const summary = orders
       .filter((order) => order.shippingStatus !== "order_cancelled")
@@ -231,11 +236,8 @@ const OrderShippingManagement: React.FC = () => {
             case "delay_requested": // 출고 지연중도 상품준비중에 포함
               acc.preparing++;
               break;
-            case "ready_to_ship":
-              acc.readyToShip++;
-              break;
-            case "shipping":
-              acc.shipping++;
+            case "ready_for_delivery": // 통합된 상태
+              acc.readyForDelivery++;
               break;
             case "in_transit":
               acc.inTransit++;
@@ -249,8 +251,7 @@ const OrderShippingManagement: React.FC = () => {
         {
           paymentCompleted: 0,
           preparing: 0,
-          readyToShip: 0,
-          shipping: 0,
+          readyForDelivery: 0,
           inTransit: 0,
           delivered: 0,
         }
@@ -264,30 +265,42 @@ const OrderShippingManagement: React.FC = () => {
       .length;
   }, [orders]);
 
-  // 이벤트 핸들러들
-  const handleFilterChange =
-    (field: keyof OrderFilter) =>
-    (event: SelectChangeEvent<string | boolean>) => {
-      const value = event.target.value;
-      setFilter((prev: OrderFilter) => ({
-        ...prev,
-        [field]: value,
-      }));
-    };
+  // 배송상태 체크박스 다중 선택 핸들러
+  const handleShippingStatusChange = (value: string) => {
+    setFilter((prev) => {
+      let newShippingStatus = [...prev.shippingStatus];
 
-  const handleTextFieldChange =
-    (field: keyof OrderFilter) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-      setFilter((prev: OrderFilter) => ({
+      if (value === "all") {
+        // "전체" 선택 시 모든 선택 해제
+        newShippingStatus = ["all"];
+      } else {
+        // "전체"가 선택되어 있다면 제거
+        if (newShippingStatus.includes("all")) {
+          newShippingStatus = newShippingStatus.filter((s) => s !== "all");
+        }
+
+        // 해당 값이 이미 선택되어 있다면 제거, 없다면 추가
+        if (newShippingStatus.includes(value)) {
+          newShippingStatus = newShippingStatus.filter((s) => s !== value);
+        } else {
+          newShippingStatus.push(value);
+        }
+
+        // 아무것도 선택되지 않았다면 "전체" 선택
+        if (newShippingStatus.length === 0) {
+          newShippingStatus = ["all"];
+        }
+      }
+
+      return {
         ...prev,
-        [field]: value,
-      }));
-    };
+        shippingStatus: newShippingStatus,
+      };
+    });
+  };
 
   const handleDateRangeClick = (range: "today" | "7days" | "30days") => {
     setFilter((prev) => ({ ...prev, dateRange: range }));
-    // 실제로는 날짜 범위에 따라 startDate, endDate를 자동 설정
     const today = new Date();
     const endDate = new Date(today);
     let startDate = new Date(today);
@@ -318,20 +331,31 @@ const OrderShippingManagement: React.FC = () => {
     setPage(0);
   };
 
-  // 상태 편집 버튼 클릭
+  // 상태 편집 버튼 클릭 (출고지연중 처리 개선 + 배송완료 삭제 기능 추가)
   const handleStatusEdit = (order: Order) => {
     setSelectedOrder(order);
 
-    // 주문 취소 상태인 경우 삭제 확인 다이얼로그 표시
-    if (order.shippingStatus === "order_cancelled") {
+    // 주문 취소 또는 배송 완료 상태인 경우 삭제 확인 다이얼로그 표시
+    if (
+      order.shippingStatus === "order_cancelled" ||
+      order.shippingStatus === "delivered"
+    ) {
       setCancelConfirmDialog(true);
     } else {
-      // 일반 주문인 경우 상태 변경 다이얼로그 표시
-      setNewStatus(order.shippingStatus as ShippingStatus);
+      // 출고지연중 상태인 경우 기본값 설정
+      if (order.shippingStatus === "delay_requested") {
+        setNewStatus("preparing"); // 상품준비중으로 설정
+        setIsDelayRequested(true); // 출고 지연 요청 체크
+        setDelayReason(order.delayReason || "");
+      } else {
+        // 일반 주문인 경우
+        setNewStatus(order.shippingStatus);
+        setIsDelayRequested(false);
+        setDelayReason("");
+      }
+
       setTrackingNumber(order.trackingNumber || "");
       setShippingCompany(order.shippingCompany || "");
-      setIsDelayRequested(order.shippingStatus === "delay_requested");
-      setDelayReason(order.delayReason || "");
       setStatusEditDialog(true);
     }
   };
@@ -340,9 +364,11 @@ const OrderShippingManagement: React.FC = () => {
   const handleStatusSubmit = () => {
     if (!selectedOrder) return;
 
-    // 운송장 등록 선택 시 필수 필드 검증
-    if (newStatus === "shipping" && (!trackingNumber || !shippingCompany)) {
-      setAlertMessage("택배사와 운송장 번호를 입력해주세요.");
+    // 배송중 선택 시 운송장 정보 필수 검증 (변경된 시점)
+    if (newStatus === "in_transit" && (!trackingNumber || !shippingCompany)) {
+      setAlertMessage(
+        "배송중으로 변경하려면 택배사와 운송장 번호를 입력해주세요."
+      );
       setAlertSeverity("error");
       setShowAlert(true);
       return;
@@ -361,11 +387,11 @@ const OrderShippingManagement: React.FC = () => {
       ...selectedOrder,
       shippingStatus: isDelayRequested ? "delay_requested" : newStatus,
       trackingNumber:
-        newStatus === "shipping" || newStatus === "in_transit"
+        newStatus === "in_transit" // 배송중일 때만 운송장 정보 업데이트
           ? trackingNumber
           : selectedOrder.trackingNumber,
       shippingCompany:
-        newStatus === "shipping" || newStatus === "in_transit"
+        newStatus === "in_transit" // 배송중일 때만 배송사 정보 업데이트
           ? shippingCompany
           : selectedOrder.shippingCompany,
       delayReason: isDelayRequested ? delayReason : selectedOrder.delayReason,
@@ -386,38 +412,51 @@ const OrderShippingManagement: React.FC = () => {
     setDelayReason("");
   };
 
-  // 취소된 주문 삭제 확인
+  // 주문 삭제 확인 (취소된 주문 + 배송완료된 주문)
   const handleCancelledOrderDelete = () => {
     if (!selectedOrder) return;
 
     setOrders((prev) => prev.filter((order) => order.id !== selectedOrder.id));
 
-    setAlertMessage("취소된 주문이 목록에서 삭제되었습니다.");
+    const deleteMessage =
+      selectedOrder.shippingStatus === "order_cancelled"
+        ? "취소된 주문이 목록에서 삭제되었습니다."
+        : "배송완료된 주문이 목록에서 삭제되었습니다.";
+
+    setAlertMessage(deleteMessage);
     setAlertSeverity("success");
     setShowAlert(true);
     setCancelConfirmDialog(false);
     setSelectedOrder(null);
   };
 
+  // 검색 실행
+  const handleSearch = () => {
+    setAppliedFilter({ ...filter });
+  };
+
   // 검색 초기화
   const handleResetFilters = () => {
-    setFilter({
-      dateRange: "30days",
+    const initialFilter = {
+      dateRange: "30days" as const,
       startDate: "",
       endDate: "",
-      shippingStatus: "all",
-      searchCondition: "customer_name",
+      shippingStatus: ["all"],
+      searchCondition: "customer_name" as const,
       searchKeyword: "",
       directShippingOnly: false,
-    });
+    };
+    setFilter(initialFilter);
+    setAppliedFilter(initialFilter);
     setStartDate(null);
     setEndDate(null);
   };
 
-  const getStatusChip = (
-    status: ShippingStatus | "order_cancelled" | "delay_requested"
-  ) => {
-    const statusConfig = statusColorMap[status];
+  const getStatusChip = (status: string) => {
+    const statusConfig = statusColorMap[status] || {
+      label: status,
+      color: "default" as const,
+    };
     return (
       <Chip
         label={statusConfig.label}
@@ -428,121 +467,81 @@ const OrderShippingManagement: React.FC = () => {
     );
   };
 
-  // 필터링된 주문 목록
+  // 필터링된 주문 목록 (appliedFilter 사용)
   const filteredOrders = orders.filter((order) => {
-    // 배송 상태 필터
+    // 배송 상태 필터 (다중 선택 지원)
     if (
-      filter.shippingStatus !== "all" &&
-      order.shippingStatus !== filter.shippingStatus
+      !appliedFilter.shippingStatus.includes("all") &&
+      !appliedFilter.shippingStatus.includes(order.shippingStatus)
     ) {
       return false;
     }
 
     // 검색 키워드 필터
-    if (filter.searchKeyword) {
+    if (appliedFilter.searchKeyword) {
       const searchField =
-        filter.searchCondition === "customer_name"
+        appliedFilter.searchCondition === "customer_name"
           ? order.customerName
-          : filter.searchCondition === "order_number"
+          : appliedFilter.searchCondition === "order_number"
             ? order.orderNumber
-            : filter.searchCondition === "product_name"
+            : appliedFilter.searchCondition === "product_name"
               ? order.productName
               : order.customerName;
-      return searchField
-        .toLowerCase()
-        .includes(filter.searchKeyword.toLowerCase());
+
+      if (
+        !searchField
+          .toLowerCase()
+          .includes(appliedFilter.searchKeyword.toLowerCase())
+      ) {
+        return false;
+      }
     }
+
     return true;
   });
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ko}>
-      <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: "none", width: "100%" }}>
-        {/* 페이지 헤더 */}
+      <Box sx={{ p: { xs: 2, md: 4 } }}>
+        {/* 페이지 제목 */}
         <Box sx={{ mb: 4 }}>
           <Typography
-            variant="h4"
-            sx={{ fontWeight: 700, color: "#2d2a27", mb: 1 }}
+            variant="h3"
+            sx={{
+              fontSize: "2.5rem",
+              fontWeight: 700,
+              color: "#2d2a27",
+              fontFamily: "'Noto Sans KR', sans-serif",
+              mb: 1,
+            }}
           >
-            배송관리
+            주문/배송 관리
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ color: "#5c5752", fontSize: "1rem" }}
+          >
+            주문 현황을 확인하고 배송 상태를 관리하세요.
           </Typography>
         </Box>
 
-        {/* 우선 처리 알림 */}
-        <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 600, color: "#2d2a27", mb: 2 }}
+        {/* 긴급 처리 현황 */}
+        {delayRequestedCount > 0 && (
+          <Alert
+            severity="warning"
+            icon={<WarningIcon />}
+            sx={{ mb: 3, borderRadius: 3 }}
           >
-            먼저 확인하고 처리해주세요!
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Card sx={{ border: 1, borderColor: "#e0e0e0", borderRadius: 2 }}>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mb: 1,
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      출고지연요청
-                    </Typography>
-                    <InfoIcon sx={{ fontSize: 16, color: "#bdbdbd" }} />
-                  </Box>
-                  <Typography
-                    variant="h3"
-                    sx={{ fontWeight: 700, color: "#ef9942", mb: 1 }}
-                  >
-                    {delayRequestedCount}
-                  </Typography>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <ErrorIcon sx={{ fontSize: 12, color: "#f44336" }} />
-                    <Typography variant="caption" sx={{ color: "#f44336" }}>
-                      출고지시 완료해야 발송지연됩니다.
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Card sx={{ border: 1, borderColor: "#e0e0e0", borderRadius: 2 }}>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mb: 1,
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      장기미배송
-                    </Typography>
-                    <InfoIcon sx={{ fontSize: 16, color: "#bdbdbd" }} />
-                  </Box>
-                  <Typography
-                    variant="h3"
-                    sx={{ fontWeight: 700, color: "#ef9942", mb: 1 }}
-                  >
-                    {mockUrgentTasks.longTermUndelivered}
-                  </Typography>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <ErrorIcon sx={{ fontSize: 12, color: "#f44336" }} />
-                    <Typography variant="caption" sx={{ color: "#f44336" }}>
-                      7일 이상 배송중 상태입니다.
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Paper>
+            <Typography variant="body2" fontWeight={600}>
+              출고 지연 요청: {delayRequestedCount}건
+            </Typography>
+            <Typography variant="body2">
+              지연 요청된 주문들을 확인하고 처리해주세요.
+            </Typography>
+          </Alert>
+        )}
 
-        {/* 주문 현황 요약 (동적 데이터 연동) */}
+        {/* 개편된 주문 현황판 */}
         <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
           <Typography
             variant="h6"
@@ -551,7 +550,7 @@ const OrderShippingManagement: React.FC = () => {
             주문 현황
           </Typography>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -564,7 +563,7 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -577,37 +576,24 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
                   sx={{ color: "#0288d1", fontWeight: 600 }}
                 >
-                  {orderSummary.readyToShip}
+                  {orderSummary.readyForDelivery}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  배송지시
+                  배송준비 완료
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
                   sx={{ color: "#9c27b0", fontWeight: 600 }}
-                >
-                  {orderSummary.shipping}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  운송장등록
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Box sx={{ textAlign: "center" }}>
-                <Typography
-                  variant="h4"
-                  sx={{ color: "#0288d1", fontWeight: 600 }}
                 >
                   {orderSummary.inTransit}
                 </Typography>
@@ -616,7 +602,7 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -632,7 +618,7 @@ const OrderShippingManagement: React.FC = () => {
           </Grid>
         </Paper>
 
-        {/* 개편된 검색 영역 */}
+        {/* 기존 방식으로 복원된 검색 영역 */}
         <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
           <Typography
             variant="h6"
@@ -684,33 +670,22 @@ const OrderShippingManagement: React.FC = () => {
               <DatePicker
                 label="시작일"
                 value={startDate}
-                onChange={(date) => setStartDate(date)}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    sx: { minWidth: 140 },
-                  },
-                }}
+                onChange={setStartDate}
+                slotProps={{ textField: { size: "small", sx: { width: 150 } } }}
               />
-              <Typography variant="body2">~</Typography>
               <DatePicker
                 label="종료일"
                 value={endDate}
-                onChange={(date) => setEndDate(date)}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    sx: { minWidth: 140 },
-                  },
-                }}
+                onChange={setEndDate}
+                slotProps={{ textField: { size: "small", sx: { width: 150 } } }}
               />
             </Box>
           </Box>
 
-          {/* 둘째 줄: 배송상태 (라디오 버튼으로 변경) */}
+          {/* 둘째 줄: 배송상태 (개편된 상태들로 수정) */}
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              배송상태
+              배송 상태
             </Typography>
             <Box
               sx={{
@@ -720,30 +695,22 @@ const OrderShippingManagement: React.FC = () => {
                 flexWrap: "wrap",
               }}
             >
-              <FormControlLabel
-                control={
-                  <Radio
-                    checked={filter.shippingStatus === "all"}
-                    onChange={() =>
-                      setFilter((prev) => ({ ...prev, shippingStatus: "all" }))
-                    }
-                    value="all"
-                  />
-                }
-                label="전체"
-              />
-              {Object.entries(SHIPPING_STATUS_LABELS).map(([value, label]) => (
+              {[
+                { value: "all", label: "전체" },
+                { value: "payment_completed", label: "주문확인" },
+                { value: "preparing", label: "상품준비중" },
+                { value: "delay_requested", label: "출고지연중" },
+                { value: "ready_for_delivery", label: "배송준비 완료" },
+                { value: "in_transit", label: "배송중" },
+                { value: "delivered", label: "배송완료" },
+                { value: "order_cancelled", label: "주문 취소" },
+              ].map(({ value, label }) => (
                 <FormControlLabel
                   key={value}
                   control={
-                    <Radio
-                      checked={filter.shippingStatus === value}
-                      onChange={() =>
-                        setFilter((prev) => ({
-                          ...prev,
-                          shippingStatus: value as any,
-                        }))
-                      }
+                    <Checkbox
+                      checked={filter.shippingStatus.includes(value)}
+                      onChange={() => handleShippingStatusChange(value)}
                       value={value}
                     />
                   }
@@ -769,51 +736,59 @@ const OrderShippingManagement: React.FC = () => {
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <Select
                   value={filter.searchCondition}
-                  onChange={handleFilterChange("searchCondition")}
+                  onChange={(e) =>
+                    setFilter((prev) => ({
+                      ...prev,
+                      searchCondition: e.target.value as SearchCondition,
+                    }))
+                  }
                 >
-                  {SEARCH_CONDITIONS.map((condition) => (
-                    <MenuItem key={condition.value} value={condition.value}>
-                      {condition.label}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="customer_name">주문자명</MenuItem>
+                  <MenuItem value="order_number">주문번호</MenuItem>
+                  <MenuItem value="product_name">상품명</MenuItem>
                 </Select>
               </FormControl>
               <TextField
                 size="small"
                 placeholder="검색어를 입력하세요"
                 value={filter.searchKeyword}
-                onChange={handleTextFieldChange("searchKeyword")}
+                onChange={(e) =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    searchKeyword: e.target.value,
+                  }))
+                }
                 sx={{ minWidth: 250 }}
               />
+              {/* 검색 버튼과 초기화 버튼을 검색어 필드 옆으로 이동 */}
+              <Button
+                variant="contained"
+                onClick={handleSearch}
+                sx={{
+                  backgroundColor: "#ef9942",
+                  "&:hover": { backgroundColor: "#d6853c" },
+                  textTransform: "none",
+                  height: "40px",
+                }}
+              >
+                검색
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleResetFilters}
+                sx={{
+                  textTransform: "none",
+                  height: "40px",
+                }}
+              >
+                초기화
+              </Button>
             </Box>
-          </Box>
-
-          {/* 하단 버튼 */}
-          <Box
-            sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
-          >
-            <Button
-              variant="outlined"
-              onClick={handleResetFilters}
-              sx={{ textTransform: "none" }}
-            >
-              초기화
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#ef9942",
-                "&:hover": { backgroundColor: "#d6853c" },
-                textTransform: "none",
-              }}
-            >
-              검색
-            </Button>
           </Box>
         </Paper>
 
         {/* 주문 목록 테이블 */}
-        <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: 3 }}>
+        <Paper sx={{ borderRadius: 3, overflow: "hidden" }}>
           <TableContainer>
             <Table>
               <TableHead>
@@ -831,7 +806,7 @@ const OrderShippingManagement: React.FC = () => {
                   <TableCell
                     sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
                   >
-                    고객명
+                    주문자명
                   </TableCell>
                   <TableCell
                     sx={{ backgroundColor: "#f9fafb", fontWeight: 600 }}
@@ -866,12 +841,12 @@ const OrderShippingManagement: React.FC = () => {
                   .map((order) => (
                     <TableRow key={order.id} hover>
                       <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        <Typography variant="body2" fontWeight={500}>
                           {order.orderNumber}
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">
+                        <Typography variant="body2" color="text.secondary">
                           {order.orderDate}
                         </Typography>
                       </TableCell>
@@ -884,14 +859,6 @@ const OrderShippingManagement: React.FC = () => {
                         <Typography variant="body2">
                           {order.productName}
                         </Typography>
-                        {order.delayReason && (
-                          <Typography
-                            variant="caption"
-                            sx={{ color: "#f44336", display: "block" }}
-                          >
-                            지연사유: {order.delayReason}
-                          </Typography>
-                        )}
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2">
@@ -899,33 +866,35 @@ const OrderShippingManagement: React.FC = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">
+                        <Typography variant="body2" fontWeight={500}>
                           {order.amount.toLocaleString()}원
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        {getStatusChip(order.shippingStatus as any)}
+                        {getStatusChip(order.shippingStatus)}
                       </TableCell>
                       <TableCell>
                         <Button
                           size="small"
                           variant="outlined"
-                          startIcon={<EditIcon />}
                           onClick={() => handleStatusEdit(order)}
                           sx={{
-                            textTransform: "none",
-                            fontSize: "0.75rem",
                             color:
-                              order.shippingStatus === "order_cancelled"
+                              order.shippingStatus === "order_cancelled" ||
+                              order.shippingStatus === "delivered"
                                 ? "#f44336"
                                 : "#ef9942",
                             borderColor:
-                              order.shippingStatus === "order_cancelled"
+                              order.shippingStatus === "order_cancelled" ||
+                              order.shippingStatus === "delivered"
                                 ? "#f44336"
                                 : "#ef9942",
                           }}
                         >
-                          상태 편집
+                          {order.shippingStatus === "order_cancelled" ||
+                          order.shippingStatus === "delivered"
+                            ? "삭제"
+                            : "상태 편집"}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -948,7 +917,7 @@ const OrderShippingManagement: React.FC = () => {
           />
         </Paper>
 
-        {/* 상태 변경 다이얼로그 (출고 지연 요청 기능 포함) */}
+        {/* 개편된 상태 변경 다이얼로그 */}
         <Dialog
           open={statusEditDialog}
           onClose={() => setStatusEditDialog(false)}
@@ -968,7 +937,7 @@ const OrderShippingManagement: React.FC = () => {
                   <Select
                     value={newStatus}
                     onChange={(e) => {
-                      setNewStatus(e.target.value as ShippingStatus);
+                      setNewStatus(e.target.value);
                       // 상품준비중이 아닌 상태로 변경하면 출고 지연 요청 해제
                       if (e.target.value !== "preparing") {
                         setIsDelayRequested(false);
@@ -978,10 +947,11 @@ const OrderShippingManagement: React.FC = () => {
                   >
                     <MenuItem value="payment_completed">주문확인</MenuItem>
                     <MenuItem value="preparing">상품준비중</MenuItem>
-                    <MenuItem value="ready_to_ship">배송 지시</MenuItem>
-                    <MenuItem value="shipping">운송장 등록</MenuItem>
+                    <MenuItem value="ready_for_delivery">
+                      배송준비 완료
+                    </MenuItem>
                     <MenuItem value="in_transit">배송중</MenuItem>
-                    <MenuItem value="delivered">배송완료</MenuItem>
+                    {/* 배송완료는 택배사 API로 자동 처리되므로 제거 */}
                   </Select>
                 </FormControl>
 
@@ -1016,8 +986,8 @@ const OrderShippingManagement: React.FC = () => {
                   />
                 )}
 
-                {/* 운송장 등록/배송중 선택 시 추가 폼 */}
-                {(newStatus === "shipping" || newStatus === "in_transit") && (
+                {/* 운송장 정보 입력 (배송중 선택 시만 표시) */}
+                {newStatus === "in_transit" && (
                   <Box>
                     {selectedOrder.shippingAddress && (
                       <Typography
@@ -1029,32 +999,38 @@ const OrderShippingManagement: React.FC = () => {
                           borderRadius: 1,
                         }}
                       >
-                        배송지: {selectedOrder.shippingAddress}
+                        <strong>배송 주소:</strong>{" "}
+                        {selectedOrder.shippingAddress}
                       </Typography>
                     )}
 
-                    <FormControl fullWidth sx={{ mb: 2 }}>
-                      <InputLabel>택배사</InputLabel>
-                      <Select
-                        value={shippingCompany}
-                        onChange={(e) => setShippingCompany(e.target.value)}
-                        label="택배사"
-                      >
-                        {shippingCompanies.map((company) => (
-                          <MenuItem key={company} value={company}>
-                            {company}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-
-                    <TextField
-                      fullWidth
-                      label="운송장 번호"
-                      value={trackingNumber}
-                      onChange={(e) => setTrackingNumber(e.target.value)}
-                      placeholder="운송장 번호를 입력하세요"
-                    />
+                    <Grid container spacing={2}>
+                      <Grid size={{ xs: 12 }}>
+                        <FormControl fullWidth>
+                          <InputLabel>택배사</InputLabel>
+                          <Select
+                            value={shippingCompany}
+                            onChange={(e) => setShippingCompany(e.target.value)}
+                            label="택배사"
+                          >
+                            {shippingCompanies.map((company) => (
+                              <MenuItem key={company} value={company}>
+                                {company}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid size={{ xs: 12 }}>
+                        <TextField
+                          fullWidth
+                          label="운송장 번호"
+                          value={trackingNumber}
+                          onChange={(e) => setTrackingNumber(e.target.value)}
+                          placeholder="운송장 번호를 입력하세요"
+                        />
+                      </Grid>
+                    </Grid>
                   </Box>
                 )}
               </Box>
@@ -1067,25 +1043,37 @@ const OrderShippingManagement: React.FC = () => {
               variant="contained"
               sx={{
                 backgroundColor: "#ef9942",
-                "&:hover": { backgroundColor: "#d6853c" },
+                "&:hover": { backgroundColor: "#e08830" },
               }}
             >
-              변경
+              변경 완료
             </Button>
           </DialogActions>
         </Dialog>
 
-        {/* 주문 취소 확인 다이얼로그 */}
+        {/* 주문 삭제 확인 다이얼로그 (취소 + 배송완료) */}
         <Dialog
           open={cancelConfirmDialog}
           onClose={() => setCancelConfirmDialog(false)}
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>취소된 주문</DialogTitle>
+          <DialogTitle>
+            {selectedOrder?.shippingStatus === "order_cancelled"
+              ? "취소된 주문 삭제"
+              : "배송완료된 주문 삭제"}
+          </DialogTitle>
           <DialogContent>
-            <Typography variant="body1" sx={{ py: 2 }}>
-              취소된 주문입니다. 주문 목록에서 삭제할까요?
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              {selectedOrder?.shippingStatus === "order_cancelled"
+                ? "취소된 주문을 목록에서 삭제하시겠습니까?"
+                : "배송완료된 주문을 목록에서 삭제하시겠습니까?"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              주문번호: {selectedOrder?.orderNumber}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              고객명: {selectedOrder?.customerName}
             </Typography>
           </DialogContent>
           <DialogActions>
@@ -1103,8 +1091,9 @@ const OrderShippingManagement: React.FC = () => {
         {/* 알림 스낵바 */}
         <Snackbar
           open={showAlert}
-          autoHideDuration={3000}
+          autoHideDuration={4000}
           onClose={() => setShowAlert(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <Alert
             onClose={() => setShowAlert(false)}

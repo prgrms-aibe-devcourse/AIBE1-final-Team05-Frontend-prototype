@@ -1,28 +1,26 @@
-// src/components/product/ProductFilters.tsx
+// src/components/ProductList/components/ProductFilters.tsx
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Paper,
-  Typography,
   Box,
+  Typography,
+  Paper,
   FormControl,
+  FormLabel,
+  RadioGroup,
   FormControlLabel,
   Radio,
-  RadioGroup,
-  Checkbox,
-  FormGroup,
   Slider,
+  TextField,
+  Button,
+  Divider,
   useTheme,
-  alpha,
 } from "@mui/material";
 import {
   ProductFilters as ProductFiltersType,
   PET_TYPES,
   PRODUCT_TYPES,
-  INGREDIENTS,
-  HEALTH_BENEFITS,
-  PetType,
-  ProductType,
+  ALLERGEN_OPTIONS,
 } from "@/components/ProductList/types/product.types";
 
 interface ProductFiltersProps {
@@ -36,352 +34,395 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
 }) => {
   const theme = useTheme();
 
-  const handlePetTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onFiltersChange({
-      ...filters,
-      petType: (event.target.value as PetType) || null,
-    });
+  // 로컬 상태 (적용 버튼 클릭 전까지 임시 저장)
+  const [localFilters, setLocalFilters] = useState<ProductFiltersType>(filters);
+
+  // 가격 입력 상자 상태
+  const [minPriceInput, setMinPriceInput] = useState(
+    filters.priceRange[0].toString()
+  );
+  const [maxPriceInput, setMaxPriceInput] = useState(
+    filters.priceRange[1].toString()
+  );
+
+  // 필터가 외부에서 변경될 때 로컬 상태 업데이트
+  useEffect(() => {
+    setLocalFilters(filters);
+    setMinPriceInput(filters.priceRange[0].toString());
+    setMaxPriceInput(filters.priceRange[1].toString());
+  }, [filters]);
+
+  // 로컬 필터 업데이트
+  const updateLocalFilter = (key: keyof ProductFiltersType, value: any) => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
-  const handleProductTypeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    onFiltersChange({
-      ...filters,
-      productType: (event.target.value as ProductType) || null,
-    });
+  // 가격 슬라이더 변경
+  const handlePriceSliderChange = (_: Event, newValue: number | number[]) => {
+    const range = newValue as [number, number];
+    updateLocalFilter("priceRange", range);
+    setMinPriceInput(range[0].toString());
+    setMaxPriceInput(range[1].toString());
   };
 
-  const handleIngredientChange =
-    (ingredient: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newIngredients = event.target.checked
-        ? [...filters.ingredients, ingredient]
-        : filters.ingredients.filter((item) => item !== ingredient);
+  // 가격 입력 상자 변경
+  const handlePriceInputChange = (type: "min" | "max", value: string) => {
+    const numValue = Math.max(0, Math.min(500000, Number(value) || 0));
 
-      onFiltersChange({
-        ...filters,
-        ingredients: newIngredients,
-      });
+    if (type === "min") {
+      setMinPriceInput(value);
+      const newRange: [number, number] = [numValue, localFilters.priceRange[1]];
+      if (numValue <= localFilters.priceRange[1]) {
+        updateLocalFilter("priceRange", newRange);
+      }
+    } else {
+      setMaxPriceInput(value);
+      const newRange: [number, number] = [localFilters.priceRange[0], numValue];
+      if (numValue >= localFilters.priceRange[0]) {
+        updateLocalFilter("priceRange", newRange);
+      }
+    }
+  };
+
+  // 평점 슬라이더 변경
+  const handleRatingChange = (_: Event, newValue: number | number[]) => {
+    updateLocalFilter("ratingRange", newValue as [number, number]);
+  };
+
+  // 초기화
+  const handleReset = () => {
+    const resetFilters: ProductFiltersType = {
+      petType: null,
+      productType: null,
+      priceRange: [0, 500000],
+      hasAllergens: null,
+      ratingRange: [1, 5],
     };
+    setLocalFilters(resetFilters);
+    setMinPriceInput("0");
+    setMaxPriceInput("500000");
+  };
 
-  const handleHealthBenefitChange =
-    (benefit: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newBenefits = event.target.checked
-        ? [...filters.healthBenefits, benefit]
-        : filters.healthBenefits.filter((item) => item !== benefit);
-
-      onFiltersChange({
-        ...filters,
-        healthBenefits: newBenefits,
-      });
-    };
-
-  const handlePriceRangeChange = (_: Event, newValue: number | number[]) => {
-    onFiltersChange({
-      ...filters,
-      priceRange: newValue as [number, number],
-    });
+  // 적용
+  const handleApply = () => {
+    onFiltersChange(localFilters);
   };
 
   const formatPrice = (value: number) => {
-    return `₩${value.toLocaleString()}`;
+    return value.toLocaleString() + "원";
   };
 
-  const filterSections = [
-    {
-      title: "반려동물 종류",
-      content: (
-        <FormControl component="fieldset">
-          <RadioGroup
-            value={filters.petType || ""}
-            onChange={handlePetTypeChange}
-          >
-            {PET_TYPES.map((petType) => (
-              <FormControlLabel
-                key={petType}
-                value={petType}
-                control={
-                  <Radio
-                    sx={{
-                      color: theme.palette.grey[200],
-                      "&.Mui-checked": {
-                        color: theme.palette.primary.main,
-                      },
-                    }}
-                  />
-                }
-                label={
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: "0.875rem",
-                      color: theme.palette.text.primary,
-                    }}
-                  >
-                    {petType}
-                  </Typography>
-                }
-                sx={{
-                  py: 1.5,
-                  px: 1.5,
-                  m: 0,
-                  borderRadius: 2,
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                  },
-                }}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
-      ),
-    },
-    {
-      title: "상품 유형",
-      content: (
-        <FormControl component="fieldset">
-          <RadioGroup
-            value={filters.productType || ""}
-            onChange={handleProductTypeChange}
-          >
-            {PRODUCT_TYPES.map((productType) => (
-              <FormControlLabel
-                key={productType}
-                value={productType}
-                control={
-                  <Radio
-                    sx={{
-                      color: theme.palette.grey[200],
-                      "&.Mui-checked": {
-                        color: theme.palette.primary.main,
-                      },
-                    }}
-                  />
-                }
-                label={
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: "0.875rem",
-                      color: theme.palette.text.primary,
-                    }}
-                  >
-                    {productType}
-                  </Typography>
-                }
-                sx={{
-                  py: 1.5,
-                  px: 1.5,
-                  m: 0,
-                  borderRadius: 2,
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                  },
-                }}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
-      ),
-    },
-    {
-      title: "주요 원재료",
-      content: (
-        <FormGroup>
-          {INGREDIENTS.map((ingredient) => (
-            <FormControlLabel
-              key={ingredient}
-              control={
-                <Checkbox
-                  checked={filters.ingredients.includes(ingredient)}
-                  onChange={handleIngredientChange(ingredient)}
-                  sx={{
-                    color: theme.palette.grey[200],
-                    "&.Mui-checked": {
-                      color: theme.palette.primary.main,
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: "0.875rem",
-                    color: theme.palette.text.primary,
-                  }}
-                >
-                  {ingredient}
-                </Typography>
-              }
-              sx={{
-                py: 1.5,
-                px: 1.5,
-                m: 0,
-                borderRadius: 2,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                },
-              }}
-            />
-          ))}
-        </FormGroup>
-      ),
-    },
-    {
-      title: "건강 기능",
-      content: (
-        <FormGroup>
-          {HEALTH_BENEFITS.map((benefit) => (
-            <FormControlLabel
-              key={benefit}
-              control={
-                <Checkbox
-                  checked={filters.healthBenefits.includes(benefit)}
-                  onChange={handleHealthBenefitChange(benefit)}
-                  sx={{
-                    color: theme.palette.grey[200],
-                    "&.Mui-checked": {
-                      color: theme.palette.primary.main,
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: "0.875rem",
-                    color: theme.palette.text.primary,
-                  }}
-                >
-                  {benefit}
-                </Typography>
-              }
-              sx={{
-                py: 1.5,
-                px: 1.5,
-                m: 0,
-                borderRadius: 2,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                },
-              }}
-            />
-          ))}
-        </FormGroup>
-      ),
-    },
-  ];
+  const formatRating = (value: number) => {
+    return value + "점";
+  };
 
   return (
     <Paper
       sx={{
-        backgroundColor: theme.palette.background.paper,
         p: 3,
         borderRadius: 3,
-        boxShadow:
-          "0px 4px 12px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.05)",
         height: "fit-content",
+        position: "sticky",
+        top: 20,
       }}
     >
       <Typography
         variant="h6"
         sx={{
-          fontSize: "1.125rem",
-          fontWeight: 600,
-          color: theme.palette.text.primary,
+          fontWeight: 700,
           mb: 3,
-          fontFamily: theme.typography.fontFamily,
+          color: theme.palette.text.primary,
         }}
       >
-        필터
+        상품 필터
       </Typography>
 
-      {filterSections.map((section, index) => (
-        <Box
-          key={section.title}
-          sx={{ mb: index < filterSections.length - 1 ? 3 : 2 }}
-        >
-          <Typography
-            variant="subtitle2"
+      {/* 반려동물 종류 */}
+      <Box sx={{ mb: 3 }}>
+        <FormControl component="fieldset" fullWidth>
+          <FormLabel
+            component="legend"
             sx={{
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              color: theme.palette.text.secondary,
-              mb: 1.5,
+              fontWeight: 600,
+              color: theme.palette.text.primary,
+              mb: 1,
+              "&.Mui-focused": {
+                color: theme.palette.text.primary,
+              },
             }}
           >
-            {section.title}
-          </Typography>
-          {section.content}
-        </Box>
-      ))}
+            반려동물 종류
+          </FormLabel>
+          <RadioGroup
+            value={localFilters.petType || ""}
+            onChange={(e) =>
+              updateLocalFilter("petType", e.target.value || null)
+            }
+          >
+            <FormControlLabel
+              value=""
+              control={<Radio size="small" />}
+              label="전체"
+              sx={{ "& .MuiFormControlLabel-label": { fontSize: "0.875rem" } }}
+            />
+            {PET_TYPES.map((type) => (
+              <FormControlLabel
+                key={type}
+                value={type}
+                control={<Radio size="small" />}
+                label={type}
+                sx={{
+                  "& .MuiFormControlLabel-label": { fontSize: "0.875rem" },
+                }}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </Box>
 
-      {/* 가격대 슬라이더 */}
-      <Box>
-        <Typography
-          variant="subtitle2"
+      <Divider sx={{ my: 2 }} />
+
+      {/* 상품 유형 */}
+      <Box sx={{ mb: 3 }}>
+        <FormControl component="fieldset" fullWidth>
+          <FormLabel
+            component="legend"
+            sx={{
+              fontWeight: 600,
+              color: theme.palette.text.primary,
+              mb: 1,
+              "&.Mui-focused": {
+                color: theme.palette.text.primary,
+              },
+            }}
+          >
+            상품 유형
+          </FormLabel>
+          <RadioGroup
+            value={localFilters.productType || ""}
+            onChange={(e) =>
+              updateLocalFilter("productType", e.target.value || null)
+            }
+          >
+            {PRODUCT_TYPES.map((type) => (
+              <FormControlLabel
+                key={type}
+                value={type === "전체" ? "" : type}
+                control={<Radio size="small" />}
+                label={type}
+                sx={{
+                  "& .MuiFormControlLabel-label": { fontSize: "0.875rem" },
+                }}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* 알러지 유무 */}
+      <Box sx={{ mb: 3 }}>
+        <FormControl component="fieldset" fullWidth>
+          <FormLabel
+            component="legend"
+            sx={{
+              fontWeight: 600,
+              color: theme.palette.text.primary,
+              mb: 1,
+              "&.Mui-focused": {
+                color: theme.palette.text.primary,
+              },
+            }}
+          >
+            알러지 유발 성분
+          </FormLabel>
+          <RadioGroup
+            value={
+              localFilters.hasAllergens === null
+                ? "all"
+                : localFilters.hasAllergens.toString()
+            }
+            onChange={(e) => {
+              const value =
+                e.target.value === "all" ? null : e.target.value === "true";
+              updateLocalFilter("hasAllergens", value);
+            }}
+          >
+            {ALLERGEN_OPTIONS.map((option) => (
+              <FormControlLabel
+                key={option.label}
+                value={option.value === null ? "all" : option.value.toString()}
+                control={<Radio size="small" />}
+                label={option.label}
+                sx={{
+                  "& .MuiFormControlLabel-label": { fontSize: "0.875rem" },
+                }}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* 평점 범위 */}
+      <Box sx={{ mb: 3 }}>
+        <FormLabel
+          component="legend"
           sx={{
-            fontSize: "0.875rem",
-            fontWeight: 500,
-            color: theme.palette.text.secondary,
-            mb: 1.5,
+            fontWeight: 600,
+            color: theme.palette.text.primary,
+            mb: 2,
+            display: "block",
+          }}
+        >
+          평점 범위
+        </FormLabel>
+        <Box sx={{ px: 2 }}>
+          <Slider
+            value={localFilters.ratingRange}
+            onChange={handleRatingChange}
+            valueLabelDisplay="auto"
+            valueLabelFormat={formatRating}
+            min={1}
+            max={5}
+            step={0.5}
+            marks={[
+              { value: 1, label: "1점" },
+              { value: 2, label: "2점" },
+              { value: 3, label: "3점" },
+              { value: 4, label: "4점" },
+              { value: 5, label: "5점" },
+            ]}
+            sx={{
+              color: theme.palette.primary.main,
+              "& .MuiSlider-markLabel": {
+                fontSize: "0.75rem",
+              },
+            }}
+          />
+          <Typography
+            variant="body2"
+            sx={{
+              textAlign: "center",
+              mt: 1,
+              color: theme.palette.text.secondary,
+            }}
+          >
+            {formatRating(localFilters.ratingRange[0])} ~{" "}
+            {formatRating(localFilters.ratingRange[1])}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* 가격대 */}
+      <Box sx={{ mb: 4 }}>
+        <FormLabel
+          component="legend"
+          sx={{
+            fontWeight: 600,
+            color: theme.palette.text.primary,
+            mb: 2,
+            display: "block",
           }}
         >
           가격대
-        </Typography>
-        <Box sx={{ px: 1, pt: 1 }}>
+        </FormLabel>
+
+        {/* 가격 슬라이더 */}
+        <Box sx={{ px: 2, mb: 2 }}>
           <Slider
-            value={filters.priceRange}
-            onChange={handlePriceRangeChange}
+            value={localFilters.priceRange}
+            onChange={handlePriceSliderChange}
             valueLabelDisplay="auto"
+            valueLabelFormat={formatPrice}
             min={0}
-            max={100000}
+            max={500000}
             step={1000}
             sx={{
               color: theme.palette.primary.main,
-              height: 8,
-              "& .MuiSlider-track": {
-                backgroundColor: theme.palette.primary.main,
-                border: "none",
-              },
-              "& .MuiSlider-thumb": {
-                backgroundColor: theme.palette.primary.main,
-                width: 20,
-                height: 20,
-                "&:hover": {
-                  boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.primary.main, 0.16)}`,
-                },
-              },
-              "& .MuiSlider-rail": {
-                backgroundColor: theme.palette.grey[100],
-                opacity: 1,
-              },
             }}
-            valueLabelFormat={formatPrice}
           />
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontSize: "0.75rem",
-              }}
-            >
-              ₩0
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontSize: "0.75rem",
-              }}
-            >
-              ₩100,000
-            </Typography>
-          </Box>
+          <Typography
+            variant="body2"
+            sx={{
+              textAlign: "center",
+              mt: 1,
+              color: theme.palette.text.secondary,
+            }}
+          >
+            {formatPrice(localFilters.priceRange[0])} ~{" "}
+            {formatPrice(localFilters.priceRange[1])}
+          </Typography>
         </Box>
+
+        {/* 가격 입력 상자 */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <TextField
+            size="small"
+            label="최소"
+            type="number"
+            value={minPriceInput}
+            onChange={(e) => handlePriceInputChange("min", e.target.value)}
+            inputProps={{ min: 0, max: 500000 }}
+            sx={{ flex: 1 }}
+          />
+          <Typography
+            variant="body2"
+            sx={{ color: theme.palette.text.secondary }}
+          >
+            ~
+          </Typography>
+          <TextField
+            size="small"
+            label="최대"
+            type="number"
+            value={maxPriceInput}
+            onChange={(e) => handlePriceInputChange("max", e.target.value)}
+            inputProps={{ min: 0, max: 500000 }}
+            sx={{ flex: 1 }}
+          />
+        </Box>
+      </Box>
+
+      {/* 하단 버튼 */}
+      <Box sx={{ display: "flex", gap: 1, mt: 3 }}>
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={handleReset}
+          sx={{
+            textTransform: "none",
+            borderColor: theme.palette.grey[300],
+            color: theme.palette.text.secondary,
+            "&:hover": {
+              borderColor: theme.palette.grey[400],
+              backgroundColor: theme.palette.grey[50],
+            },
+          }}
+        >
+          초기화
+        </Button>
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handleApply}
+          sx={{
+            textTransform: "none",
+            backgroundColor: theme.palette.primary.main,
+            "&:hover": {
+              backgroundColor: theme.palette.primary.dark,
+            },
+          }}
+        >
+          적용
+        </Button>
       </Box>
     </Paper>
   );

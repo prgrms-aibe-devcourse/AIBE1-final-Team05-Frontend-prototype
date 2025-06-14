@@ -7,29 +7,30 @@ import {
   FormControl,
   Select,
   MenuItem,
-  ToggleButton,
-  ToggleButtonGroup,
-  Paper,
+  IconButton,
   SelectChangeEvent,
   useTheme,
-  alpha,
 } from "@mui/material";
+import {
+  KeyboardArrowUp as ArrowUpIcon,
+  KeyboardArrowDown as ArrowDownIcon,
+} from "@mui/icons-material";
 import { SORT_OPTIONS } from "@/components/ProductList/types/product.types";
 
 interface ProductSortingProps {
   sortBy: string;
-  isHandmadeOnly: boolean | null; // null = 전체, true = 수제품만, false = 완제품만
+  sortDirection: "asc" | "desc";
   totalCount: number;
   onSortChange: (sortBy: string) => void;
-  onHandmadeToggle: (isHandmadeOnly: boolean | null) => void;
+  onSortDirectionChange: (direction: "asc" | "desc") => void;
 }
 
 const ProductSorting: React.FC<ProductSortingProps> = ({
   sortBy,
-  isHandmadeOnly,
+  sortDirection,
   totalCount,
   onSortChange,
-  onHandmadeToggle,
+  onSortDirectionChange,
 }) => {
   const theme = useTheme();
 
@@ -37,28 +38,22 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
     onSortChange(event.target.value);
   };
 
-  const handleProductTypeChange = (
-    _: React.MouseEvent<HTMLElement>,
-    newValue: string | null
-  ) => {
-    if (newValue !== null) {
-      // 전체 보기 = null, 수제품만 = true, 완제품만 = false
-      if (newValue === "all") {
-        onHandmadeToggle(null);
-      } else if (newValue === "handmade") {
-        onHandmadeToggle(true);
-      } else if (newValue === "ready-made") {
-        onHandmadeToggle(false);
-      }
-    }
+  const handleDirectionToggle = () => {
+    onSortDirectionChange(sortDirection === "asc" ? "desc" : "asc");
   };
 
-  // 현재 선택된 값 결정
-  const getSelectedValue = () => {
-    if (isHandmadeOnly === null || isHandmadeOnly === undefined) {
-      return "all";
+  const getDirectionLabel = () => {
+    switch (sortBy) {
+      case "price":
+        return sortDirection === "asc" ? "낮은순" : "높은순";
+      case "rating":
+        return sortDirection === "asc" ? "낮은순" : "높은순";
+      case "latest":
+        return sortDirection === "asc" ? "오래된순" : "최신순";
+      case "sales":
+      default:
+        return sortDirection === "asc" ? "적은순" : "많은순";
     }
-    return isHandmadeOnly ? "handmade" : "ready-made";
   };
 
   return (
@@ -100,56 +95,11 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 2,
+          gap: 1,
           mt: { xs: 2, md: 0 },
         }}
       >
-        {/* 상품 타입 토글 - 3개 버튼으로 확장 */}
-        <Paper
-          sx={{
-            display: "flex",
-            backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.grey[200]}`,
-            borderRadius: 2,
-            p: 0.25,
-          }}
-        >
-          <ToggleButtonGroup
-            value={getSelectedValue()}
-            exclusive
-            onChange={handleProductTypeChange}
-            sx={{
-              "& .MuiToggleButton-root": {
-                border: "none",
-                borderRadius: 1.5,
-                px: 1.5,
-                py: 0.75,
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                color: theme.palette.text.secondary,
-                textTransform: "none",
-                minWidth: "auto",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                },
-                "&.Mui-selected": {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  color: theme.palette.primary.main,
-                  fontWeight: 600,
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  },
-                },
-              },
-            }}
-          >
-            <ToggleButton value="all">전체 보기</ToggleButton>
-            <ToggleButton value="handmade">수제품만 보기</ToggleButton>
-            <ToggleButton value="ready-made">완제품만 보기</ToggleButton>
-          </ToggleButtonGroup>
-        </Paper>
-
-        {/* 정렬 선택 */}
+        {/* 정렬 기준 선택 */}
         <FormControl size="small" sx={{ minWidth: 120 }}>
           <Select
             value={sortBy}
@@ -184,6 +134,42 @@ const ProductSorting: React.FC<ProductSortingProps> = ({
             ))}
           </Select>
         </FormControl>
+
+        {/* 정렬 방향 토글 버튼 */}
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <IconButton
+            onClick={handleDirectionToggle}
+            sx={{
+              borderRadius: 2,
+              border: `1px solid ${theme.palette.grey[200]}`,
+              backgroundColor: theme.palette.background.paper,
+              color: theme.palette.text.primary,
+              "&:hover": {
+                borderColor: theme.palette.primary.main,
+                backgroundColor: theme.palette.action.hover,
+              },
+              minWidth: 40,
+              height: 40,
+            }}
+          >
+            {sortDirection === "desc" ? (
+              <ArrowDownIcon fontSize="small" />
+            ) : (
+              <ArrowUpIcon fontSize="small" />
+            )}
+          </IconButton>
+          <Typography
+            variant="body2"
+            sx={{
+              ml: 1,
+              color: theme.palette.text.secondary,
+              fontSize: "0.75rem",
+              minWidth: 60,
+            }}
+          >
+            {getDirectionLabel()}
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
