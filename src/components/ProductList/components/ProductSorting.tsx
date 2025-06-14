@@ -12,7 +12,6 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  SwapVert as SwapVertIcon,
   KeyboardArrowUp as ArrowUpIcon,
   KeyboardArrowDown as ArrowDownIcon,
 } from "@mui/icons-material";

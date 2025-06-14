@@ -26,7 +26,7 @@ import {
 } from "@/components/ProductList";
 import ProductFilters from "@/components/ProductList/components/ProductFilters";
 import type { ProductFilters as ProductFiltersType } from "@/components/ProductList/types/product.types";
-import { mockProducts, getTotalProductCount } from "../data/mockProducts";
+import { mockProducts } from "../data/mockProducts";
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -62,22 +62,25 @@ const ProductListPage: React.FC = () => {
 
     // 상품 유형 필터
     if (filters.productType && filters.productType !== "전체") {
-      // 실제로는 product.productType 같은 필드를 확인
-      // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 생략
-      // 실제 구현에서는 다음과 같이 처리:
-      // if (filters.productType === "수제품") {
-      //   result = result.filter((product) => product.isHandmade === true);
-      // } else if (filters.productType === "완제품") {
-      //   result = result.filter((product) => product.isHandmade === false);
-      // }
+      result = result.filter((product) => {
+        // 실제로는 product.productType 같은 필드를 확인
+        // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 상품 ID 기반으로 처리
+        const isHandmade = parseInt(product.id) % 2 === 0; // ID 기반으로 수제품 여부 결정
+        if (filters.productType === "수제품") {
+          return isHandmade;
+        } else if (filters.productType === "완제품") {
+          return !isHandmade;
+        }
+        return true;
+      });
     }
 
     // 알러지 유발 성분 필터
     if (filters.hasAllergens !== null) {
       result = result.filter((product) => {
         // 실제로는 product.hasAllergens 필드를 확인
-        // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 랜덤하게 처리
-        const hasAllergens = Math.random() > 0.7; // 30% 확률로 알러지 성분 포함
+        // 현재는 mock 데이터에 해당 필드가 없으므로 임시로 상품 ID 기반으로 처리
+        const hasAllergens = parseInt(product.id) % 3 === 0; // ID 기반으로 일관된 결과
         return hasAllergens === filters.hasAllergens;
       });
     }
