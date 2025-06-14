@@ -45,7 +45,7 @@ const PetsView: React.FC<PetsViewProps> = ({ pets, handleEditPet, handleDeletePe
         <Box>
             <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
                 <Typography variant="h4" style={{ fontWeight: "bold", color: "text.primary" }}>
-                    나의 애완동물
+                    나의 반려동물
                 </Typography>
                 <Button variant="contained" startIcon={<Add />} onClick={() => setPetDialogOpen(true)}>
                     새 반려동물 추가
