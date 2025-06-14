@@ -1,4 +1,4 @@
-// src/components/SellerDashboard/SellerInfo/// src/components/SellerDashboard/SellerInfo/index.ts
+// src/components/SellerDashboard/SellerInfo/index.ts
 
 // 컴포넌트 export
 export { BRAND_COLORS, PrimaryButton, SecondaryButton } from "./constants";
