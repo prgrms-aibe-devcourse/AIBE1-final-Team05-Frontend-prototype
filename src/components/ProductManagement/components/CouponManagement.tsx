@@ -47,6 +47,7 @@ interface Coupon {
   minOrderAmount: number;
   startDate: Date;
   endDate: Date;
+  isActive: boolean; // 속성 추가
   usageCount: number;
   createdAt: Date;
 }
@@ -59,6 +60,7 @@ interface CouponFormData {
   minOrderAmount: number;
   startDate: Date | null;
   endDate: Date | null;
+  isActive: boolean; // 필드는 유지하되 UI에서만 숨김
 }
 
 // 쿠폰 삭제 확인 다이얼로그를 위한 상태 타입
@@ -80,6 +82,7 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: 30000,
       startDate: new Date("2024-06-01"),
       endDate: new Date("2024-08-31"),
+      isActive: true, // 추가
       usageCount: 42,
       createdAt: new Date("2024-05-15"),
     },
@@ -92,12 +95,13 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: 20000,
       startDate: new Date("2024-01-01"),
       endDate: new Date("2024-12-31"),
+      isActive: true, // 추가
       usageCount: 18,
       createdAt: new Date("2024-01-01"),
     },
   ]);
 
-  // 쿠폰 활성화 필드 제거된 폼 데이터
+  // 쿠폰 활성화 필드 제거된 폼 데이터 (isActive는 내부적으로 유지)
   const [formData, setFormData] = useState<CouponFormData>({
     name: "",
     code: "",
@@ -106,6 +110,7 @@ const CouponManagement: React.FC = () => {
     minOrderAmount: 0,
     startDate: null,
     endDate: null,
+    isActive: true, // 기본값으로 항상 활성 상태
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -160,7 +165,7 @@ const CouponManagement: React.FC = () => {
     }
 
     if (editingCoupon) {
-      // 수정
+      // 수정 (formData의 isActive 값 사용 - 기존 값 유지됨)
       setCoupons((prev) =>
         prev.map((coupon) =>
           coupon.id === editingCoupon.id
@@ -175,7 +180,7 @@ const CouponManagement: React.FC = () => {
       );
       setAlertMessage("쿠폰이 수정되었습니다.");
     } else {
-      // 새 쿠폰 등록 (isActive 필드 제거, 기본값으로 활성 상태)
+      // 새 쿠폰 등록 (기본값으로 활성 상태)
       const newCoupon: Coupon = {
         id: Date.now().toString(),
         ...formData,
@@ -205,6 +210,7 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: 0,
       startDate: null,
       endDate: null,
+      isActive: true, // 기본값 유지
     });
   };
 
@@ -219,6 +225,7 @@ const CouponManagement: React.FC = () => {
       minOrderAmount: coupon.minOrderAmount,
       startDate: coupon.startDate,
       endDate: coupon.endDate,
+      isActive: coupon.isActive, // 기존 값 유지
     });
     setIsDialogOpen(true);
   };
@@ -410,7 +417,7 @@ const CouponManagement: React.FC = () => {
             </Table>
           </TableContainer>
 
-          {/* 페이지네이션 (행 수 선택 옵션 제거, 5개 고정) */}
+          {/* 페이지네이션 (5개 고정, 행 수 선택 완전 제거) */}
           <TablePagination
             component="div"
             count={coupons.length}
@@ -420,22 +427,23 @@ const CouponManagement: React.FC = () => {
             labelDisplayedRows={({ from, to, count }) =>
               `${count}개 중 ${from}-${to}`
             }
-            // rowsPerPageOptions 및 onRowsPerPageChange 제거
+            showFirstButton
+            showLastButton
             sx={{
-              ".MuiTablePagination-selectLabel": {
-                display: "none", // "페이지당 행 수" 레이블 숨김
+              "& .MuiTablePagination-selectLabel": {
+                display: "none",
               },
-              ".MuiTablePagination-select": {
-                display: "none", // 행 수 선택 드롭다운 숨김
+              "& .MuiTablePagination-select": {
+                display: "none",
               },
-              ".MuiTablePagination-selectIcon": {
-                display: "none", // 선택 아이콘 숨김
+              "& .MuiTablePagination-selectIcon": {
+                display: "none",
               },
             }}
           />
         </Paper>
 
-        {/* 쿠폰 등록/수정 다이얼로그 (쿠폰 활성화 체크박스 제거) */}
+        {/* 쿠폰 등록/수정 다이얼로그 */}
         <Dialog
           open={isDialogOpen}
           onClose={handleDialogClose}
@@ -446,38 +454,46 @@ const CouponManagement: React.FC = () => {
             {editingCoupon ? "쿠폰 수정" : "새 쿠폰 등록"}
           </DialogTitle>
           <DialogContent>
-            <Grid container spacing={3} sx={{ mt: 1 }}>
-              <Grid size={{ xs: 12, md: 6 }}>
+            <Grid container spacing={2} sx={{ mt: 1 }}>
+              {/* 쿠폰 이름 */}
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
-                  label="쿠폰명"
+                  label="쿠폰 이름"
                   value={formData.name}
                   onChange={(e) => handleFormChange("name", e.target.value)}
+                  placeholder="예: 여름맞이 15% 할인"
                   required
                 />
               </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <TextField
-                    fullWidth
-                    label="쿠폰 코드"
-                    value={formData.code}
-                    onChange={(e) => handleFormChange("code", e.target.value)}
-                    required
-                  />
-                  <Button
-                    variant="outlined"
-                    onClick={() =>
-                      handleFormChange("code", generateCouponCode())
-                    }
-                    sx={{ minWidth: "auto", px: 2 }}
-                  >
-                    생성
-                  </Button>
-                </Box>
+
+              {/* 쿠폰 코드 */}
+              <Grid size={{ xs: 8 }}>
+                <TextField
+                  fullWidth
+                  label="쿠폰 코드"
+                  value={formData.code}
+                  onChange={(e) =>
+                    handleFormChange("code", e.target.value.toUpperCase())
+                  }
+                  placeholder="예: SUMMER15"
+                  required
+                  inputProps={{ style: { fontFamily: "monospace" } }}
+                />
+              </Grid>
+              <Grid size={{ xs: 4 }}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => handleFormChange("code", generateCouponCode())}
+                  sx={{ height: "56px", textTransform: "none" }}
+                >
+                  자동 생성
+                </Button>
               </Grid>
 
-              <Grid size={{ xs: 12, md: 4 }}>
+              {/* 할인 유형 */}
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth>
                   <InputLabel>할인 유형</InputLabel>
                   <Select
@@ -487,58 +503,79 @@ const CouponManagement: React.FC = () => {
                     }
                     label="할인 유형"
                   >
-                    <MenuItem value="percentage">비율 할인 (%)</MenuItem>
-                    <MenuItem value="fixed">금액 할인 (원)</MenuItem>
+                    <MenuItem value="percentage">정률 할인 (%)</MenuItem>
+                    <MenuItem value="fixed">정액 할인 (원)</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
+
+              {/* 할인 값 */}
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
-                  label={
-                    formData.discountType === "percentage"
-                      ? "할인 비율 (%)"
-                      : "할인 금액 (원)"
-                  }
+                  label={`할인 ${formData.discountType === "percentage" ? "율" : "금액"}`}
                   type="number"
                   value={formData.discountValue}
                   onChange={(e) =>
                     handleFormChange("discountValue", Number(e.target.value))
                   }
+                  InputProps={{
+                    endAdornment:
+                      formData.discountType === "percentage" ? "%" : "원",
+                  }}
                 />
               </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
+
+              {/* 최소 주문 금액 */}
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
-                  label="최소 주문금액 (원)"
+                  label="최소 주문 금액"
                   type="number"
                   value={formData.minOrderAmount}
                   onChange={(e) =>
                     handleFormChange("minOrderAmount", Number(e.target.value))
                   }
+                  InputProps={{ endAdornment: "원" }}
                 />
               </Grid>
 
-              <Grid size={{ xs: 12, md: 6 }}>
+              {/* 사용 기간 - DatePicker 사용 */}
+              <Grid size={{ xs: 6 }}>
                 <DatePicker
                   label="시작일"
                   value={formData.startDate}
-                  onChange={(date) => handleFormChange("startDate", date)}
+                  onChange={(date: Date | null) =>
+                    handleFormChange("startDate", date)
+                  }
                   slotProps={{
-                    textField: { fullWidth: true, required: true },
+                    textField: {
+                      fullWidth: true,
+                      error: false,
+                      helperText: "",
+                    },
                   }}
                 />
               </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
+              <Grid size={{ xs: 6 }}>
                 <DatePicker
                   label="종료일"
                   value={formData.endDate}
-                  onChange={(date) => handleFormChange("endDate", date)}
+                  onChange={(date: Date | null) =>
+                    handleFormChange("endDate", date)
+                  }
                   slotProps={{
-                    textField: { fullWidth: true, required: true },
+                    textField: {
+                      fullWidth: true,
+                      error: false,
+                      helperText: "",
+                    },
                   }}
                 />
               </Grid>
+
+              {/* 활성화 상태 체크박스 - 제거됨 */}
+              {/* 기존에 있던 FormControlLabel with Switch 제거 */}
             </Grid>
           </DialogContent>
           <DialogActions>
@@ -548,7 +585,7 @@ const CouponManagement: React.FC = () => {
               variant="contained"
               sx={{
                 backgroundColor: "#ef9942",
-                "&:hover": { backgroundColor: "#e08830" },
+                "&:hover": { backgroundColor: "#d6853c" },
               }}
             >
               {editingCoupon ? "수정" : "등록"}
