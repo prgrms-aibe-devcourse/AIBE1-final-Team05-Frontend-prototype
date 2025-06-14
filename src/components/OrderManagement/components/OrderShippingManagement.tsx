@@ -28,7 +28,6 @@ import {
   Snackbar,
   FormControlLabel,
   Checkbox,
-  SelectChangeEvent,
 } from "@mui/material";
 import { Warning as WarningIcon } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -39,7 +38,7 @@ import {
   Order,
   OrderFilter,
   OrderSummary,
-  ShippingStatus,
+  SearchCondition,
 } from "../types/order.types";
 
 // 개편된 목업 데이터 (구매자 주소 추가, 상태 변경)
@@ -149,7 +148,7 @@ const mockOrders: Order[] = [
 
 // 개편된 배송 상태별 색상 정의
 const statusColorMap: Record<
-  ShippingStatus | "order_cancelled" | "delay_requested",
+  string,
   {
     label: string;
     color: "primary" | "warning" | "info" | "secondary" | "success" | "error";
@@ -171,7 +170,7 @@ const OrderShippingManagement: React.FC = () => {
     dateRange: "30days",
     startDate: "",
     endDate: "",
-    shippingStatus: "all",
+    shippingStatus: ["all"], // 배열로 변경
     searchCondition: "customer_name",
     searchKeyword: "",
     directShippingOnly: false,
@@ -183,8 +182,7 @@ const OrderShippingManagement: React.FC = () => {
   // 상태 편집 관련 상태
   const [statusEditDialog, setStatusEditDialog] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [newStatus, setNewStatus] =
-    useState<ShippingStatus>("payment_completed");
+  const [newStatus, setNewStatus] = useState<string>("payment_completed");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [shippingCompany, setShippingCompany] = useState("");
   const [isDelayRequested, setIsDelayRequested] = useState(false);
@@ -256,26 +254,39 @@ const OrderShippingManagement: React.FC = () => {
       .length;
   }, [orders]);
 
-  // 이벤트 핸들러들
-  const handleFilterChange =
-    (field: keyof OrderFilter) =>
-    (event: SelectChangeEvent<string | boolean>) => {
-      const value = event.target.value;
-      setFilter((prev: OrderFilter) => ({
-        ...prev,
-        [field]: value,
-      }));
-    };
+  // 배송상태 체크박스 다중 선택 핸들러
+  const handleShippingStatusChange = (value: string) => {
+    setFilter((prev) => {
+      let newShippingStatus = [...prev.shippingStatus];
 
-  const handleTextFieldChange =
-    (field: keyof OrderFilter) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-      setFilter((prev: OrderFilter) => ({
+      if (value === "all") {
+        // "전체" 선택 시 모든 선택 해제
+        newShippingStatus = ["all"];
+      } else {
+        // "전체"가 선택되어 있다면 제거
+        if (newShippingStatus.includes("all")) {
+          newShippingStatus = newShippingStatus.filter((s) => s !== "all");
+        }
+
+        // 해당 값이 이미 선택되어 있다면 제거, 없다면 추가
+        if (newShippingStatus.includes(value)) {
+          newShippingStatus = newShippingStatus.filter((s) => s !== value);
+        } else {
+          newShippingStatus.push(value);
+        }
+
+        // 아무것도 선택되지 않았다면 "전체" 선택
+        if (newShippingStatus.length === 0) {
+          newShippingStatus = ["all"];
+        }
+      }
+
+      return {
         ...prev,
-        [field]: value,
-      }));
-    };
+        shippingStatus: newShippingStatus,
+      };
+    });
+  };
 
   const handleDateRangeClick = (range: "today" | "7days" | "30days") => {
     setFilter((prev) => ({ ...prev, dateRange: range }));
@@ -324,7 +335,7 @@ const OrderShippingManagement: React.FC = () => {
         setDelayReason(order.delayReason || "");
       } else {
         // 일반 주문인 경우
-        setNewStatus(order.shippingStatus as ShippingStatus);
+        setNewStatus(order.shippingStatus);
         setIsDelayRequested(false);
         setDelayReason("");
       }
@@ -406,7 +417,7 @@ const OrderShippingManagement: React.FC = () => {
       dateRange: "30days",
       startDate: "",
       endDate: "",
-      shippingStatus: "all",
+      shippingStatus: ["all"], // 배열로 변경
       searchCondition: "customer_name",
       searchKeyword: "",
       directShippingOnly: false,
@@ -415,10 +426,11 @@ const OrderShippingManagement: React.FC = () => {
     setEndDate(null);
   };
 
-  const getStatusChip = (
-    status: ShippingStatus | "order_cancelled" | "delay_requested"
-  ) => {
-    const statusConfig = statusColorMap[status];
+  const getStatusChip = (status: string) => {
+    const statusConfig = statusColorMap[status] || {
+      label: status,
+      color: "default" as const,
+    };
     return (
       <Chip
         label={statusConfig.label}
@@ -431,10 +443,10 @@ const OrderShippingManagement: React.FC = () => {
 
   // 필터링된 주문 목록
   const filteredOrders = orders.filter((order) => {
-    // 배송 상태 필터
+    // 배송 상태 필터 (다중 선택 지원)
     if (
-      filter.shippingStatus !== "all" &&
-      order.shippingStatus !== filter.shippingStatus
+      !filter.shippingStatus.includes("all") &&
+      !filter.shippingStatus.includes(order.shippingStatus)
     ) {
       return false;
     }
@@ -510,7 +522,7 @@ const OrderShippingManagement: React.FC = () => {
             주문 현황
           </Typography>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -523,7 +535,7 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -536,7 +548,7 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -549,7 +561,7 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -562,7 +574,7 @@ const OrderShippingManagement: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
+            <Grid size={{ xs: 6, md: 2.4 }}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -578,7 +590,7 @@ const OrderShippingManagement: React.FC = () => {
           </Grid>
         </Paper>
 
-        {/* 개편된 검색 영역 */}
+        {/* 기존 방식으로 복원된 검색 영역 */}
         <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
           <Typography
             variant="h6"
@@ -642,70 +654,99 @@ const OrderShippingManagement: React.FC = () => {
             </Box>
           </Box>
 
-          {/* 둘째 줄: 배송상태와 검색 */}
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel>배송상태</InputLabel>
-                <Select
-                  value={filter.shippingStatus}
-                  onChange={handleFilterChange("shippingStatus")}
-                  label="배송상태"
-                >
-                  <MenuItem value="all">전체</MenuItem>
-                  <MenuItem value="payment_completed">주문확인</MenuItem>
-                  <MenuItem value="preparing">상품준비중</MenuItem>
-                  <MenuItem value="delay_requested">출고지연중</MenuItem>
-                  <MenuItem value="ready_for_delivery">배송준비 완료</MenuItem>
-                  <MenuItem value="in_transit">배송중</MenuItem>
-                  <MenuItem value="delivered">배송완료</MenuItem>
-                  <MenuItem value="order_cancelled">주문 취소</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{ xs: 12, md: 2 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel>검색조건</InputLabel>
+          {/* 둘째 줄: 배송상태 (개편된 상태들로 수정) */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              배송 상태
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              {[
+                { value: "all", label: "전체" },
+                { value: "payment_completed", label: "주문확인" },
+                { value: "preparing", label: "상품준비중" },
+                { value: "delay_requested", label: "출고지연중" },
+                { value: "ready_for_delivery", label: "배송준비 완료" },
+                { value: "in_transit", label: "배송중" },
+                { value: "delivered", label: "배송완료" },
+                { value: "order_cancelled", label: "주문 취소" },
+              ].map(({ value, label }) => (
+                <FormControlLabel
+                  key={value}
+                  control={
+                    <Checkbox
+                      checked={filter.shippingStatus.includes(value)}
+                      onChange={() => handleShippingStatusChange(value)}
+                      value={value}
+                    />
+                  }
+                  label={label}
+                />
+              ))}
+            </Box>
+          </Box>
+
+          {/* 셋째 줄: 검색 조건 */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              검색 조건
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              <FormControl size="small" sx={{ minWidth: 120 }}>
                 <Select
                   value={filter.searchCondition}
-                  onChange={handleFilterChange("searchCondition")}
-                  label="검색조건"
+                  onChange={(e) =>
+                    setFilter((prev) => ({
+                      ...prev,
+                      searchCondition: e.target.value as SearchCondition,
+                    }))
+                  }
                 >
                   <MenuItem value="customer_name">주문자명</MenuItem>
                   <MenuItem value="order_number">주문번호</MenuItem>
                   <MenuItem value="product_name">상품명</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
               <TextField
-                fullWidth
                 size="small"
                 placeholder="검색어를 입력하세요"
                 value={filter.searchKeyword}
-                onChange={handleTextFieldChange("searchKeyword")}
+                onChange={(e) =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    searchKeyword: e.target.value,
+                  }))
+                }
+                sx={{ minWidth: 250 }}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#ef9942",
-                    "&:hover": { backgroundColor: "#e08830" },
-                  }}
-                  onClick={() => {
-                    // 검색 실행 (필터링은 실시간으로 적용됨)
-                  }}
-                >
-                  검색
-                </Button>
-                <Button variant="outlined" onClick={handleResetFilters}>
-                  초기화
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
+
+          {/* 하단 버튼 (검색 버튼 제거, 초기화만 유지) */}
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
+          >
+            <Button
+              variant="outlined"
+              onClick={handleResetFilters}
+              sx={{ textTransform: "none" }}
+            >
+              초기화
+            </Button>
+          </Box>
         </Paper>
 
         {/* 주문 목록 테이블 */}
@@ -853,7 +894,7 @@ const OrderShippingManagement: React.FC = () => {
                   <Select
                     value={newStatus}
                     onChange={(e) => {
-                      setNewStatus(e.target.value as ShippingStatus);
+                      setNewStatus(e.target.value);
                       // 상품준비중이 아닌 상태로 변경하면 출고 지연 요청 해제
                       if (e.target.value !== "preparing") {
                         setIsDelayRequested(false);
