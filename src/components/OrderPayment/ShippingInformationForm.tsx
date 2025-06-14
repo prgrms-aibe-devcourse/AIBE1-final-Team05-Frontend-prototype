@@ -28,7 +28,7 @@ const ShippingInformationForm: React.FC<ShippingInformationFormProps> = ({
             <CardContent style={{ padding: 32 }}>
                 <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
                     <Typography variant="h5" component="h2" style={{ fontWeight: 600, color: "#1b150e" }}>
-                        Shipping Information
+                        배송 정보
                     </Typography>
                     <Button
                         startIcon={<Map />}
@@ -42,58 +42,58 @@ const ShippingInformationForm: React.FC<ShippingInformationFormProps> = ({
                             fontSize: "0.875rem",
                         }}
                     >
-                        Load Saved Address
+                        저장된 주소 불러오기
                     </Button>
                 </Box>
                 <Grid container spacing={3}>
                     <Grid size={{ xs: 12 }}>
                         <TextField
                             fullWidth
-                            label="Full Name"
+                            label="이름"
                             value={shippingInfo.fullName}
                             onChange={(e) => onShippingInfoChange("fullName", e.target.value)}
-                            placeholder="Enter your full name"
+                            placeholder="이름을 입력하세요"
                             variant="outlined"
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }}>
                         <TextField
                             fullWidth
-                            label="Address"
+                            label="주소"
                             value={shippingInfo.address}
                             onChange={(e) => onShippingInfoChange("address", e.target.value)}
-                            placeholder="Enter your street address"
+                            placeholder="도로명 주소"
                             variant="outlined"
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
-                            label="City"
+                            label="시/도"
                             value={shippingInfo.city}
                             onChange={(e) => onShippingInfoChange("city", e.target.value)}
-                            placeholder="Enter your city"
+                            placeholder="시/도를 입력하세요"
                             variant="outlined"
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
-                            label="Postal Code"
+                            label="우편번호"
                             value={shippingInfo.postalCode}
                             onChange={(e) => onShippingInfoChange("postalCode", e.target.value)}
-                            placeholder="Enter your postal code"
+                            placeholder="우편 번호를 입력하세요"
                             variant="outlined"
                         />
                     </Grid>
                     <Grid size={{ xs: 12 }}>
                         <TextField
                             fullWidth
-                            label="Phone Number"
+                            label="휴대폰 번호"
                             type="tel"
                             value={shippingInfo.phoneNumber}
                             onChange={(e) => onShippingInfoChange("phoneNumber", e.target.value)}
-                            placeholder="Enter your phone number"
+                            placeholder="휴대폰 번호를 입력하세요"
                             variant="outlined"
                         />
                     </Grid>

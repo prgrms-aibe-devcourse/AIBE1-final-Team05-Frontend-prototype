@@ -7,7 +7,7 @@ import { Schedule, ShoppingCartCheckout } from "@mui/icons-material"
 import { ThemeProvider } from "@mui/material/styles"
 
 // Component imports
-import PaymentHeader from "@/components/OrderPayment/PaymentHeader"
+// import PaymentHeader from "@/components/OrderPayment/PaymentHeader"
 import OrderSummary from "@/components/OrderPayment/OrderSummary"
 import PetInformationForm from "@/components/OrderPayment/PetInformationForm"
 import ShippingInformationForm from "@/components/OrderPayment/ShippingInformationForm"
@@ -25,6 +25,7 @@ import type {PetInfo, ShippingInfo}from "@/components/OrderPayment"
 export default function PaymentPage() {
     const [petInfo, setPetInfo] = useState<PetInfo>({
         name: "",
+        category: "",
         breed: "",
         age: "",
         gender: "",
@@ -63,6 +64,7 @@ export default function PaymentPage() {
     const handleLoadPet = (pet: SavedPet) => {
         setPetInfo({
             name: pet.name,
+            category: pet.category,
             breed: pet.breed,
             age: pet.age,
             gender: pet.gender,
@@ -90,15 +92,14 @@ export default function PaymentPage() {
     return (
         <ThemeProvider theme={theme}>
             <Box style={{ flexGrow: 1, backgroundColor: "#fcfaf8", minHeight: "100vh" }}>
-                <PaymentHeader />
 
                 <Container maxWidth="md" style={{ paddingTop: 40, paddingBottom: 40 }}>
                     {/* Breadcrumbs */}
                     <Breadcrumbs style={{ marginBottom: 24 }}>
                         <Link color="text.secondary" href="#" underline="hover">
-                            Shop
+                            shop
                         </Link>
-                        <Typography color="text.primary">Custom Order</Typography>
+                        <Typography color="text.primary">주문</Typography>
                     </Breadcrumbs>
 
                     {/* Page Header */}
