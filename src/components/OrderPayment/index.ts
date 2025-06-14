@@ -28,6 +28,7 @@ export interface OrderItem {
 
 export interface PetInfo {
     name: string
+    category: string
     breed: string
     age: string
     gender: string
