@@ -149,6 +149,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
               fontWeight: 600,
               color: theme.palette.text.primary,
               mb: 1,
+              "&.Mui-focused": {
+                color: theme.palette.text.primary,
+              },
             }}
           >
             반려동물 종류
@@ -191,6 +194,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
               fontWeight: 600,
               color: theme.palette.text.primary,
               mb: 1,
+              "&.Mui-focused": {
+                color: theme.palette.text.primary,
+              },
             }}
           >
             상품 유형
@@ -227,6 +233,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
               fontWeight: 600,
               color: theme.palette.text.primary,
               mb: 1,
+              "&.Mui-focused": {
+                color: theme.palette.text.primary,
+              },
             }}
           >
             알러지 유발 성분
