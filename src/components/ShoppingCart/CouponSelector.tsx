@@ -22,6 +22,7 @@ interface CouponSelectorProps {
     onCouponSelect: (couponId: string) => void
     isCouponApplicable: (coupon: Coupon) => boolean
     discountAmount: number
+    formatPrice: (price: number) => string
 }
 
 const CouponSelector: React.FC<CouponSelectorProps> = ({
@@ -30,6 +31,7 @@ const CouponSelector: React.FC<CouponSelectorProps> = ({
                                                            onCouponSelect,
                                                            isCouponApplicable,
                                                            discountAmount,
+                                                           formatPrice,
                                                        }) => {
     return (
         <Card
@@ -49,7 +51,7 @@ const CouponSelector: React.FC<CouponSelectorProps> = ({
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
-                        fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
+                        fontFamily: '"Plus Jakarta Sans", "Noto Sans KR", sans-serif',
                     }}
                 >
                     <CouponIcon sx={{ color: "#e89830" }} />
@@ -91,7 +93,12 @@ const CouponSelector: React.FC<CouponSelectorProps> = ({
                                             {coupon.name}
                                         </Typography>
                                         {!isCouponApplicable(coupon) && (
-                                            <Chip label={`최소 $${coupon.minAmount}`} size="small" color="error" variant="outlined" />
+                                            <Chip
+                                                label={`최소 ${coupon.minAmount.toLocaleString()}원`}
+                                                size="small"
+                                                color="error"
+                                                variant="outlined"
+                                            />
                                         )}
                                     </Box>
                                     <Typography variant="caption" sx={{ color: "#97784e" }}>
@@ -113,7 +120,7 @@ const CouponSelector: React.FC<CouponSelectorProps> = ({
                             },
                         }}
                     >
-                        쿠폰이 적용되었습니다! ${discountAmount.toFixed(2)} 할인
+                        쿠폰이 적용되었습니다! {formatPrice(discountAmount)} 할인
                     </Alert>
                 )}
             </CardContent>

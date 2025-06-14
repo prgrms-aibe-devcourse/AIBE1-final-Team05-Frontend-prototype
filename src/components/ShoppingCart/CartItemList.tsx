@@ -1,21 +1,11 @@
 "use client"
 
 import type React from "react"
-import {
-    Box,
-    Button,
-    Checkbox,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-} from "@mui/material"
-import { Delete as DeleteIcon, Compare as CompareIcon } from "@mui/icons-material"
+import { Box, Checkbox, Typography, IconButton, Paper } from "@mui/material"
+import AddIcon from "@mui/icons-material/Add"
+import RemoveIcon from "@mui/icons-material/Remove"
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import type { CartItem as CartItemType } from "./types/cart.types"
-import CartItem from "./CartItem"
 
 interface CartItemListProps {
     cartItems: CartItemType[]
@@ -24,8 +14,7 @@ interface CartItemListProps {
     onItemSelect: (id: string) => void
     onQuantityChange: (id: string, quantity: number) => void
     onRemoveItem: (id: string) => void
-    onRemoveSelected: () => void
-    onCompareSelected: () => void
+    formatPrice: (price: number) => string
 }
 
 const CartItemList: React.FC<CartItemListProps> = ({
@@ -35,133 +24,174 @@ const CartItemList: React.FC<CartItemListProps> = ({
                                                        onItemSelect,
                                                        onQuantityChange,
                                                        onRemoveItem,
-                                                       onRemoveSelected,
-                                                       onCompareSelected,
+                                                       formatPrice,
                                                    }) => {
     return (
-        <>
-            <Paper
+        <Paper
+            elevation={0}
+            sx={{
+                border: "1px solid #f0f0f0",
+                borderRadius: 2,
+                overflow: "hidden",
+            }}
+        >
+            {/* 헤더 */}
+            <Box
                 sx={{
-                    overflow: "hidden",
-                    border: "1px solid #F3EADD",
-                    borderRadius: 3,
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                        boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-                    },
+                    display: "grid",
+                    gridTemplateColumns: "50px 1fr 100px 100px 100px 50px",
+                    alignItems: "center",
+                    p: 2,
+                    backgroundColor: "#fafaf8",
+                    borderBottom: "1px solid #f0f0f0",
                 }}
             >
-                <TableContainer>
-                    <Table>
-                        <TableHead sx={{ bgcolor: "#f9f6f2" }}>
-                            <TableRow>
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        checked={selectAll}
-                                        onChange={onSelectAll}
-                                        sx={{
-                                            color: "#e89830",
-                                            "&.Mui-checked": { color: "#e89830" },
-                                        }}
-                                    />
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: "#57493a",
-                                        textTransform: "uppercase",
-                                        fontSize: "0.75rem",
-                                        letterSpacing: "0.05em",
-                                    }}
-                                >
-                                    제품
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: "#57493a",
-                                        textTransform: "uppercase",
-                                        fontSize: "0.75rem",
-                                        letterSpacing: "0.05em",
-                                    }}
-                                >
-                                    금액
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: "#57493a",
-                                        textTransform: "uppercase",
-                                        fontSize: "0.75rem",
-                                        letterSpacing: "0.05em",
-                                    }}
-                                >
-                                    수량
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: "#57493a",
-                                        textTransform: "uppercase",
-                                        fontSize: "0.75rem",
-                                        letterSpacing: "0.05em",
-                                    }}
-                                >
-                                    총 금액
-                                </TableCell>
-                                <TableCell />
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {cartItems.map((item) => (
-                                <CartItem
-                                    key={item.id}
-                                    item={item}
-                                    onSelect={onItemSelect}
-                                    onQuantityChange={onQuantityChange}
-                                    onRemove={onRemoveItem}
-                                />
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Paper>
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Checkbox
+                        checked={selectAll}
+                        onChange={onSelectAll}
+                        sx={{
+                            color: "#ccc",
+                            "&.Mui-checked": {
+                                color: "#e89830",
+                            },
+                        }}
+                    />
+                </Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#666" }}>
+                    제품
+                </Typography>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#666", textAlign: "center" }}>
+                    금액
+                </Typography>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#666", textAlign: "center" }}>
+                    수량
+                </Typography>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#666", textAlign: "center" }}>
+                    총 금액
+                </Typography>
+                <Box />
+            </Box>
 
-            {/* 액션 버튼들 */}
-            <Box sx={{ mt: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
-                <Button
-                    variant="outlined"
-                    startIcon={<DeleteIcon />}
-                    onClick={onRemoveSelected}
+            {/* 상품 목록 */}
+            {cartItems.map((item) => (
+                <Box
+                    key={item.id}
                     sx={{
-                        borderColor: "#e7ddd0",
-                        color: "#57493a",
-                        textTransform: "none",
-                        borderRadius: "8px",
-                        "&:hover": {
-                            borderColor: "#e89830",
-                            bgcolor: "#f9f6f2",
-                            color: "#1b150e",
+                        display: "grid",
+                        gridTemplateColumns: "50px 1fr 100px 100px 100px 50px",
+                        alignItems: "center",
+                        p: 2,
+                        borderBottom: "1px solid #f0f0f0",
+                        "&:last-child": {
+                            borderBottom: "none",
                         },
                     }}
                 >
-                    선택한 제품 삭제
-                </Button>
-                <Button
-                    variant="contained"
-                    startIcon={<CompareIcon />}
-                    onClick={onCompareSelected}
-                    sx={{
-                        bgcolor: "#e89830",
-                        textTransform: "none",
-                        borderRadius: "8px",
-                        "&:hover": { bgcolor: "#d18727" },
-                    }}
-                >
-                    AI 제품 비교
-                </Button>
-            </Box>
-        </>
+                    {/* 체크박스 */}
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <Checkbox
+                            checked={item.selected}
+                            onChange={() => onItemSelect(item.id)}
+                            sx={{
+                                color: "#ccc",
+                                "&.Mui-checked": {
+                                    color: "#e89830",
+                                },
+                            }}
+                        />
+                    </Box>
+
+                    {/* 상품 정보 */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        <Box
+                            component="img"
+                            src={item.image}
+                            alt={item.name}
+                            sx={{
+                                width: 60,
+                                height: 60,
+                                objectFit: "cover",
+                                borderRadius: 1,
+                            }}
+                        />
+                        <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5 }}>
+                                {item.name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: "#888" }}>
+                                옵션: {item.option}
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    {/* 가격 */}
+                    <Typography variant="body2" sx={{ textAlign: "center" }}>
+                        {formatPrice(item.price)}
+                    </Typography>
+
+                    {/* 수량 */}
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <IconButton
+                            size="small"
+                            onClick={() => onQuantityChange(item.id, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                            sx={{
+                                color: "#888",
+                                bgcolor: "#f5f5f5",
+                                width: 24,
+                                height: 24,
+                                "&:hover": { bgcolor: "#e0e0e0" },
+                            }}
+                        >
+                            <RemoveIcon fontSize="small" />
+                        </IconButton>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                mx: 1,
+                                minWidth: "30px",
+                                textAlign: "center",
+                            }}
+                        >
+                            {item.quantity}
+                        </Typography>
+                        <IconButton
+                            size="small"
+                            onClick={() => onQuantityChange(item.id, item.quantity + 1)}
+                            sx={{
+                                color: "#888",
+                                bgcolor: "#f5f5f5",
+                                width: 24,
+                                height: 24,
+                                "&:hover": { bgcolor: "#e0e0e0" },
+                            }}
+                        >
+                            <AddIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
+
+                    {/* 합계 */}
+                    <Typography variant="body2" sx={{ fontWeight: 600, textAlign: "center" }}>
+                        {formatPrice(item.price * item.quantity)}
+                    </Typography>
+
+                    {/* 삭제 버튼 */}
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <IconButton
+                            onClick={() => onRemoveItem(item.id)}
+                            size="small"
+                            sx={{
+                                color: "#888",
+                                "&:hover": { color: "#e89830" },
+                            }}
+                        >
+                            <DeleteOutlineIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
+            ))}
+        </Paper>
     )
 }
 
