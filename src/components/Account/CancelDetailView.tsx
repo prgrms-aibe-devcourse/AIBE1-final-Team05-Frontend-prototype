@@ -31,7 +31,7 @@ const CancelDetailView: React.FC<CancelDetailViewProps> = ({ setDetailView }) =>
             </Button>
 
             <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4 }}>
-                취소/반품/교환/환불내역 상세
+                취소/환불내역 상세
             </Typography>
 
             <Box sx={{ mb: 4 }}>

@@ -1,11 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Container, Grid, Card, CardContent } from "@mui/material"
+import { Box, Container, Grid, Card, CardContent, Typography } from "@mui/material"
 import { ThemeProvider } from "@mui/material/styles"
 
-// 분리된 컴포넌트들 import
-import Sidebar from "@/components/Account/Sidebar"
+// 기존 컴포넌트들
 import OrdersView from "@/components/Account/OrdersView"
 import ReviewsView from "@/components/Account/ReviewsView"
 import ReturnInquiryView from "@/components/Account/ReturnInquiryView"
@@ -20,10 +19,16 @@ import OrderDetail from "@/components/Account/OrderDetail"
 import AddressDialog from "@/components/Account/AddressDialog"
 import PetDialog from "@/components/Account/PetDialog"
 
-// 타입 import
+// 새로운 회원 탈퇴 관련 컴포넌트들
+import UpdatedSidebar from "@/components/Account/Sidebar"
+import AccountWithdrawalView from "@/components/Account/accountWithdrawalView"
+import WithdrawalConfirmationModal from "@/components/Account/withdrawalConfirmationModal"
+import WithdrawalSuccessView from "@/components/Account/withdrawalSuccessView"
+
+// 타입 및 데이터
 import type { Address, Pet, Order } from "components/Account"
-import {mockOrders} from "@/data/mock-data"
-import {theme} from "@/theme";
+import { mockOrders } from "@/data/mock-data"
+import { theme } from "@/theme"
 
 export default function MyPage() {
     const [activeMenu, setActiveMenu] = useState("orders")
@@ -38,6 +43,11 @@ export default function MyPage() {
     const [detailView, setDetailView] = useState<string | null>(null)
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
     const [returnTab, setReturnTab] = useState(0)
+
+    // 회원 탈퇴 관련 상태
+    const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false)
+
+    const [, setIsWithdrawalComplete] = useState(false); // 나중에 isWithdrawalComplete 추가해야함
 
     const [newAddress, setNewAddress] = useState({
         label: "",
@@ -59,7 +69,7 @@ export default function MyPage() {
         specialRequests: "",
     })
 
-    // 핸들러 함수들
+    // 기존 핸들러 함수들
     const handleMenuChange = (menuId: string) => {
         setActiveMenu(menuId)
         setDetailView(null)
@@ -70,6 +80,23 @@ export default function MyPage() {
         setDetailView(action)
     }
 
+    // 회원 탈퇴 관련 핸들러
+    const handleWithdrawalRequest = () => {
+        setWithdrawalModalOpen(true)
+    }
+
+    const handleWithdrawalConfirm = () => {
+        setWithdrawalModalOpen(false)
+        setIsWithdrawalComplete(true)
+        setActiveMenu("withdrawal-success") // 추가
+        window.location.href = "/withdraw"
+    }
+
+    const handleWithdrawalCancel = () => {
+        setWithdrawalModalOpen(false)
+    }
+
+    // 기존 핸들러들 (생략 - 원본과 동일)
     const handleAddressSubmit = () => {
         if (editingAddress) {
             setAddresses(
@@ -156,6 +183,16 @@ export default function MyPage() {
 
     // 메인 컨텐츠 렌더링
     const renderContent = () => {
+        // 회원 탈퇴 완료 화면
+        if (activeMenu === "withdrawal-success") {
+            return <WithdrawalSuccessView />
+        }
+
+        // 회원 탈퇴 화면
+        if (activeMenu === "withdrawal") {
+            return <AccountWithdrawalView onWithdrawalRequest={handleWithdrawalRequest} />
+        }
+
         // 상세 뷰들
         if (detailView === "shipping" && selectedOrder) {
             return <ShippingDetailView setDetailView={setDetailView} />
@@ -179,7 +216,7 @@ export default function MyPage() {
             return <CancelDetailView setDetailView={setDetailView} />
         }
 
-        // 메인 메뉴들
+        // 기존 메인 메뉴들
         switch (activeMenu) {
             case "orders":
                 return (
@@ -216,6 +253,15 @@ export default function MyPage() {
                 )
             case "coupons":
                 return <CouponsView />
+            case "profile":
+                return (
+                    <Box sx={{ p: 3 }}>
+                        <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4 }}>
+                            회원정보 수정
+                        </Typography>
+                        <Typography variant="body1">회원정보 수정 기능은 준비 중입니다.</Typography>
+                    </Box>
+                )
             default:
                 return null
         }
@@ -226,13 +272,13 @@ export default function MyPage() {
             <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
                 <Container maxWidth="xl" sx={{ py: 4 }}>
                     <Grid container spacing={4}>
-                        {/* 사이드바 */}
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <Sidebar activeMenu={activeMenu} onMenuChange={handleMenuChange} />
+                        {/* 업데이트된 사이드바 */}
+                        <Grid size={{xs:12, md:3}} >
+                            <UpdatedSidebar activeMenu={activeMenu} onMenuChange={handleMenuChange} />
                         </Grid>
 
                         {/* 메인 컨텐츠 */}
-                        <Grid size={{ xs: 12, md: 9 }}>
+                        <Grid size={{xs:12, md:9}}>
                             <Card>
                                 <CardContent sx={{ p: 4 }}>{renderContent()}</CardContent>
                             </Card>
@@ -240,7 +286,7 @@ export default function MyPage() {
                     </Grid>
                 </Container>
 
-                {/* 다이얼로그들 */}
+                {/* 기존 다이얼로그들 */}
                 <AddressDialog
                     open={addressDialogOpen}
                     onClose={() => setAddressDialogOpen(false)}
@@ -257,6 +303,13 @@ export default function MyPage() {
                     newPet={newPet}
                     setNewPet={setNewPet}
                     onSubmit={handlePetSubmit}
+                />
+
+                {/* 회원 탈퇴 확인 모달 */}
+                <WithdrawalConfirmationModal
+                    open={withdrawalModalOpen}
+                    onClose={handleWithdrawalCancel}
+                    onConfirm={handleWithdrawalConfirm}
                 />
             </Box>
         </ThemeProvider>
