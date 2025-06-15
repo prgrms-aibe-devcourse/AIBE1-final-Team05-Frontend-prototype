@@ -19,6 +19,7 @@ import CustomerManagementPage from "@/pages/SellerDashboardPage/CustomerManageme
 import OrdersManagementPage from "@/pages/SellerDashboardPage/OrderManagementPage.tsx";
 import ShoppingCartPage from "@/pages/ShoppingCartPage";
 import CustomerServiceCenterPageServicePage from "@/pages/CusServiceCenterPage/CustomerServiceCenterPage.tsx";
+import WithdrawalSuccessPage from "@/pages/Account/WidrawSuccess.tsx";
 
 
 
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
             // 장바구니
             { path: "cart", element: <ShoppingCartPage /> },
 
-            {path: "customerServiceCenter", element: <CustomerServiceCenterPageServicePage />},
+            {path: "support", element: <CustomerServiceCenterPageServicePage />},
 
             // 판매자 스토어 페이지 (구매자가 보는 판매자 정보)
             { path: 'seller/:sellerId', element: <SellerStorePage /> },
@@ -95,7 +96,11 @@ const router = createBrowserRouter([
             },
         ],
     },
+    {
+        path: "/withdraw",
+        element: <WithdrawalSuccessPage></WithdrawalSuccessPage>
 
+    },
 ]);
 
 const AppRouter = () => {
