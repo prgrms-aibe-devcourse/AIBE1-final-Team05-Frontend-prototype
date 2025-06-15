@@ -17,6 +17,8 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NotificationMenu, { Notification } from '../../common/NotificationMenu';
+import ProfileMenu, { UserInfo } from '../../common/ProfileMenu';
 
 const BuyerHeader = () => {
     const navigate = useNavigate();
@@ -27,6 +29,42 @@ const BuyerHeader = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
     const [hoveredSubCategory, setHoveredSubCategory] = useState<string | null>(null);
+
+    // 임시 사용자 정보 (실제로는 상태 관리나 API에서 가져와야 함)
+    const [isLoggedIn, setIsLoggedIn] = useState(true); // 로그인 상태 true로 전환시, 로그인 페이지
+    const [userInfo] = useState<UserInfo>({
+        name: '김구매',
+        email: 'buyer@example.com',
+        profileImage: '' // 프로필 이미지가 없으면 이니셜 표시
+    });
+
+    // 임시 알림 데이터
+    const [notifications] = useState<Notification[]>([
+        {
+            id: '1',
+            type: 'order',
+            title: '주문이 접수되었습니다',
+            message: '주문번호 #12345가 정상적으로 접수되었습니다.',
+            timestamp: '2분 전',
+            isRead: false
+        },
+        {
+            id: '2',
+            type: 'delivery',
+            title: '배송이 시작되었습니다',
+            message: '주문하신 상품이 배송을 시작했습니다.',
+            timestamp: '1시간 전',
+            isRead: false
+        },
+        {
+            id: '3',
+            type: 'inquiry',
+            title: '문의 답변이 등록되었습니다',
+            message: '상품 문의에 대한 답변이 등록되었습니다.',
+            timestamp: '3시간 전',
+            isRead: true
+        }
+    ]);
 
     const navigationItems = [
         { label: '베스트 상품', path: '/best' },
@@ -68,6 +106,40 @@ const BuyerHeader = () => {
         setHoveredSubCategory(null);
     };
 
+    // 알림 클릭 핸들러
+    const handleNotificationClick = (notification: Notification) => {
+        console.log('알림 클릭:', notification);
+        // 알림 타입에 따라 다른 페이지로 이동
+        switch (notification.type) {
+            case 'order':
+                navigate('/account/orders');
+                break;
+            case 'delivery':
+                navigate('/account/orders');
+                break;
+            case 'inquiry':
+                navigate('/account/inquiries');
+                break;
+            default:
+                break;
+        }
+    };
+
+    // 프로필 메뉴 핸들러들
+    const handleProfileEdit = () => {
+        navigate('/mypage');
+    };
+
+    const handleSettings = () => {
+        navigate('/account/settings');
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        // 로그아웃 로직 추가
+        console.log('로그아웃');
+    };
+
     const drawer = (
         <Box sx={{ width: 250, pt: 2 }}>
             <Box sx={{ px: 2, mb: 2 }}>
@@ -94,27 +166,42 @@ const BuyerHeader = () => {
             </List>
             <Divider />
             <Box sx={{ p: 2 }}>
-                <Button
-                    fullWidth
-                    variant="outlined"
-                    sx={{ mb: 1 }}
-                    onClick={() => {
-                        navigate('/login');
-                        setMobileOpen(false);
-                    }}
-                >
-                    로그인
-                </Button>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    onClick={() => {
-                        navigate('/login');
-                        setMobileOpen(false);
-                    }}
-                >
-                    회원가입
-                </Button>
+                {!isLoggedIn ? (
+                    <>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            sx={{ mb: 1 }}
+                            onClick={() => {
+                                navigate('/login');
+                                setMobileOpen(false);
+                            }}
+                        >
+                            로그인
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            onClick={() => {
+                                navigate('/login');
+                                setMobileOpen(false);
+                            }}
+                        >
+                            회원가입
+                        </Button>
+                    </>
+                ) : (
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={() => {
+                            handleLogout();
+                            setMobileOpen(false);
+                        }}
+                    >
+                        로그아웃
+                    </Button>
+                )}
             </Box>
         </Box>
     );
@@ -433,49 +520,66 @@ const BuyerHeader = () => {
                             />
                         )}
 
-                        {/* 로그인 버튼 (데스크톱) */}
-                        {!isMobile && (
-                            <Button
-                                variant="text"
-                                onClick={() => navigate('/login')} // 로그인 페이지로 이동
-                                sx={{
-                                    fontSize: '0.875rem',
-                                    fontWeight: 400,
-                                    color: 'text.secondary',
-                                    textTransform: 'none',
-                                    minWidth: 'auto',
-                                    px: 2,
-                                    '&:hover': {
-                                        color: 'text.primary',
-                                        backgroundColor: 'transparent',
-                                    }
-                                }}
-                            >
-                                로그인
-                            </Button>
-                        )}
-
-                        {/* 회원가입 버튼 (데스크톱) */}
-                        {!isMobile && (
-                            <Button
-                                variant="contained"
-                                onClick={() => navigate('/login')} // 로그인 페이지로 이동 (소셜로그인으로 회원가입도 처리)
-                                sx={{
-                                    fontSize: '0.875rem',
-                                    fontWeight: 500,
-                                    backgroundColor: '#e89830',
-                                    color: 'white',
-                                    textTransform: 'none',
-                                    borderRadius: '20px',
-                                    px: 3,
-                                    py: 1,
-                                    '&:hover': {
-                                        backgroundColor: '#d18224',
-                                    }
-                                }}
-                            >
-                                회원가입
-                            </Button>
+                        {/* 로그인 상태에 따른 우측 버튼 영역 */}
+                        {isLoggedIn ? (
+                            <>
+                                {/* 로그인된 경우: 알림 + 프로필 */}
+                                <NotificationMenu
+                                    notifications={notifications}
+                                    onNotificationClick={handleNotificationClick}
+                                />
+                                <ProfileMenu
+                                    userInfo={userInfo}
+                                    onProfileEdit={handleProfileEdit}
+                                    onSettings={handleSettings}
+                                    onLogout={handleLogout}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                {/* 로그인하지 않은 경우: 로그인/회원가입 버튼 (데스크톱) */}
+                                {!isMobile && (
+                                    <>
+                                        <Button
+                                            variant="text"
+                                            onClick={() => navigate('/login')}
+                                            sx={{
+                                                fontSize: '0.875rem',
+                                                fontWeight: 400,
+                                                color: 'text.secondary',
+                                                textTransform: 'none',
+                                                minWidth: 'auto',
+                                                px: 2,
+                                                '&:hover': {
+                                                    color: 'text.primary',
+                                                    backgroundColor: 'transparent',
+                                                }
+                                            }}
+                                        >
+                                            로그인
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => navigate('/login')}
+                                            sx={{
+                                                fontSize: '0.875rem',
+                                                fontWeight: 500,
+                                                backgroundColor: '#e89830',
+                                                color: 'white',
+                                                textTransform: 'none',
+                                                borderRadius: '20px',
+                                                px: 3,
+                                                py: 1,
+                                                '&:hover': {
+                                                    backgroundColor: '#d18224',
+                                                }
+                                            }}
+                                        >
+                                            회원가입
+                                        </Button>
+                                    </>
+                                )}
+                            </>
                         )}
 
                         {/* 장바구니 아이콘 */}

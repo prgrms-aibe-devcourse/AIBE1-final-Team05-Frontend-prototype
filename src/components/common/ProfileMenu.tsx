@@ -116,22 +116,27 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                     <span className="material-icons" style={{ marginRight: '8px', fontSize: '18px' }}>
                         person
                     </span>
-                    프로필 수정
+                    마이페이지
                 </MenuItem>
-                <MenuItem
-                    onClick={() => handleMenuItemClick(onSellerInfo)}
-                    sx={{
-                        color: theme.palette.text.primary,
-                        '&:hover': {
-                            backgroundColor: theme.palette.grey[100]
-                        }
-                    }}
-                >
-                    <span className="material-icons" style={{ marginRight: '8px', fontSize: '18px' }}>
-                        store
-                    </span>
-                    판매자 정보
-                </MenuItem>
+
+                {/* onSellerInfo prop이 있을 때만 판매자 정보 메뉴 표시 */}
+                {onSellerInfo && (
+                    <MenuItem
+                        onClick={() => handleMenuItemClick(onSellerInfo)}
+                        sx={{
+                            color: theme.palette.text.primary,
+                            '&:hover': {
+                                backgroundColor: theme.palette.grey[100]
+                            }
+                        }}
+                    >
+                        <span className="material-icons" style={{ marginRight: '8px', fontSize: '18px' }}>
+                            store
+                        </span>
+                        판매자 정보
+                    </MenuItem>
+                )}
+
                 <MenuItem
                     onClick={() => handleMenuItemClick(onSettings)}
                     sx={{
