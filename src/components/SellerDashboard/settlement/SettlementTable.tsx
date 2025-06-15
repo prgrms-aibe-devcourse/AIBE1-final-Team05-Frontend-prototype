@@ -108,16 +108,29 @@ const SettlementTable = ({
         return '기간 선택';
     };
 
-    // 날짜 범위에 따른 데이터 필터링
+    // 🔧 수정: 모든 필터 적용한 데이터 필터링
     const filteredData = useMemo(() => {
         return data.filter(item => {
-            if (!startDate && !endDate) return true;
-            const itemDate = new Date(item.orderDate);
-            const start = startDate ? parseDate(startDate) : null;
-            const end = endDate ? parseDate(endDate) : null;
-            return isDateInRange(itemDate, start, end);
+            // 1. 날짜 범위 필터
+            if (startDate || endDate) {
+                const itemDate = new Date(item.orderDate);
+                const start = startDate ? parseDate(startDate) : null;
+                const end = endDate ? parseDate(endDate) : null;
+                if (!isDateInRange(itemDate, start, end)) {
+                    return false;
+                }
+            }
+
+            // 2. 🔧 정산 상태 필터 (수정됨)
+            if (filters.settlementFilter && filters.settlementFilter !== '전체') {
+                if (item.status !== filters.settlementFilter) {
+                    return false;
+                }
+            }
+
+            return true;
         });
-    }, [data, startDate, endDate]);
+    }, [data, startDate, endDate, filters.settlementFilter]); // 🔧 의존성 배열에 필터 추가
 
     // 페이지네이션 계산
     const totalItems = filteredData.length;
@@ -198,7 +211,7 @@ const SettlementTable = ({
                 정산 현황
             </Typography>
 
-            {/* 필터 섹션 */}
+            {/* 🔧 수정: 필터 섹션 - 결제일 필터 제거 */}
             <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
                 <TextField
                     size="small"
@@ -250,19 +263,7 @@ const SettlementTable = ({
                     }}
                 />
 
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                    <Select
-                        value={filters.paymentFilter}
-                        onChange={handleFilterChange('paymentFilter')}
-                        displayEmpty
-                    >
-                        <MenuItem value="전체">결제일</MenuItem>
-                        <MenuItem value="오늘">오늘</MenuItem>
-                        <MenuItem value="일주일">일주일</MenuItem>
-                        <MenuItem value="한달">한달</MenuItem>
-                    </Select>
-                </FormControl>
-
+                {/* 🔧 수정: 정산 상태 필터만 유지 */}
                 <FormControl size="small" sx={{ minWidth: 120 }}>
                     <Select
                         value={filters.settlementFilter}
@@ -289,7 +290,7 @@ const SettlementTable = ({
 
             {/* 결과 요약 */}
             <Box sx={{ mb: 2 }}>
-                {(startDate || endDate) ? (
+                {(startDate || endDate || filters.settlementFilter !== '전체') ? (
                     <Typography
                         variant="body2"
                         sx={{
@@ -302,7 +303,10 @@ const SettlementTable = ({
                         <span className="material-icons" style={{ fontSize: '16px', color: theme.palette.primary.main }}>
                             filter_alt
                         </span>
-                        선택한 기간: {getDateRangeLabel()} (총 {totalItems}건)
+                        필터 적용됨:
+                        {(startDate || endDate) && ` 기간(${getDateRangeLabel()})`}
+                        {filters.settlementFilter !== '전체' && ` 상태(${filters.settlementFilter})`}
+                        {' '} - 총 {totalItems}건
                     </Typography>
                 ) : (
                     <Typography
@@ -421,8 +425,8 @@ const SettlementTable = ({
                                         variant="body2"
                                         sx={{ color: theme.palette.text.secondary }}
                                     >
-                                        {(startDate || endDate)
-                                            ? '선택한 기간에 정산 내역이 없습니다.'
+                                        {(startDate || endDate || filters.settlementFilter !== '전체')
+                                            ? '선택한 조건에 해당하는 정산 내역이 없습니다.'
                                             : '정산 내역이 없습니다.'
                                         }
                                     </Typography>
@@ -526,7 +530,7 @@ const SettlementTable = ({
                             mb: 0.5
                         }}
                     >
-                        {(startDate || endDate) ? '선택 기간 총 정산 금액' : '전체 정산 금액'}:
+                        {(startDate || endDate || filters.settlementFilter !== '전체') ? '필터 적용 총 정산 금액' : '전체 정산 금액'}:
                         <span style={{ color: theme.palette.primary.main, marginLeft: '8px' }}>
                             ₩{totalSettlementAmount.toLocaleString()}
                         </span>
@@ -538,8 +542,8 @@ const SettlementTable = ({
                             fontSize: '0.875rem'
                         }}
                     >
-                        {(startDate || endDate) ? (
-                            `선택기간: ${startDate || '시작일'} ~ ${endDate || '종료일'} (${totalItems}건)`
+                        {(startDate || endDate || filters.settlementFilter !== '전체') ? (
+                            `필터 조건: ${(startDate || endDate) ? `기간(${startDate || '시작일'} ~ ${endDate || '종료일'})` : ''}${filters.settlementFilter !== '전체' ? ` 상태(${filters.settlementFilter})` : ''} (${totalItems}건)`
                         ) : (
                             `전체 ${totalItems}건의 정산 내역`
                         )}
@@ -552,10 +556,10 @@ const SettlementTable = ({
                         variant="outlined"
                         size="large"
                         onClick={() => {
-                            console.log('선택기간 정산내역 영수증 다운로드');
-                            console.log('선택기간:', { startDate, endDate });
-                            console.log('선택기간 데이터:', filteredData);
-                            console.log('선택기간 총 정산금액:', totalSettlementAmount.toLocaleString());
+                            console.log('필터 적용 정산내역 영수증 다운로드');
+                            console.log('필터 조건:', { startDate, endDate, settlementFilter: filters.settlementFilter });
+                            console.log('필터 적용 데이터:', filteredData);
+                            console.log('필터 적용 총 정산금액:', totalSettlementAmount.toLocaleString());
                         }}
                         sx={{
                             borderRadius: 6,
@@ -577,7 +581,7 @@ const SettlementTable = ({
                             </span>
                         }
                     >
-                        선택기간 정산내역 영수증
+                        필터 적용 정산내역 영수증
                     </Button>
                 )}
             </Box>

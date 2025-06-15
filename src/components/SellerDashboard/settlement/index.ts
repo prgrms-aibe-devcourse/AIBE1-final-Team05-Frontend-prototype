@@ -9,7 +9,7 @@ export { default as YearSelector } from './YearSelector';
 export { default as SettlementSummary } from './SettlementSummary';
 export { default as MonthlySettlementStatus } from './MonthlySettlementStatus';
 export { default as SalesInsight } from './SalesInsight';
-export { default as ProductSalesDetail } from './ProductSalesDetail';
+
 
 // Props 타입들도 re-export (필요시)
 export type { DateRangePickerProps } from './DateRangePicker';
