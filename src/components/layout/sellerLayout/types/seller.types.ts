@@ -25,4 +25,8 @@ export interface SellerHeaderProps {
     onAnnouncementClick?: () => void;
     onFaqClick?: () => void;
     onInquiryClick?: () => void;
+    onProfileEdit?: () => void;
+    onSellerInfo?: () => void;
+    onSettings?: () => void;
+    onLogout?: () => void;
 }
