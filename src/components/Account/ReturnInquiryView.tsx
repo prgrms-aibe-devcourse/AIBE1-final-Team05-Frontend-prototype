@@ -50,7 +50,7 @@ const ReturnInquiryView: React.FC<ReturnInquiryViewProps> = ({ returnTab, setRet
 
             <Box mb={3}>
                 <Typography variant="body2" color="text.secondary" mb={1}>
-                    • 취소/반품/교환 신청한 내역을 확인할 수 있습니다.
+                    • 취소/환불 신청한 내역을 확인할 수 있습니다.
                 </Typography>
                 <Typography variant="body2" color="text.secondary" mb={1}>
                     • 하단 상품목록에 없는 상품은 1:1문의 또는 고객센터(1577-7011)로 문의주세요.
@@ -58,7 +58,7 @@ const ReturnInquiryView: React.FC<ReturnInquiryViewProps> = ({ returnTab, setRet
                 <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Box />
                     <Button variant="text" color="primary" size="small" endIcon={<ChevronRight />}>
-                        취소/반품 안내
+                        취소/환불 안내
                     </Button>
                 </Box>
             </Box>
