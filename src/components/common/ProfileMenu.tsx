@@ -5,7 +5,6 @@ import {
     MenuItem,
     Box,
     Typography,
-    Avatar,
     Divider,
     useTheme
 } from '@mui/material';
@@ -56,19 +55,20 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
 
     return (
         <>
-            <IconButton onClick={handleProfileClick} sx={{ p: 0.5 }}>
-                <Avatar
-                    sx={{
-                        width: 36,
-                        height: 36,
-                        backgroundColor: theme.palette.primary.main,
-                        fontSize: '0.75rem', // 전체 이름을 표시하기 위해 폰트 크기 조정
-                        fontWeight: 600
-                    }}
-                    src={userInfo.profileImage}
-                >
+            <IconButton onClick={handleProfileClick} sx={{ p: 0.5 ,  fontSize: '1rem'}}  >
+                {/*<Avatar*/}
+                {/*    sx={{*/}
+                {/*        width: 36,*/}
+                {/*        height: 36,*/}
+                {/*        backgroundColor: theme.palette.primary.main,*/}
+                {/*        fontSize: '0.75rem', // 전체 이름을 표시하기 위해 폰트 크기 조정*/}
+                {/*        fontWeight: 600*/}
+                {/*    }}*/}
+                {/*    src={userInfo.profileImage}*/}
+                {/*>*/}
+                <span style={{ textDecoration: 'underline'}}>
                     {getDisplayName(userInfo.name)}
-                </Avatar>
+                  </span>                {/*</Avatar>*/}
             </IconButton>
 
             <Menu
