@@ -3,7 +3,7 @@
 import type React from "react"
 import { Box, Typography, TextField, InputAdornment, List, ListItem, ListItemText, Chip, Paper } from "@mui/material"
 import { Search, ChatBubbleOutline } from "@mui/icons-material"
-import type { CustomerInquiry } from "../../types/customer"
+import type { CustomerInquiry } from "@/types/customer.ts"
 
 interface CustomerInquiryListProps {
     customerInquiries: CustomerInquiry[]
@@ -62,11 +62,11 @@ const CustomerInquiryList: React.FC<CustomerInquiryListProps> = ({
                                         <Typography component="span" variant="body1" fontWeight="medium">
                                             {customer.name}
                                         </Typography>
-                                        {customer.orderProduct && (
-                                            <Typography component="span" variant="body2" sx={{ ml: 1, color: "text.secondary" }}>
-                                                ({customer.orderProduct})
-                                            </Typography>
-                                        )}
+                                        {/*{customer.orderProduct && (*/}
+                                        {/*    <Typography component="span" variant="body2" sx={{ ml: 1, color: "text.secondary" }}>*/}
+                                        {/*        ({customer.orderProduct})*/}
+                                        {/*    </Typography>*/}
+                                        {/*)}*/}
                                     </Box>
                                 }
                                 secondary={customer.lastMessage}
