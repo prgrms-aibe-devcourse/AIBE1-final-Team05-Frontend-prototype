@@ -9,9 +9,9 @@ import {
     ListItem,
     ListItemButton,
     ListItemIcon,
-    ListItemText,
+    ListItemText, Divider,
 } from "@mui/material"
-import {Receipt, Description, Home, Pets, RateReview, LocalOffer} from "@mui/icons-material"
+import {Receipt, Description, Home, Pets, RateReview, LocalOffer, ExitToApp} from "@mui/icons-material"
 
 const menuItems = [
     { id: "orders", label: "주문/배송 조회", icon: Receipt },
@@ -22,10 +22,16 @@ const menuItems = [
     { id: "coupons", label: "나의 쿠폰함", icon: LocalOffer}
 ]
 
+const accountMenuItems = [
+    { id: "withdrawal", label: "회원 탈퇴", icon: ExitToApp },
+]
+
 interface SidebarProps {
     activeMenu: string
     onMenuChange: (menuId: string) => void
 }
+
+
 
 const Sidebar: React.FC<SidebarProps> = ({ activeMenu, onMenuChange }) => {
     return (
@@ -34,6 +40,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, onMenuChange }) => {
                 <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
                     마이페이지
                 </Typography>
+
+                {/* 주문/서비스 관련 메뉴 */}
                 <List sx={{ p: 0 }}>
                     {menuItems.map((item) => (
                         <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
@@ -63,15 +71,61 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, onMenuChange }) => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={item.label}
-                                    primaryTypographyProps={{
-                                        fontSize: "0.875rem",
-                                        fontWeight: 500,
-                                    }}
                                 />
                             </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
+
+                <Divider sx={{ my: 2 }} />
+
+                {/* 계정 관리 메뉴 */}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, px: 1 }}>
+                    계정 관리
+                </Typography>
+                <List sx={{ p: 0 }}>
+                    {accountMenuItems.map((item) => (
+                        <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
+                            <ListItemButton
+                                selected={activeMenu === item.id}
+                                onClick={() => onMenuChange(item.id)}
+                                sx={{
+                                    borderRadius: 2,
+                                    "&.Mui-selected": {
+                                        bgcolor: item.id === "withdrawal" ? "#ffebee" : "#FDBF60",
+                                        color: item.id === "withdrawal" ? "#d32f2f" : "#4A2C2A",
+                                        "& .MuiListItemIcon-root": {
+                                            color: item.id === "withdrawal" ? "#d32f2f" : "#4A2C2A",
+                                        },
+                                    },
+                                    "&:hover": {
+                                        bgcolor: item.id === "withdrawal" ? "#ffebee" : "#FFF3E0",
+                                        color: item.id === "withdrawal" ? "#d32f2f" : "#8D5B4C",
+                                        "& .MuiListItemIcon-root": {
+                                            color: item.id === "withdrawal" ? "#d32f2f" : "#8D5B4C",
+                                        },
+                                    },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <item.icon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={item.label}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
+                </List>
+
+                {/* 회원 탈퇴 주의사항 */}
+                {/*{activeMenu === "withdrawal" && (*/}
+                {/*    <Box sx={{ mt: 2, p: 2, bgcolor: "#fff3e0", borderRadius: 1 }}>*/}
+                {/*        <Typography variant="caption" color="text.secondary">*/}
+                {/*            ⚠️ 회원 탈퇴 시 모든 데이터가 삭제되며 복구가 불가능합니다.*/}
+                {/*        </Typography>*/}
+                {/*    </Box>*/}
+                {/*)}*/}
             </CardContent>
         </Card>
     )

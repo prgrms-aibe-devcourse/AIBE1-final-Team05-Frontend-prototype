@@ -40,19 +40,10 @@ export interface ProductSalesData {
     salesCount: number; // ? 제거하여 필수 속성으로 변경
 }
 
-export interface SalesRecommendation {
-    id: string;
-    productName: string;
-    description: string;
-    amount: number;
-    rank?: number;
-}
-
 // Props 타입들
 export interface SettlementTabProps {
     settlementData?: SettlementItem[];
     salesData?: SalesData[];
-    salesRecommendations?: SalesRecommendation[];
 }
 
 export interface SettlementTableProps {
@@ -80,11 +71,7 @@ export interface EnhancedSalesChartProps extends SalesChartProps {
     onYearChange?: (year: number) => void;
 }
 
-export interface SalesRankingProps {
-    data: SalesRecommendation[];
-    title?: string;
-    onDownloadReport?: () => void;
-}
+
 
 // 날짜 범위 피커 컴포넌트 Props
 export interface DateRangePickerProps {
@@ -96,31 +83,3 @@ export interface DateRangePickerProps {
     onClose: () => void;
 }
 
-// API 응답 타입들
-export interface SettlementResponse {
-    success: boolean;
-    data: SettlementItem[];
-    total: number;
-    totalAmount: number;
-}
-
-export interface SalesResponse {
-    success: boolean;
-    data: SalesData[];
-    totalSales: number;
-    growthRate: number;
-}
-
-export interface YearlySalesResponse {
-    success: boolean;
-    data: YearlyMonthData[];
-    currentYear: number;
-    availableYears: number[];
-}
-
-export interface ProductSalesResponse {
-    success: boolean;
-    data: ProductSalesData[];
-    totalProducts: number;
-    totalAmount: number;
-}

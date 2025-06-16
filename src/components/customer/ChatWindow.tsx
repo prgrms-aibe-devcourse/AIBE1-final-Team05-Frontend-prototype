@@ -2,8 +2,8 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Box, Paper, Typography, Avatar, Badge, IconButton, TextField, useTheme } from "@mui/material"
-import { ArrowBack, MoreVert, AttachFile, Send } from "@mui/icons-material"
+import { Box, Paper, Typography, IconButton, TextField, Button } from "@mui/material"
+import { ArrowBack, Send, Close } from "@mui/icons-material"
 import type { CustomerInquiry } from "../../types/customer"
 
 interface ChatWindowProps {
@@ -13,7 +13,6 @@ interface ChatWindowProps {
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ selectedCustomer, onBackToList, isMobile }) => {
-    const theme = useTheme()
     const [newMessage, setNewMessage] = useState("")
 
     const handleSendMessage = () => {
@@ -36,29 +35,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedCustomer, onBackToList,
             {/* 채팅 헤더 */}
             <Paper elevation={1} sx={{ p: 2, borderRadius: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {isMobile && (
-                        <IconButton onClick={onBackToList}>
-                            <ArrowBack />
-                        </IconButton>
-                    )}
-                    <Badge
-                        badgeContent=" "
-                        color="success"
-                        invisible={!selectedCustomer.isOnline}
-                        variant="dot"
-                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    >
-                        <Avatar src={selectedCustomer.avatar} />
-                    </Badge>
+                    {/* 모바일에서는 뒤로가기 아이콘, 데스크톱에서는 닫기 아이콘 */}
+                    <IconButton onClick={onBackToList}>{isMobile ? <ArrowBack /> : <Close />}</IconButton>
                     <Box sx={{ flexGrow: 1 }}>
                         <Typography variant="h6">{selectedCustomer.name}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {selectedCustomer.isOnline ? "온라인" : "오프라인"}
-                        </Typography>
+                        {selectedCustomer.orderProduct && (
+                            <Typography variant="body2" color="text.secondary">
+                                주문 상품: {selectedCustomer.orderProduct}
+                            </Typography>
+                        )}
                     </Box>
-                    <IconButton>
-                        <MoreVert />
-                    </IconButton>
+                    <Button variant="text" onClick={() => console.log("채팅방 나가기")}>
+                        채팅방 나가기
+                    </Button>
                 </Box>
             </Paper>
 
@@ -78,7 +67,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedCustomer, onBackToList,
                             sx={{
                                 p: 1.5,
                                 maxWidth: "70%",
-                                backgroundColor: message.sender === "admin" ? theme.palette.primary.main : "#f5f5f5",
+                                backgroundColor: message.sender === "admin" ? "primary.main" : "#f5f5f5",
                                 color: message.sender === "admin" ? "white" : "inherit",
                                 borderRadius: 2,
                                 borderBottomRightRadius: message.sender === "admin" ? 4 : 16,
@@ -105,9 +94,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ selectedCustomer, onBackToList,
             {/* 메시지 입력창 */}
             <Paper elevation={2} sx={{ p: 2, borderRadius: 0 }}>
                 <Box sx={{ display: "flex", gap: 1, alignItems: "flex-end" }}>
-                    <IconButton>
-                        <AttachFile />
-                    </IconButton>
                     <TextField
                         multiline
                         maxRows={3}

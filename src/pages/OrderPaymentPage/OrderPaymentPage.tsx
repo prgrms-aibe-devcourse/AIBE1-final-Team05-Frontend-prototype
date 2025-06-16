@@ -24,7 +24,7 @@ import ShippingInformationForm from "@/components/OrderPayment/ShippingInformati
 import OrderTotal from "@/components/OrderPayment/OrderTotal"
 import PetModal from "@/components/OrderPayment/PetModal"
 import AddressModal from "@/components/OrderPayment/AddressModal"
-import type { Coupon } from "@/components/ShoppingCart/types/cart.types"
+import type { Coupon } from "@/components/OrderPayment"
 
 // Data imports
 import {savedPets, savedAddresses, type SavedPet, type SavedAddress, orderItems} from "@/data/mock-data"

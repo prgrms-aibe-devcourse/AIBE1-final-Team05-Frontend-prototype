@@ -48,3 +48,12 @@ export interface PetModalProps {
     onSelectPet: (pet: SavedPet) => void
     savedPets: SavedPet[]
 }
+
+export interface Coupon {
+    id: string
+    name: string
+    type: "percentage" | "fixed"
+    value: number
+    minAmount: number
+    description: string
+}
