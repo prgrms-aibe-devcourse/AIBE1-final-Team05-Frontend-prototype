@@ -17,7 +17,7 @@ import type { CustomerInquiry } from "../../types/customer"
 import CustomerInquiryList from "../../components/customer/CustomerInquiryList"
 import ChatWindow from "../../components/customer/ChatWindow"
 import ProductReviewList from "../../components/customer/ProductReviewList"
-import { customerInquiries, productReviews } from "../../data/customerData"
+import { customerInquiries as initialCustomerInquiries, productReviews } from "../../data/customerData"
 
 const CustomerManagementPage: React.FC = () => {
     const theme = useTheme()
@@ -26,6 +26,9 @@ const CustomerManagementPage: React.FC = () => {
     const [selectedCustomer, setSelectedCustomer] = useState<CustomerInquiry | null>(null)
     const [reviewFilter, setReviewFilter] = useState("all")
     const [reviewSort, setReviewSort] = useState("latest")
+
+    // 고객 문의 목록 상태 관리 (삭제 기능을 위해 state로 관리)
+    const [customerInquiries, setCustomerInquiries] = useState<CustomerInquiry[]>(initialCustomerInquiries)
 
     // 탭 변경 핸들러
     const switchToTab = (tabIndex: number) => {
@@ -38,6 +41,14 @@ const CustomerManagementPage: React.FC = () => {
     }
 
     const handleBackToList = () => {
+        setSelectedCustomer(null)
+    }
+
+    // 채팅방 삭제 핸들러
+    const handleDeleteChatRoom = (customerId: number) => {
+        // 고객 문의 목록에서 해당 고객 제거
+        setCustomerInquiries(prev => prev.filter(customer => customer.id !== customerId))
+        // 선택된 고객 초기화
         setSelectedCustomer(null)
     }
 
@@ -106,7 +117,12 @@ const CustomerManagementPage: React.FC = () => {
                     {/* 모바일에서 채팅창이 열린 경우 */}
                     {selectedCustomer && isMobile && (
                         <Box sx={{ height: "100%" }}>
-                            <ChatWindow selectedCustomer={selectedCustomer} onBackToList={handleBackToList} isMobile={isMobile} />
+                            <ChatWindow
+                                selectedCustomer={selectedCustomer}
+                                onBackToList={handleBackToList}
+                                onDeleteChatRoom={handleDeleteChatRoom}
+                                isMobile={isMobile}
+                            />
                         </Box>
                     )}
 
@@ -133,7 +149,12 @@ const CustomerManagementPage: React.FC = () => {
                             {/* 채팅창 */}
                             {selectedCustomer && !isMobile && (
                                 <Box sx={{ flexGrow: 1 }}>
-                                    <ChatWindow selectedCustomer={selectedCustomer} onBackToList={handleBackToList} isMobile={isMobile} />
+                                    <ChatWindow
+                                        selectedCustomer={selectedCustomer}
+                                        onBackToList={handleBackToList}
+                                        onDeleteChatRoom={handleDeleteChatRoom}
+                                        isMobile={isMobile}
+                                    />
                                 </Box>
                             )}
                         </Box>
