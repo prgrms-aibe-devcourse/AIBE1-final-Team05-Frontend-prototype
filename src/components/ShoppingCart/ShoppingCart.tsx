@@ -2,17 +2,24 @@
 
 import type React from "react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Box, Breadcrumbs, Container, Typography, Link, Button, Modal } from "@mui/material"
 import { NavigateNext as NavigateNextIcon } from "@mui/icons-material"
 import type { CartItem, RecommendedProduct } from "./types/cart.types"
+import type { Pet } from "../Account/index" // Account 타입에서 import
 import CartItemList from "./CartItemList"
 import EmptyCart from "./EmptyCart"
 import OrderSummary from "./OrderSummary"
 import RecommendedProducts from "./RecommendedProducts"
-import ProductComparison from "./ProductComparison"
+import AIComparisonModal from "./AIComparisonModal"
 
-const ShoppingCart: React.FC = () => {
-    // 상태 관리
+interface ShoppingCartProps {
+    pets?: Pet[] // props로 전달받는 펫 정보
+}
+
+const ShoppingCart: React.FC<ShoppingCartProps> = ({ pets = [] }) => {
+    const navigate = useNavigate() // React Router 네비게이션 훅 추가
+    // 상태 관리 (CartItem에 petType 필드 추가)
     const [cartItems, setCartItems] = useState<CartItem[]>([
         {
             id: "1",
@@ -23,6 +30,7 @@ const ShoppingCart: React.FC = () => {
             image:
                 "https://lh3.googleusercontent.com/aida-public/AB6AXuCQEf71hk9m0w23j83x5tXwCamyvp3ZRQE-Gn6mURnDhwsrZ2iVxIlPzb-cIXTc2Nb06JfuTnZLas9esghplzH7niN5KZna2omsb_5oGsE_F94elQt3t7vR8aDqwuweZnhF8CN6_-2kZDZuGuwEv3eYTWWmPS7H1vyMiLoW-JUCHYCJjh1NTQGyaNWL8p18oXQ1tftvd_-xUXDPuCWj00PDJpf38YtYUsKVDhySccZYlQanbhc4yx2irM_q_q3tMZawnypnNa7SGnI",
             selected: false,
+            petType: "강아지" // 추가된 필드
         },
         {
             id: "2",
@@ -33,12 +41,62 @@ const ShoppingCart: React.FC = () => {
             image:
                 "https://lh3.googleusercontent.com/aida-public/AB6AXuDc-p_3A9etPWhm2pKuNp8uokcJGVXdaQFWsESe3PIIF1CvVnu_LCynYZaUz7rS-M8Z_VE5yxHvwnUWdwW5bYbT9RDYiOXhCy-_-Hfj8XZHBMYoGRWnX_qquYWlm_c17C1njRiOeISCM-pB0AWCOwn7WO6ztSY7FrxdslQhRTq0_KXd6ld2aLNLogn7HUywuT3PmibMR7ISRDEB2V7fYKy4mdWQuFEHggsy8_20bbvK7obANl4ptmYanm0qrthM7EC40-7ZccpSayY",
             selected: false,
+            petType: "고양이" // 추가된 필드
         },
+        {
+            id: "3",
+            name: "소고기 저키 스틱",
+            option: "중형견용",
+            price: 15990,
+            quantity: 1,
+            image:
+                "https://lh3.googleusercontent.com/aida-public/AB6AXuAin29om5OwCRLqHjfWNZuHdAMFXq-xMJdMh64LSS7pa9YFMqpezCqmuwy-IhkaZ0ft6ZTmsgR4yDJdmYsemZ5t3QzkP7APXMlSvZ4yvlfTiD_4B1VrhE-0bae07KnzqZMScfh6z2xLtJ2g8PYSX0tDnFs4y-a2jYZCxH6QVpH4vMjLebxU0ENWERJb93wGr9105HRWJy9Iq3Iw0usGGrp3ds2eVBN3EdFZJ3Lr6MFLwcRQMFPwBupQ5bnyIl_g9asnJuhUzmq5Pzw",
+            selected: false,
+            petType: "강아지" // 추가된 필드
+        },
+        {
+            id: "4",
+            name: "참치 크런치 볼",
+            option: "소형",
+            price: 8990,
+            quantity: 2,
+            image:
+                "https://lh3.googleusercontent.com/aida-public/AB6AXuDrIOlKYAPwL8tOlLcZSfZ0sTXCaAJVkCqZ3GuctaAouZ9ELKxz3oDyqR8yzxyvtejrPLjb4DP2wvUmj130lZlTfmdPkPRR9eh_1frX6piUSXIsFAS2q6BCEIu-zOGhmsq_pXaehHcNFK2a8bmEDWQXt7QxSjeGZFfy9EQUbGQK78or5vS7NPmHyePfGPfYqo08ltZNKFVHnEa-J9Ugmsm5nhEBcNWP8NJKTkxjaXeV2BLHFiFVSTk4rEVsCeZX7JEM-_yWZ4dqbtU",
+            selected: false,
+            petType: "고양이" // 추가된 필드
+        }
     ])
 
     const [comparisonOpen, setComparisonOpen] = useState<boolean>(false)
-    const [comparisonResult, setComparisonResult] = useState<string>("")
     const [selectAll, setSelectAll] = useState<boolean>(false)
+
+    // 임시 펫 데이터 (props로 전달받지 않은 경우 사용)
+    const defaultPets: Pet[] = [
+        {
+            id: "1",
+            name: "뽀삐",
+            category: "dogs",
+            breed: "골든리트리버",
+            age: "3",
+            gender: "female",
+            hasAllergies: true,
+            healthCondition: "건강함, 관절 주의",
+            specialRequests: "작은 크기로 잘라서 주세요"
+        },
+        {
+            id: "2",
+            name: "나비",
+            category: "cats",
+            breed: "페르시안",
+            age: "5",
+            gender: "female",
+            hasAllergies: false,
+            healthCondition: "털빠짐 주의",
+            specialRequests: "부드러운 식감 선호"
+        }
+    ]
+
+    const userPets = pets.length > 0 ? pets : defaultPets
 
     // 추천 상품
     const recommendedProducts: RecommendedProduct[] = [
@@ -112,46 +170,25 @@ const ShoppingCart: React.FC = () => {
         })
     }
 
-    // 상품 비교 기능
+    // AI 상품 비교 기능 (업데이트된 버전)
     const handleCompareSelected = () => {
-        const selectedItems = cartItems.filter((item) => item.selected)
-        if (selectedItems.length < 2) {
-            alert("비교를 위해서는 최소 2개 상품을 선택해주세요.")
-            return
-        }
-
-        // 샘플 비교 결과 (실제로는 LLM API 호출)
-        const result = `
-선택된 상품들의 비교 분석:
-
-${selectedItems.map((item) => `• ${item.name} (${item.option}) - ${item.price.toLocaleString()}원`).join("\n")}
-
-영양성분 및 특징 분석:
-이 제품들은 모두 자연 재료로 만들어진 프리미엄 펫 간식입니다. 
-닭고기 육포 간식은 높은 단백질 함량으로 활동적인 반려동물에게 적합하며, 
-연어 & 고구마 트릿은 오메가-3가 풍부하여 피모 건강에 도움을 줍니다.
-
-권장사항:
-두 제품 모두 우수한 품질의 간식이므로, 반려동물의 선호도와 건강 상태에 따라 선택하시면 됩니다.
-`
-
-        setComparisonResult(result)
+        // AI 비교 모달 열기 (제품 선택 제한 없음)
         setComparisonOpen(true)
     }
 
-    // 가격 계산 (할인 기능 제거)
+    // 가격 계산
     const calculateTotal = () => {
         return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
     }
 
     // 결제 처리
     const handleCheckout = () => {
-        alert("결제 페이지로 이동합니다...")
+        navigate("/orderpayment") // 주문 결제 페이지로 이동
     }
 
     // 쇼핑 계속하기
     const handleContinueShopping = () => {
-        alert("쇼핑 페이지로 이동합니다...")
+        navigate("/productsList") // 상품 목록 페이지로 이동
     }
 
     // 가격 포맷팅 함수
@@ -225,7 +262,7 @@ ${selectedItems.map((item) => `• ${item.name} (${item.option}) - ${item.price.
                                 <Button
                                     variant="outlined"
                                     onClick={handleCompareSelected}
-                                    startIcon={<span>📊</span>}
+                                    startIcon={<span>🤖</span>}
                                     sx={{
                                         borderColor: "#e89830",
                                         color: "#e89830",
@@ -245,7 +282,7 @@ ${selectedItems.map((item) => `• ${item.name} (${item.option}) - ${item.price.
                     )}
                 </Box>
 
-                {/* 주문 요약 (상단으로 이동) */}
+                {/* 주문 요약 */}
                 <Box sx={{ flex: "1 1 35%" }}>
                     <OrderSummary
                         total={calculateTotal()}
@@ -271,19 +308,13 @@ ${selectedItems.map((item) => `• ${item.name} (${item.option}) - ${item.price.
                 <RecommendedProducts products={recommendedProducts} formatPrice={formatPrice} />
             </Box>
 
-            {/* 상품 비교 모달 */}
-            <Modal
+            {/* AI 제품 비교 모달 */}
+            <AIComparisonModal
                 open={comparisonOpen}
                 onClose={() => setComparisonOpen(false)}
-                aria-labelledby="product-comparison-modal"
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
-                <ProductComparison result={comparisonResult} onClose={() => setComparisonOpen(false)} />
-            </Modal>
+                cartItems={cartItems}
+                pets={userPets}
+            />
         </Container>
     )
 }
