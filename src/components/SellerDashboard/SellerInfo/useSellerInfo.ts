@@ -36,7 +36,7 @@ const initialData: SellerInfoData = {
         holidayInfo: "주말 및 공휴일 휴무",
     },
     profileImage: null,
-    completionRate: 75,
+    completionRate: 30,
     rating: 4.5,
     avatarEmoji: "🐾",
 };
