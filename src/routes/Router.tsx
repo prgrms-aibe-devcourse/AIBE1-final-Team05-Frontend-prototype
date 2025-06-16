@@ -20,6 +20,7 @@ import OrdersManagementPage from "@/pages/SellerDashboardPage/OrderManagementPag
 import ShoppingCartPage from "@/pages/ShoppingCartPage";
 import CustomerServiceCenterPageServicePage from "@/pages/CusServiceCenterPage/CustomerServiceCenterPage.tsx";
 import WithdrawalSuccessPage from "@/pages/Account/WidrawSuccess.tsx";
+import ChatPage from "@/pages/Chat/ChatPage.tsx";
 
 
 
@@ -63,7 +64,10 @@ const router = createBrowserRouter([
 
             // 404 페이지
             { path: "*", element: <NotFoundPage /> },
-
+            {
+                path: "talk",
+                element: <ChatPage />
+            },
         ],
     },
     {

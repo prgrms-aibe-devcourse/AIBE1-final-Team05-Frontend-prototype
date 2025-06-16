@@ -92,7 +92,7 @@ const BuyerHeader = () => {
                 }
             ]
         },
-        { label: '판매자와 1:1채팅', path: '/chat' },
+        { label: '판매자와 1:1채팅', path: '/talk' },
         { label: '고객센터', path: '/support' },
     ];
 

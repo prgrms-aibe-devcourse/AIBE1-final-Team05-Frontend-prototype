@@ -17,6 +17,17 @@ export interface CustomerInquiry {
     orderProduct?: string
 }
 
+export interface CustomerChat {
+    id: number
+    name: string
+    avatar: string
+    lastMessage: string
+    unreadCount: number
+    isOnline: boolean
+    messages: CustomerMessage[]
+    orderProduct?: string
+}
+
 export interface ProductReview {
     id: number
     customerName: string
