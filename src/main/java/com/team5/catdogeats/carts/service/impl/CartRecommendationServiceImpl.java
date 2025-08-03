@@ -1,176 +1,173 @@
 package com.team5.catdogeats.carts.service.impl;
 
 import com.team5.catdogeats.auth.dto.UserPrincipal;
-import com.team5.catdogeats.carts.domain.mapping.CartItems;
 import com.team5.catdogeats.carts.dto.response.RecommendationResponse;
-import com.team5.catdogeats.carts.repository.CartItemRepository;
 import com.team5.catdogeats.carts.repository.CartRecommendationRepository;
 import com.team5.catdogeats.carts.service.CartRecommendationService;
-import com.team5.catdogeats.products.domain.Products;
+import com.team5.catdogeats.global.annotation.JpaTransactional;
 import com.team5.catdogeats.pets.domain.enums.PetCategory;
+import com.team5.catdogeats.products.domain.Products;
 import com.team5.catdogeats.users.domain.Users;
 import com.team5.catdogeats.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CartRecommendationServiceImpl implements CartRecommendationService {
 
     private final CartRecommendationRepository cartRecommendationRepository;
-    private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
 
-    // ㅐ상수로 추천 개수 관리 (향후 설정으로 변경 가능)
-    private static final int DEFAULT_RECOMMENDATION_LIMIT = 4;
-
     @Override
+    @JpaTransactional(readOnly = true)
     public List<RecommendationResponse> getCartBasedRecommendations(UserPrincipal userPrincipal) {
-        log.debug("장바구니 기반 추천 조회 시작 - provider: {}, providerId: {}",
+        log.info("장바구니 기반 추천 상품 조회 시작 - provider: {}, providerId: {}",
                 userPrincipal.provider(), userPrincipal.providerId());
 
         try {
-            // 1. 사용자 조회
-            Users user = getUserByPrincipal(userPrincipal);
+            // 1. 사용자 검증
+            Users user = userRepository.findByProviderAndProviderId(
+                            userPrincipal.provider(), userPrincipal.providerId())
+                    .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
 
-            // 2. 사용자의 장바구니 아이템들 조회 (상품 정보 포함)
-            List<CartItems> cartItems = cartItemRepository.findCartItemsWithProductByBuyerId(user.getId());
+            // 2. 장바구니 상품 분석
+            List<String> cartProductIds = cartRecommendationRepository.findCartProductIdsByUserId(user.getId());
 
-            // 3. 장바구니가 비어있으면 전체 인기 상품 추천
-            if (cartItems.isEmpty()) {
-                log.info("장바구니가 비어있어 전체 인기 상품 추천 - userId: {}", user.getId());
-                return getPopularProductsAll(Collections.emptyList());
+            if (cartProductIds.isEmpty()) {
+                log.info("빈 장바구니 - 전체 인기상품 추천");
+                return getPopularProductsForEmptyCart();
             }
 
-            // 4. 장바구니 상품들의 카테고리 분석
-            Set<PetCategory> categories = cartItems.stream()
-                    .map(cartItem -> cartItem.getProduct().getPetCategory())
-                    .collect(Collectors.toSet());
+            // 3. 장바구니 상품들의 카테고리 분석
+            List<PetCategory> cartCategories = cartRecommendationRepository.findCategoriesByProductIds(cartProductIds);
+            Set<PetCategory> uniqueCategories = new HashSet<>(cartCategories);
 
-            // 5. 장바구니에 이미 담긴 상품 ID들 추출 (중복 방지용)
-            List<String> excludeProductIds = cartItems.stream()
-                    .map(cartItem -> cartItem.getProduct().getId())
-                    .collect(Collectors.toList());
+            log.info("장바구니 카테고리 분석 결과: {}", uniqueCategories);
 
-            // 6. 카테고리에 따른 추천 전략 결정
-            List<RecommendationResponse> recommendations = determineRecommendationStrategy(
-                    categories, excludeProductIds);
-
-            log.info("장바구니 기반 추천 완료 - userId: {}, 장바구니 상품: {}개, 추천 상품: {}개",
-                    user.getId(), cartItems.size(), recommendations.size());
-
-            return recommendations;
+            // 4. 추천 전략 결정
+            if (uniqueCategories.size() == 1) {
+                // 단일 카테고리 → 해당 카테고리 인기상품
+                PetCategory targetCategory = uniqueCategories.iterator().next();
+                log.info("단일 카테고리 추천 - category: {}", targetCategory);
+                return getCategoryBasedRecommendations(targetCategory, cartProductIds);
+            } else {
+                // 혼합 카테고리 또는 카테고리 없음 → 전체 인기상품
+                log.info("혼합 카테고리 또는 기타 - 전체 인기상품 추천");
+                return getPopularProductsWithExclusion(cartProductIds);
+            }
 
         } catch (Exception e) {
-            log.error("장바구니 기반 추천 중 오류 발생 - provider: {}, providerId: {}",
+            log.error("장바구니 기반 추천 상품 조회 실패 - provider: {}, providerId: {}",
                     userPrincipal.provider(), userPrincipal.providerId(), e);
-
-            // 오류 발생 시 전체 인기 상품
-            return getPopularProductsAll(Collections.emptyList());
+            throw e;
         }
     }
 
-    // 카테고리 분석에 따른 추천 전략 결정
-    private List<RecommendationResponse> determineRecommendationStrategy(
-            Set<PetCategory> categories, List<String> excludeProductIds) {
-
-        if (categories.size() == 1) {
-            // 단일 카테고리 (강아지 또는 고양이)
-            PetCategory singleCategory = categories.iterator().next();
-            log.debug("단일 카테고리 추천 - category: {}", singleCategory);
-            return getPopularProductsByCategory(singleCategory, excludeProductIds);
-
-        } else {
-            // 혼합 카테고리 (강아지 + 고양이)
-            log.debug("혼합 카테고리 장바구니 - 전체 인기 상품 추천");
-            return getPopularProductsAll(excludeProductIds);
-        }
-    }
-
-    // 특정 카테고리 인기 상품 조회
-    private List<RecommendationResponse> getPopularProductsByCategory(
-            PetCategory petCategory, List<String> excludeProductIds) {
+    /**
+     * 특정 카테고리 기반 추천 상품 조회
+     */
+    private List<RecommendationResponse> getCategoryBasedRecommendations(PetCategory petCategory, List<String> excludeProductIds) {
+        Pageable pageable = PageRequest.of(0, 4);
 
         try {
-            List<Products> products;
+            List<Products> recommendedProducts = cartRecommendationRepository
+                    .findTopPopularProductsByCategoryExcluding(petCategory, excludeProductIds, pageable);
 
-            // 제외할 상품이 있는지 확인하고 적절한 메서드 호출
-            if (excludeProductIds == null || excludeProductIds.isEmpty()) {
-                // DB에서 4개 조회
-                products = cartRecommendationRepository.findTopPopularProductsByCategory(
-                        petCategory.name(), DEFAULT_RECOMMENDATION_LIMIT);
-            } else {
-                // DB에서 4개 조회
-                products = cartRecommendationRepository.findTopPopularProductsByCategoryExcluding(
-                        petCategory.name(), excludeProductIds, DEFAULT_RECOMMENDATION_LIMIT);
+            if (recommendedProducts.isEmpty()) {
+                log.warn("카테고리별 추천 상품이 없음 - category: {}, 전체 인기상품으로 대체", petCategory);
+                return getPopularProductsWithExclusion(excludeProductIds);
             }
 
-            return products.stream()
+            return recommendedProducts.stream()
                     .map(this::convertToRecommendationResponse)
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
-            log.warn("카테고리별 추천 조회 실패, 전체 인기 상품으로 대체 - category: {}", petCategory, e);
-            return getPopularProductsAll(excludeProductIds);
+            log.error("카테고리별 추천 상품 조회 실패 - category: {}, 전체 인기상품으로 대체", petCategory, e);
+            return getPopularProductsWithExclusion(excludeProductIds);
         }
     }
 
-    // 전체 인기 상품 조회
-    private List<RecommendationResponse> getPopularProductsAll(List<String> excludeProductIds) {
-        try {
-            List<Products> products;
+    /**
+     * 전체 인기 상품 조회 (제외 상품 있음)
+     */
+    private List<RecommendationResponse> getPopularProductsWithExclusion(List<String> excludeProductIds) {
+        Pageable pageable = PageRequest.of(0, 4);
 
-            // 제외할 상품이 있는지 확인하고 적절한 메서드 호출
-            if (excludeProductIds == null || excludeProductIds.isEmpty()) {
-                // DB에서 4개 조회
-                products = cartRecommendationRepository.findTopPopularProductsAll(DEFAULT_RECOMMENDATION_LIMIT);
-            } else {
-                // DB에서 4개 조회
-                products = cartRecommendationRepository.findTopPopularProductsExcluding(
-                        excludeProductIds, DEFAULT_RECOMMENDATION_LIMIT);
+        try {
+            List<Products> popularProducts = cartRecommendationRepository
+                    .findTopPopularProductsExcluding(excludeProductIds, pageable);
+
+            if (popularProducts.isEmpty()) {
+                log.warn("제외 조건 적용 인기 상품이 없음 - 전체 인기상품으로 대체");
+                return getPopularProductsForEmptyCart();
             }
 
-            return products.stream()
+            return popularProducts.stream()
                     .map(this::convertToRecommendationResponse)
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
-            log.error("전체 인기 상품 조회 실패", e);
+            log.error("제외 조건 적용 인기상품 조회 실패", e);
+            return getPopularProductsForEmptyCart();
+        }
+    }
+
+    /**
+     * 전체 인기 상품 조회 (빈 장바구니용)
+     */
+    private List<RecommendationResponse> getPopularProductsForEmptyCart() {
+        Pageable pageable = PageRequest.of(0, 4);
+
+        try {
+            List<Products> popularProducts = cartRecommendationRepository.findTopPopularProductsAll(pageable);
+
+            if (popularProducts.isEmpty()) {
+                log.warn("추천할 인기 상품이 전혀 없음");
+                return Collections.emptyList();
+            }
+
+            return popularProducts.stream()
+                    .map(this::convertToRecommendationResponse)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.error("전체 인기상품 조회 실패", e);
             return Collections.emptyList();
         }
     }
 
-    // Products 엔티티를 RecommendationResponse로 변환
+    /**
+     * Products 엔티티를 RecommendationResponse로 변환
+     */
     private RecommendationResponse convertToRecommendationResponse(Products product) {
+        // 상품별 총 구매 수량 조회
+        Long purchaseCount = cartRecommendationRepository.getTotalPurchaseCountByProductId(product.getId());
+
+        // 상품의 첫 번째 이미지 URL 조회
+        List<String> imageUrls = cartRecommendationRepository.findFirstImageUrlByProductId(product.getId());
+        String thumbnailImage = imageUrls.isEmpty() ? null : imageUrls.get(0);
+
+        // 판매자명 조회 (Sellers 엔티티의 vendorName)
+        String vendorName = product.getSeller() != null ? product.getSeller().getVendorName() : "Unknown";
+
         return RecommendationResponse.builder()
                 .productId(product.getId())
                 .productNumber(product.getProductNumber())
                 .title(product.getTitle())
                 .price(product.getPrice())
                 .petCategory(product.getPetCategory())
-                .purchaseCount(0L) // 임시로 0, 필요시 별도 쿼리로 조회
+                .purchaseCount(purchaseCount != null ? purchaseCount : 0L)
+                .thumbnailImage(thumbnailImage)
+                .vendorName(vendorName)
                 .build();
-    }
-
-    // 사용자 조회
-    private Users getUserByPrincipal(UserPrincipal userPrincipal) {
-        return userRepository.findByProviderAndProviderId(
-                        userPrincipal.provider(),
-                        userPrincipal.providerId())
-                .orElseThrow(() -> {
-                    log.error("사용자를 찾을 수 없음 - provider: {}, providerId: {}",
-                            userPrincipal.provider(), userPrincipal.providerId());
-                    return new NoSuchElementException("사용자를 찾을 수 없습니다.");
-                });
     }
 }

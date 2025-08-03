@@ -18,4 +18,6 @@ public class RecommendationResponse {
     private Long price;
     private PetCategory petCategory;
     private Long purchaseCount;
+    private String thumbnailImage;
+    private String vendorName;
 }
